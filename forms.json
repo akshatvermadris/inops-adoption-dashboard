@@ -1,0 +1,180 @@
+{
+ "readme": "Form catalogue for the inops-daily skill. Generated from inops.mgrant.in production config.",
+ "forms": [
+  {
+   "doctype": "Food Rescue Form",
+   "form": "Pantry Collection",
+   "charter": "Charter 1 - Community Engagement",
+   "pillar": "Food Security",
+   "programme": "Hunger"
+  },
+  {
+   "doctype": "Food Distribution Form",
+   "form": "Pantry Distribution",
+   "charter": "Charter 1 - Community Engagement",
+   "pillar": "Food Security",
+   "programme": "Hunger"
+  },
+  {
+   "doctype": "Monthly Meal Donation Form",
+   "form": "MNP – Monthly Reporting",
+   "charter": "Charter 1 - Community Engagement",
+   "pillar": "Food Security",
+   "programme": "Morning Nutrition"
+  },
+  {
+   "doctype": "Hunger Awareness Form",
+   "form": "Hunger Awareness",
+   "charter": "Charter 1 - Community Engagement",
+   "pillar": "Food Security",
+   "programme": "Morning Nutrition"
+  },
+  {
+   "doctype": "MCH Activity Form",
+   "form": "MCH Activity Form",
+   "charter": "Charter 1 - Community Engagement",
+   "pillar": "Food Security",
+   "programme": "Sehat"
+  },
+  {
+   "doctype": "Member Enrolment",
+   "form": "Member Enrolment",
+   "charter": "Charter 1 - Community Engagement",
+   "pillar": "Livelihood",
+   "programme": "Entrepreneurship & Enterprise"
+  },
+  {
+   "doctype": "Enterprise Master",
+   "form": "Enterprise Registration",
+   "charter": "Charter 1 - Community Engagement",
+   "pillar": "Livelihood",
+   "programme": "Entrepreneurship & Enterprise"
+  },
+  {
+   "doctype": "BMC Master",
+   "form": "BuddhiMoney Club Registration",
+   "charter": "Charter 1 - Community Engagement",
+   "pillar": "Livelihood",
+   "programme": "Entrepreneurship & Enterprise"
+  },
+  {
+   "doctype": "Enterprise Progress Visit",
+   "form": "Enterprise Progress Visit",
+   "charter": "Charter 1 - Community Engagement",
+   "pillar": "Livelihood",
+   "programme": "Entrepreneurship & Enterprise"
+  },
+  {
+   "doctype": "BuddhiMoney Club Meeting",
+   "form": "BuddhiMoney Club Meeting",
+   "charter": "Charter 1 - Community Engagement",
+   "pillar": "Livelihood",
+   "programme": "Entrepreneurship & Enterprise"
+  },
+  {
+   "doctype": "Training",
+   "form": "BuddhiMoney Training",
+   "charter": "Charter 1 - Community Engagement",
+   "pillar": "Livelihood",
+   "programme": "Entrepreneurship & Enterprise"
+  },
+  {
+   "doctype": "Manufacturing Unit Master",
+   "form": "Sanitary Pad Manufacturing Unit",
+   "charter": "Charter 1 - Community Engagement",
+   "pillar": "Livelihood",
+   "programme": "Menstrual Health"
+  },
+  {
+   "doctype": "Sanitary Pad Unit Visit",
+   "form": "Sanitary Pad Unit Visit",
+   "charter": "Charter 1 - Community Engagement",
+   "pillar": "Livelihood",
+   "programme": "Menstrual Health"
+  },
+  {
+   "doctype": "Micro-Entrepreneur Master",
+   "form": "MH Micro-Entrepreneur",
+   "charter": "Charter 1 - Community Engagement",
+   "pillar": "Livelihood",
+   "programme": "Menstrual Health"
+  },
+  {
+   "doctype": "Menstrual Hygiene Micro-Entrepreneur",
+   "form": "MH Micro-Entrepreneur Visit",
+   "charter": "Charter 1 - Community Engagement",
+   "pillar": "Livelihood",
+   "programme": "Menstrual Health"
+  },
+  {
+   "doctype": "Champion",
+   "form": "Women Champion Registration",
+   "charter": "Charter 1 - Community Engagement",
+   "pillar": "Livelihood",
+   "programme": "Menstrual Health"
+  },
+  {
+   "doctype": "Menstrual Hygiene Champion",
+   "form": "Women Champion Visit",
+   "charter": "Charter 1 - Community Engagement",
+   "pillar": "Livelihood",
+   "programme": "Menstrual Health"
+  },
+  {
+   "doctype": "Menstrual Hygiene Training",
+   "form": "Menstrual Hygiene Training",
+   "charter": "Charter 1 - Community Engagement",
+   "pillar": "Livelihood",
+   "programme": "Menstrual Health"
+  },
+  {
+   "doctype": "Menstrual Hygiene Period Van",
+   "form": "Period Van Outreach",
+   "charter": "Charter 1 - Community Engagement",
+   "pillar": "Livelihood",
+   "programme": "Menstrual Health"
+  },
+  {
+   "doctype": "Household Survey",
+   "form": "Household Survey",
+   "charter": "Charter 1 - Community Engagement",
+   "pillar": "Social Security",
+   "programme": "Social Security"
+  },
+  {
+   "doctype": "Household Beneficiary",
+   "form": "Household Beneficiary",
+   "charter": "Charter 1 - Community Engagement",
+   "pillar": "Social Security",
+   "programme": "Social Security"
+  },
+  {
+   "doctype": "Scheme Application",
+   "form": "Scheme Application",
+   "charter": "Charter 1 - Community Engagement",
+   "pillar": "Social Security",
+   "programme": "Social Security"
+  },
+  {
+   "doctype": "Scheme Follow-up",
+   "form": "Scheme Follow-up",
+   "charter": "Charter 1 - Community Engagement",
+   "pillar": "Social Security",
+   "programme": "Social Security"
+  },
+  {
+   "doctype": "Samridhi Mela Site Visit",
+   "form": "Samriddhi Mela",
+   "charter": "Charter 2 - Associate Welfare",
+   "pillar": "-",
+   "programme": "Samriddhi"
+  },
+  {
+   "doctype": "ICE Form",
+   "form": "ICE Form",
+   "charter": "Charter 1 - Community Engagement",
+   "pillar": "All three pillars",
+   "programme": "Cross-cutting (ICE)"
+  }
+ ]
+}

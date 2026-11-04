@@ -1,0 +1,1105 @@
+<title>iNOPS Adoption Dashboard</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap">
+<style>
+/* Layout: mGrant platform dashboard — white top bar, grouped left nav, title + underline tabs, labelled filter strip, sectioned card grid, drill-down drawers. Light only by request. */
+:root{
+  --bg:#f6f7f9; --card:#ffffff; --ink:#1b1f24; --muted:#5d6572; --line:#e4e7ec; --soft:#f1f3f6;
+  --nav:#232f3e; --brand:#e8821a; --accent:#146eb4; --accent-soft:#e8f1fa;
+  --good:#1f7a3f; --good-soft:#e7f4ec; --warn:#a85a00; --warn-soft:#fdf1e3; --bad:#b42318; --bad-soft:#fdecea;
+  --idle:#6b7280; --idle-soft:#eef0f3; --plum:#6b3fa0; --plum-soft:#f1ebf8;
+  --font:"Inter","Segoe UI",Arial,Helvetica,sans-serif;
+  color-scheme:light;
+}
+[hidden]{display:none!important}
+html,body{background:var(--bg);color:var(--ink)}
+body{font:14px/1.5 var(--font);margin:0;-webkit-font-smoothing:antialiased}
+*{box-sizing:border-box}
+a{color:var(--accent)}
+button{font:inherit;color:inherit}
+:focus-visible{outline:2px solid #9cc3e6;outline-offset:1px}
+input:focus,select:focus,input:focus-visible,select:focus-visible{outline:none;border-color:#9cc3e6!important;box-shadow:0 0 0 3px #eef5fb}
+.num{font-variant-numeric:tabular-nums}
+
+/* top bar */
+.top{position:sticky;top:env(safe-area-inset-top,0px);z-index:20;background:var(--card);border-bottom:1px solid var(--line);
+  display:flex;align-items:center;gap:14px;padding-block:10px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:30;background:var(--card)}
+.brand{display:flex;align-items:center;gap:14px;white-space:nowrap;min-width:0}
+.wm{display:flex;flex-direction:column;line-height:1}
+.wm b{font-size:20px;font-weight:700;letter-spacing:-.015em;color:var(--nav)}
+.wm b span{color:var(--brand)}
+.wm i{display:block;width:48px;height:3px;border-radius:0 0 8px 8px;background:var(--brand);margin-top:3px;transform:skewX(-20deg)}
+.wm img{height:30px;display:block}
+/* the page is light-only: never let a viewer's dark theme paint form controls */
+input,select,textarea,option{background:#ffffff;color:var(--ink);color-scheme:light}
+input::placeholder{color:#8a919c}
+.brand .vr{width:1px;height:26px;background:var(--line)}
+.mg{font-weight:700;font-size:16px;color:#a3195b;letter-spacing:-.01em;line-height:1.1}
+.mg small{display:block;font-weight:500;font-size:10px;color:var(--muted);letter-spacing:.02em}
+.top .sp{flex:1}
+.asat{font-size:13px;color:var(--muted);white-space:nowrap;min-width:0;overflow:hidden;text-overflow:ellipsis}
+.asat b{color:var(--ink);font-weight:600}
+.tl{border:0;background:none;color:#4a515c;font-size:13px;cursor:pointer;display:inline-flex;gap:6px;align-items:center;padding:6px 6px;border-radius:6px;white-space:nowrap}
+.tl:hover{color:var(--ink);background:var(--soft)}
+.tl svg,.btn svg{width:15px;height:15px;stroke:currentColor;fill:none;stroke-width:1.8;flex:none}
+.top .bar{width:1px;height:22px;background:var(--line)}
+.btn{border:1px solid #cfd5dd;background:var(--card);border-radius:8px;padding:7px 14px;cursor:pointer;font-size:13px;font-weight:500;display:inline-flex;gap:6px;align-items:center;text-decoration:none;color:var(--ink);white-space:nowrap}
+.btn:hover{background:var(--soft)}
+.btn.sm{padding:5px 10px;font-size:12px}
+.btn[disabled]{opacity:.55;cursor:wait}
+.menu-btn{display:none}
+
+/* shell */
+.shell{display:grid;grid-template-columns:232px minmax(0,1fr);min-height:calc(100vh - 57px);background:linear-gradient(to right,var(--card) 231px,var(--line) 231px,var(--line) 232px,transparent 232px)}
+nav.side{background:var(--card);padding:14px 10px;position:sticky;top:57px;height:calc(100vh - 57px);overflow:auto}
+nav.side .grp{font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:#8a919c;padding:10px 12px 8px}
+nav.side .grp:not(:first-child){margin-top:14px}
+nav.side a{display:flex;align-items:center;gap:10px;padding:9px 12px;border-radius:8px;color:#353b44;text-decoration:none;font-size:14px;margin-bottom:2px}
+nav.side a svg{width:18px;height:18px;flex:none;stroke:currentColor;fill:none;stroke-width:1.8}
+nav.side a:hover{background:var(--soft)}
+nav.side a.on{background:var(--accent-soft);color:var(--accent);font-weight:600}
+nav.side a .tag{margin-left:auto;font-size:10px;letter-spacing:.05em;color:var(--muted);border:1px solid var(--line);border-radius:4px;padding:0 5px}
+main{min-width:0;padding-block:0 40px}
+.head{background:var(--card);padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:16px 0}
+.head h1{margin:4px 0 2px;font-size:24px;font-weight:700;letter-spacing:-.015em;text-wrap:balance}
+.head p{margin:0 0 6px;color:var(--muted);font-size:13px}
+.tabs{display:flex;gap:6px;overflow-x:auto;overflow-y:hidden;scrollbar-width:none;border-bottom:1px solid var(--line);margin-top:8px}
+.tabs a{padding:10px 16px;border-bottom:2px solid transparent;color:#4a515c;text-decoration:none;font-size:14px;font-weight:500;white-space:nowrap;margin-bottom:-1px}
+.tabs a:hover{color:var(--ink)}
+.tabs a.on{color:var(--accent);border-bottom-color:var(--accent);font-weight:600}
+.filters{display:flex;flex-wrap:wrap;gap:10px;align-items:center;padding-block:10px 12px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));background:var(--card);border-bottom:1px solid var(--line)}
+.fl{display:flex;align-items:center;gap:6px;border:1px solid #d5dae1;border-radius:8px;padding:3px 6px 3px 12px;background:var(--card)}
+.fl.set{border-color:var(--accent);box-shadow:0 0 0 1px var(--accent) inset}
+.fl.set label{color:var(--accent)}
+.fl label{font-size:11px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:#6b7280;white-space:nowrap}
+.fl select,.fl input{border:0;background:transparent;font:inherit;font-size:14px;font-weight:500;padding:4px;color:var(--ink);max-width:230px;min-width:0}
+.chips{display:flex;border:1px solid #d5dae1;border-radius:8px;overflow:hidden}
+.chips button{border:0;background:var(--card);padding:6px 11px;font-size:13px;cursor:pointer;border-right:1px solid var(--line)}
+.chips button:last-child{border-right:0}
+.chips button.on{background:var(--accent-soft);color:var(--accent);font-weight:600}
+.scope{margin-left:auto;font-size:13px;color:var(--muted)}
+.content{padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:20px;display:grid;gap:18px}
+.sec{display:flex;align-items:baseline;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-top:6px}
+.sec h2{margin:0;font-size:19px;font-weight:600;letter-spacing:-.01em}
+.sec span{font-size:13px;color:var(--muted)}
+
+/* cards */
+.grid{display:grid;gap:16px}
+.g2{grid-template-columns:repeat(2,minmax(0,1fr))}
+.g3{grid-template-columns:repeat(3,minmax(0,1fr))}
+.g4{grid-template-columns:repeat(4,minmax(0,1fr))}
+.g5{grid-template-columns:repeat(5,minmax(0,1fr))}
+.span2{grid-column:span 2}
+.card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:18px 20px;min-width:0;box-shadow:0 1px 2px rgba(16,24,40,.04)}
+.card h3{margin:0;font-size:16px;font-weight:600;display:flex;align-items:center;gap:6px}
+.card .sub{color:var(--muted);font-size:13px;margin:2px 0 14px}
+.kpi{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px 18px 18px;min-width:0;position:relative;box-shadow:0 1px 2px rgba(16,24,40,.04);display:flex;flex-direction:column}
+a.kpi{text-decoration:none;color:inherit;transition:border-color .15s,box-shadow .15s}
+a.kpi:hover{border-color:#b9c4d2;box-shadow:0 3px 10px rgba(16,24,40,.07)}
+.kpi .ic{width:38px;height:38px;border-radius:9px;display:grid;place-items:center;margin-bottom:14px;background:var(--accent-soft);color:var(--accent);order:1}
+.kpi .ic svg{width:19px;height:19px;stroke:currentColor;fill:none;stroke-width:1.8}
+.ic.t-green{background:#e5f4ea;color:#1f7a3f}.ic.t-amber{background:#fdf0dc;color:#b06000}.ic.t-red{background:#fde8e6;color:#b42318}
+.ic.t-purple{background:#efe8f8;color:#6b3fa0}.ic.t-teal{background:#e1f4f4;color:#16767a}.ic.t-grey{background:#eef0f3;color:#6b7280}
+.kpi .val{font-size:30px;font-weight:700;line-height:1.1;letter-spacing:-.02em;order:2}
+.kpi .val small{font-size:15px;font-weight:500;color:var(--muted);letter-spacing:0}
+.kpi .lbl{font-size:14px;color:#3d434c;font-weight:500;padding-right:22px;order:3;margin-top:6px}
+.kpi .foot{font-size:13px;color:var(--muted);margin-top:2px;order:4}
+.kpi .progress{order:5}
+.kpi .info{position:absolute;top:16px;right:16px}
+.delta{font-weight:600}
+.delta.up{color:var(--good)} .delta.down{color:var(--bad)}
+.progress{height:6px;background:var(--soft);border-radius:4px;margin-top:10px;overflow:hidden}
+.progress i{display:block;height:100%;background:var(--accent)}
+.info{border:1px solid #cfd5dd;background:var(--card);border-radius:50%;width:18px;height:18px;font-size:11px;line-height:16px;text-align:center;color:var(--muted);cursor:pointer;padding:0;flex:none;font-family:Georgia,serif;font-style:italic}
+.info:hover{border-color:var(--accent);color:var(--accent)}
+
+/* bar list */
+.bl{display:grid;gap:9px}
+.bl .row{display:grid;grid-template-columns:minmax(0,200px) minmax(0,1fr) auto;gap:12px;align-items:center;font-size:14px}
+.bl .row .l{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.bl .row .t{height:14px;background:var(--soft);border-radius:4px;overflow:hidden;display:flex}
+.bl .row .t i{display:block;height:100%}
+.bl .row .v{font-variant-numeric:tabular-nums;text-align:right;min-width:62px;font-weight:500}
+.bl .row.click{cursor:pointer}
+.bl .row.click:hover .l{color:var(--accent);text-decoration:underline}
+.legend{display:flex;flex-wrap:wrap;gap:6px 16px;font-size:13px;color:var(--muted);margin-bottom:12px}
+.legend span{display:inline-flex;align-items:center;gap:6px}
+.legend i{width:10px;height:10px;border-radius:3px;display:inline-block}
+.stack{display:flex;height:22px;border-radius:6px;overflow:hidden;background:var(--soft)}
+.stack i{display:block;height:100%}
+
+/* donut */
+.donut{display:flex;flex-direction:column;gap:16px;align-items:stretch}
+.donut svg{width:170px;height:170px;flex:none;margin:0 auto}
+.donut .lg{min-width:0}
+.donut .lg div{display:grid;grid-template-columns:12px minmax(0,1fr) auto 44px;gap:8px;align-items:center;padding:7px 0;border-bottom:1px solid var(--line);font-size:14px}
+.donut .lg div:last-child{border-bottom:0}
+.donut .lg i{width:10px;height:10px;border-radius:3px}
+.donut .lg b{font-weight:600;text-align:right;font-variant-numeric:tabular-nums}
+.donut .lg em{font-style:normal;color:var(--muted);text-align:right;font-variant-numeric:tabular-nums}
+
+/* tables */
+.tbar{display:flex;gap:8px;align-items:center;margin-bottom:10px;flex-wrap:wrap}
+.tbar input[type=search]{border:1px solid #d5dae1;border-radius:8px;padding:6px 10px;font:inherit;font-size:14px;min-width:0;flex:1 1 180px;max-width:300px}
+.tbar select{border:1px solid #d5dae1;border-radius:8px;padding:6px 8px;font:inherit;font-size:13px;background:var(--card);max-width:220px;min-width:0}
+.tbar .cnt{color:var(--muted);font-size:13px}
+.tbar .ex{margin-left:auto;display:flex;gap:6px}
+.tw{overflow-x:auto;border:1px solid var(--line);border-radius:10px}
+table{border-collapse:collapse;width:100%;font-size:14px}
+th,td{padding:9px 12px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}
+th{background:#f7f8fa;font-weight:600;font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.03em;white-space:nowrap;cursor:pointer;user-select:none}
+th.r,td.r{text-align:right;font-variant-numeric:tabular-nums}
+tr:last-child td{border-bottom:0}
+tbody tr:hover td{background:#fafbfc}
+tr.click{cursor:pointer}
+.cellbtn{border:0;background:none;padding:2px 6px;margin:-2px -6px;border-radius:5px;color:var(--accent);cursor:pointer;font-variant-numeric:tabular-nums;text-decoration:underline;text-decoration-color:#b9d3ea;text-underline-offset:3px}
+.cellbtn:hover{background:var(--accent-soft)}
+.pager{display:flex;gap:12px;align-items:center;justify-content:flex-end;padding:10px 12px;border-top:1px solid var(--line);font-size:13px;color:var(--muted);flex-wrap:wrap;background:#fbfbfc}
+.pager label{display:inline-flex;gap:6px;align-items:center;margin-right:auto}
+.pager select{border:1px solid #d5dae1;border-radius:6px;padding:3px 6px;font:inherit;font-size:13px}
+.pager .btn.sm{padding:3px 10px;font-size:15px;line-height:1.2}
+.pill{display:inline-block;border-radius:999px;padding:1px 9px;font-size:12px;font-weight:600;white-space:nowrap}
+.p-good{background:var(--good-soft);color:var(--good)} .p-warn{background:var(--warn-soft);color:var(--warn)}
+.p-bad{background:var(--bad-soft);color:var(--bad)} .p-idle{background:var(--idle-soft);color:var(--idle)}
+.p-plum{background:var(--plum-soft);color:var(--plum)} .p-acc{background:var(--accent-soft);color:var(--accent)}
+.muted{color:var(--muted)}
+.small{font-size:13px}
+
+/* chart */
+svg.chart{width:100%;height:auto;display:block}
+svg.chart text{fill:var(--muted);font:11px var(--font)}
+svg.chart .grid{stroke:#eceef2;stroke-width:1}
+svg.chart rect.bar{cursor:pointer;transition:opacity .1s}
+svg.chart g.col:hover rect.bar{opacity:.8}
+svg.chart rect.hit{fill:transparent}
+.note{font-size:13px;color:var(--muted);background:var(--soft);border-radius:8px;padding:10px 12px}
+.note b{color:var(--ink)}
+#tip{position:fixed;z-index:60;pointer-events:none;background:#1f2937;color:#fff;font-size:12.5px;line-height:1.45;padding:8px 10px;border-radius:8px;box-shadow:0 6px 18px rgba(0,0,0,.18);max-width:260px}
+#tip b{font-weight:600}
+#tip .tr{display:flex;gap:10px;justify-content:space-between}
+#tip .tr i{display:inline-block;width:8px;height:8px;border-radius:2px;margin-right:6px}
+
+/* drawer + popover + toast */
+.scrim{position:fixed;inset:0;background:rgba(20,24,31,.35);z-index:40}
+.drawer{position:fixed;top:0;right:0;bottom:0;width:min(940px,100%);background:var(--card);z-index:41;overflow:auto;box-shadow:-8px 0 24px rgba(0,0,0,.12);
+  padding-block:calc(18px + env(safe-area-inset-top,0px)) calc(24px + env(safe-area-inset-bottom,0px));padding-left:24px;padding-right:max(24px,env(safe-area-inset-right,0px))}
+.drawer h2{margin:0 0 4px;font-size:20px;padding-right:44px}
+.drawer .x{position:absolute;top:calc(14px + env(safe-area-inset-top,0px));right:max(14px,env(safe-area-inset-right,0px));border:1px solid var(--line);background:var(--card);border-radius:8px;width:34px;height:34px;cursor:pointer;font-size:18px}
+.drawer .dsnap{position:absolute;top:calc(14px + env(safe-area-inset-top,0px));right:calc(max(14px,env(safe-area-inset-right,0px)) + 44px);display:flex;gap:6px}
+.drawer .dsnap .btn{height:34px}
+.drawer h2{padding-right:220px}
+.drawer section{margin-top:20px;display:grid;gap:10px}
+.drawer h4{margin:0;font-size:12px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted)}
+.drawer .kpi .val{font-size:24px}
+.pop{position:fixed;z-index:50;background:var(--card);border:1px solid var(--line);border-radius:10px;box-shadow:0 8px 24px rgba(0,0,0,.14);padding:14px 16px;width:min(360px,calc(100vw - 32px));font-size:14px}
+.pop h5{margin:0 0 2px;font-size:12px;letter-spacing:.05em;text-transform:uppercase;color:var(--muted)}
+.pop.menu{width:220px;display:grid;gap:8px;padding:12px}
+.pop.menu h5{margin-bottom:2px}
+.pop.menu .btn{justify-content:flex-start}
+.pop p{margin:0 0 10px}
+.pop p:last-child{margin:0}
+.toast{position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);z-index:70;background:#1f2937;color:#fff;padding:10px 16px;border-radius:8px;font-size:13px;box-shadow:0 6px 18px rgba(0,0,0,.2)}
+.empty{padding:22px;text-align:center;color:var(--muted)}
+
+@media (max-width:1100px){.g5{grid-template-columns:repeat(3,minmax(0,1fr))}.g4{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media (max-width:860px){
+  .shell{grid-template-columns:minmax(0,1fr);background:none}
+  nav.side{position:fixed;left:0;top:0;bottom:0;height:auto;z-index:45;width:250px;transform:translateX(-102%);transition:transform .2s;padding-top:calc(12px + env(safe-area-inset-top,0px));border-right:1px solid var(--line)}
+  nav.side.open{transform:none;box-shadow:8px 0 24px rgba(0,0,0,.15)}
+  .menu-btn{display:inline-flex}
+  .g2,.g3{grid-template-columns:minmax(0,1fr)}
+  .span2{grid-column:auto}
+  .top .hide-sm{display:none}
+  .scope{margin-left:0;width:100%}
+}
+@media (max-width:520px){.g4,.g5{grid-template-columns:repeat(2,minmax(0,1fr))}.kpi .val{font-size:22px}.bl .row{grid-template-columns:minmax(0,110px) minmax(0,1fr) auto}.mg{display:none}.brand .vr{display:none}.asat{font-size:12px}}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+/* print layout: the page as leadership reads it, without controls */
+#printHead{display:none}
+@media print{
+  @page{size:A4 landscape;margin:10mm}
+  html,body{background:#fff}
+  .top,nav.side,.filters,.tbar,.pager,.info,.dsnap,.drawer .x,.scrim,#tip,.toast,.pop,.cellbtn::after{display:none!important}
+  #printHead{display:block;font-size:12px;color:#5d6572;margin:0 0 6px}
+  #printHead b{color:#1b1f24;font-size:15px}
+  .shell{display:block;background:none;min-height:0}
+  .head{padding:0}.tabs a:not(.on){display:none}.tabs{border:0}
+  .content{padding:10px 0}
+  .card,.kpi{box-shadow:none;break-inside:avoid}
+  .g5{grid-template-columns:repeat(5,minmax(0,1fr))!important}.g4{grid-template-columns:repeat(4,minmax(0,1fr))!important}.g3{grid-template-columns:repeat(3,minmax(0,1fr))!important}.g2{grid-template-columns:repeat(2,minmax(0,1fr))!important}.span2{grid-column:span 2!important}
+  .tw{overflow:visible}
+  .cellbtn{color:inherit;text-decoration:none}
+  body.print-drawer .shell{display:none}
+  body.print-drawer #layer .drawer{position:static;width:auto;box-shadow:none;overflow:visible;padding:0}
+  *{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+}
+</style>
+
+<header class="top">
+  <button class="btn menu-btn" id="menuBtn" aria-label="Open menu">☰</button>
+  <div class="brand"><span class="wm" id="clientMark" aria-label="Amazon iNOPS"><b>amazon <span>iNOPS</span></b><i></i></span><span class="vr"></span><span class="mg">mGrant<small>by Dhwani RIS</small></span></div>
+  <span class="sp"></span>
+  <span class="asat" id="asat"></span>
+  <button class="tl hide-sm" id="refreshBtn" hidden><svg viewBox="0 0 24 24"><path d="M20 11a8 8 0 1 0-2.3 5.7M20 5v6h-6"/></svg>Refresh</button>
+  <button class="tl hide-sm" id="snapBtn" title="Print this page"><svg viewBox="0 0 24 24"><path d="M4 8h3l2-3h6l2 3h3v11H4z"/><circle cx="12" cy="13" r="3.5"/></svg>Snapshot</button>
+  <span class="bar hide-sm"></span>
+  <a class="btn" id="openPortal" href="https://inops.mgrant.in/app" target="_blank" rel="noopener"><svg viewBox="0 0 24 24"><path d="M15 6l-6 6 6 6"/></svg><span class="hide-sm">Back to platform</span></a>
+</header>
+
+<div class="shell">
+  <nav class="side" id="side" aria-label="Dashboard sections"></nav>
+  <main id="main">
+    <div class="head"><div id="printHead"></div><h1 id="pgTitle"></h1><div class="tabs" id="tabs" role="tablist"></div></div>
+    <div class="filters" id="filters"></div>
+    <div class="content" id="view"><div class="empty">Loading iNOPS data…</div></div>
+  </main>
+</div>
+<div id="layer"></div>
+<div id="tip" hidden></div>
+
+<script id="inops-data" type="application/json">/*__DATA__*/</script>
+<script>
+(function(){
+"use strict";
+/* ---------- data source: embedded snapshot, else live endpoint on the iNOPS site ---------- */
+const LIVE_ENDPOINT = "/api/method/inops_adoption_dashboard";
+const PORTAL = "https://inops.mgrant.in/app";
+let D;
+
+/* ---------- helpers ---------- */
+const $ = s => document.querySelector(s);
+const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const fmt = n => (n ?? 0).toLocaleString("en-IN");
+const pct = (a,b) => b ? Math.round(a*100/b) : 0;
+const inr = n => { n = n||0; if (n >= 1e7) return "₹" + (n/1e7).toFixed(2) + " Cr"; if (n >= 1e5) return "₹" + (n/1e5).toFixed(1) + " L"; return "₹" + fmt(Math.round(n)); };
+const addDays = (s,n) => { const t = Date.UTC(+s.slice(0,4), +s.slice(5,7)-1, +s.slice(8,10)) + n*864e5; return new Date(t).toISOString().slice(0,10); };
+const diffDays = (a,b) => Math.round((Date.UTC(+b.slice(0,4),+b.slice(5,7)-1,+b.slice(8,10)) - Date.UTC(+a.slice(0,4),+a.slice(5,7)-1,+a.slice(8,10)))/864e5);
+const MON = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+const DOW = ["Sun","Mon","Tue","Wed","Thu","Fri","Sat"];
+const dlabel = s => s ? (+s.slice(8,10)) + " " + MON[+s.slice(5,7)-1] : "—";
+const dlabelY = s => s ? dlabel(s) + " " + s.slice(0,4) : "—";
+const dow = s => DOW[new Date(Date.UTC(+s.slice(0,4),+s.slice(5,7)-1,+s.slice(8,10))).getUTCDay()];
+const weekStart = s => { const d = new Date(Date.UTC(+s.slice(0,4),+s.slice(5,7)-1,+s.slice(8,10))).getUTCDay(); return addDays(s, -((d+6)%7)); };
+const ago = s => { if (!s) return "never"; const d = diffDays(s.slice(0,10), D.today); return d <= 0 ? "today" : d === 1 ? "yesterday" : d + " days ago"; };
+const plural = (n, one, many) => n === 1 ? one : many;
+
+const PILLAR_COL = {"Social Security":"#5b9bd5","Livelihood":"#6cc3a0","Food Security":"#f2b06a"};
+const ST = {
+  active:{label:"Active",cls:"p-good",col:"#7cc79a",desc:"Submitted in the last 7 days"},
+  slowing:{label:"Less active",cls:"p-warn",col:"#f6cd84",desc:"Last submission 8–21 days ago"},
+  quiet:{label:"Inactive",cls:"p-bad",col:"#f0a39b",desc:"No submission in over 21 days"},
+  opened:{label:"Logged in, no submissions",cls:"p-plum",col:"#c4b1e8",desc:"Has used the app, no form submitted yet"},
+  never:{label:"Never logged in",cls:"p-idle",col:"#d3d8de",desc:"Has form access, never used the app"}
+};
+const STATUS_TXT = ["No review step","Review","Approved","Other"];
+
+/* ---------- state ---------- */
+const S = { period:"all", from:"", to:"", partner:"", pillar:"" };
+try { Object.assign(S, JSON.parse(localStorage.getItem("inops-filters")||"{}")); } catch(e) {}
+const saveS = () => { try { localStorage.setItem("inops-filters", JSON.stringify(S)); } catch(e) {} };
+
+/* ---------- navigation ---------- */
+const ICON = {
+  overview:'<svg viewBox="0 0 24 24"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></svg>',
+  users:'<svg viewBox="0 0 24 24"><circle cx="9" cy="8" r="3.5"/><path d="M2.5 20c.8-3.6 3.4-5.5 6.5-5.5s5.7 1.9 6.5 5.5"/><circle cx="17.5" cy="9" r="2.5"/><path d="M17 14.5c2.3.2 4 1.7 4.6 4.5"/></svg>',
+  forms:'<svg viewBox="0 0 24 24"><rect x="5" y="3" width="14" height="18" rx="2"/><path d="M9 8h6M9 12h6M9 16h4"/></svg>',
+  grants:'<svg viewBox="0 0 24 24"><path d="M4 7h16v12H4z"/><path d="M9 7V5h6v2M4 12h16"/></svg>',
+  logs:'<svg viewBox="0 0 24 24"><path d="M12 7v5l3 2"/><circle cx="12" cy="12" r="9"/></svg>',
+  team:'<svg viewBox="0 0 24 24"><rect x="3" y="7" width="18" height="13" rx="2"/><path d="M9 7V5h6v2M3 13h18"/></svg>'
+};
+let NAV = [
+  {id:"overview", label:"Overview", sub:"How iNOPS is being used across partners, forms and field users", grp:"Amazon CSR", tabs:[["summary","Summary"],["trend","Weekly trend"],["partners","Partner scorecard"]]},
+  {id:"users", label:"Field users", sub:"Who has access, who is filling forms, who has stopped", grp:"Amazon CSR", tabs:[["status","Status overview"],["inactive","Needs follow-up"],["top","Top contributors"],["all","User directory"]]},
+  {id:"forms", label:"Forms", sub:"Every iNOPS form: volume, review status and coverage", grp:"Amazon CSR", tabs:[["catalogue","Form summary"],["review","Approvals"],["channel","Submission channel"],["gaps","Setup gaps"]]},
+  {id:"grants", label:"Grants", sub:"GAFs, grants, compliance reporting and budget", grp:"Amazon CSR", tabs:[["portfolio","Grant portfolio"],["compliance","Compliance reporting"],["budget","Budget & tranches"],["link","Grants vs field activity"]]},
+  {id:"team", label:"Amazon team", sub:"", grp:"Amazon CSR", tabs:[["usage","Team activity"]]},
+  {id:"logs", label:"Logs", sub:"Web sign-ins and data freshness", grp:"Dhwani internal", tag:"INTERNAL", tabs:[["signins","Web sign-ins"],["freshness","Data freshness"],["loginas","Login As sessions"]]}
+];
+let route = {sec:"overview", tab:"summary"};
+function parseHash(){
+  const h = (location.hash||"").replace(/^#/,"");
+  const [sec, tab] = h.split("-");
+  const n = NAV.find(x => x.id === sec) || NAV[0];
+  route = {sec:n.id, tab:(n.tabs.find(t => t[0] === tab) || n.tabs[0])[0]};
+}
+
+/* ---------- derived data ---------- */
+// facts: [day, form, partner, status, mobile, user, count]
+const F_DAY=0, F_FORM=1, F_P=2, F_ST=3, F_MOB=4, F_U=5, F_N=6;
+let FORM_ACCESS = [], FIELD_USERS = [];
+function derive(){
+  D.partners.forEach(p => { if (p.id === "(none)") p.name = "No partner assigned"; });
+  FORM_ACCESS = D.forms.map(() => 0);
+  D.users.forEach(u => { if (u.st !== "disabled") u.acc.forEach(i => FORM_ACCESS[i]++); });
+  FIELD_USERS = D.users.filter(u => u.st in ST);
+  D.partnerHasGrant = new Set(D.grants.map(g => g.p));
+}
+function range(){
+  const t = D.today;
+  if (S.period === "7") return [addDays(t,-6), t];
+  if (S.period === "30") return [addDays(t,-29), t];
+  if (S.period === "90") return [addDays(t,-89), t];
+  if (S.period === "custom") return [S.from || "2000-01-01", S.to || t];
+  return ["2000-01-01", t];
+}
+function rows(opts={}){
+  const [a,b] = opts.allTime ? ["2000-01-01","2999-12-31"] : range();
+  const P = S.partner === "" ? null : +S.partner;
+  return D.facts.filter(f => {
+    const d = D.days[f[F_DAY]];
+    if (d < a || d > b) return false;
+    if (P !== null && f[F_P] !== P) return false;
+    if (S.pillar && D.forms[f[F_FORM]].pillar !== S.pillar) return false;
+    return true;
+  });
+}
+const sum = arr => arr.reduce((a,f) => a + f[F_N], 0);
+function group(arr, keyFn){ const m = new Map(); arr.forEach(f => { const k = keyFn(f); m.set(k, (m.get(k)||0) + f[F_N]); }); return m; }
+function usersScoped(){ return FIELD_USERS.filter(u => S.partner === "" || u.p === +S.partner); }
+function periodText(){ const [a,b] = range(); return S.period === "all" ? "Since " + dlabelY(D.go_live || "2026-07-01") : S.period === "custom" ? dlabelY(a) + " – " + dlabelY(b) : "Last " + S.period + " days"; }
+function scopeText(){ return [periodText(), S.pillar || "All pillars", S.partner === "" ? "All partners" : D.partners[+S.partner].name].join(" · "); }
+const pName = p => D.partners[p] ? D.partners[p].name : "—";
+
+/* ---------- small renderers ---------- */
+const KI = {
+  forms:'<svg viewBox="0 0 24 24"><rect x="5" y="3" width="14" height="18" rx="2"/><path d="M9 8h6M9 12h6M9 16h4"/></svg>',
+  trend:'<svg viewBox="0 0 24 24"><path d="M3 17l6-6 4 4 8-8M15 7h6v6"/></svg>',
+  home:'<svg viewBox="0 0 24 24"><path d="M3 11l9-7 9 7v9H3z"/><path d="M9 20v-6h6v6"/></svg>',
+  people:'<svg viewBox="0 0 24 24"><circle cx="9" cy="8" r="3.5"/><path d="M2.5 20c.8-3.6 3.4-5.5 6.5-5.5s5.7 1.9 6.5 5.5"/><circle cx="17.5" cy="9" r="2.5"/><path d="M17 14.5c2.3.2 4 1.7 4.6 4.5"/></svg>',
+  partner:'<svg viewBox="0 0 24 24"><path d="M4 21V8l8-5 8 5v13"/><path d="M9 21v-6h6v6M9 11h.01M15 11h.01"/></svg>',
+  grant:'<svg viewBox="0 0 24 24"><path d="M4 7h16v12H4z"/><path d="M9 7V5h6v2M4 12h16"/></svg>',
+  rupee:'<svg viewBox="0 0 24 24"><path d="M7 5h10M7 9h10M10 5c3 0 5 1.5 5 4s-2 4-5 4H7l7 6"/></svg>',
+  alert:'<svg viewBox="0 0 24 24"><path d="M12 3l9.5 17h-19z"/><path d="M12 10v4M12 17.5v.5"/></svg>',
+  check:'<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M8 12.5l2.5 2.5L16 9.5"/></svg>',
+  clock:'<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>',
+  user:'<svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21c1-4 4-6 8-6s7 2 8 6"/></svg>',
+  pause:'<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M10 9v6M14 9v6"/></svg>',
+  target:'<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1"/></svg>'
+};
+const sectionHead = (title, scope="") => `<div class="sec"><h2>${title}</h2>${scope ? `<span>${esc(scope)}</span>` : ""}</div>`;
+const info = key => `<button class="info" data-info="${key}" aria-label="About this number">i</button>`;
+function kpi({label, value, foot="", key="", progress=null, icon="forms", tone="", href=""}){
+  const tg = href ? "a" : "div";
+  return `<${tg} class="kpi" ${href ? `href="#${href}"` : ""}><span class="ic ${tone}">${KI[icon]}</span>${key ? info(key) : ""}<div class="lbl">${label}</div><div class="val num">${value}</div>${progress!==null ? `<div class="progress"><i style="width:${Math.min(100,progress)}%"></i></div>` : ""}${foot ? `<div class="foot">${foot}</div>` : ""}</${tg}>`;
+}
+function card(title, sub, body, {key="", cls=""}={}){
+  return `<section class="card ${cls}"><h3>${title}${key ? info(key) : ""}</h3>${sub ? `<div class="sub">${sub}</div>` : `<div style="height:12px"></div>`}${body}</section>`;
+}
+const tipAttr = (title, lines) => `data-tip="${esc(JSON.stringify([title, lines]))}"`;
+function barList(items, {max=null, fmtV=fmt, click=null}={}){
+  if (!items.length) return `<div class="empty">Nothing in this selection.</div>`;
+  const m = max ?? Math.max(...items.map(i => i.total ?? i.value), 1);
+  return `<div class="bl">` + items.map(it => {
+    const segs = it.segs || [{v:it.value, c:it.color || "#5b9bd5", t:""}];
+    const bars = segs.map(s => `<i style="width:${(s.v/m*100).toFixed(2)}%;background:${s.c}"></i>`).join("");
+    const tip = tipAttr(it.label, segs.length > 1 ? segs.map(s => [s.t, fmtV(s.v), s.c]) : [["", fmtV(it.value)]]);
+    return `<div class="row ${click?"click":""}" ${click?`data-click="${click}" data-id="${esc(it.id)}"`:""} ${tip}><span class="l">${esc(it.label)}</span><span class="t">${bars}</span><span class="v">${it.vtext ?? fmtV(it.total ?? it.value)}</span></div>`;
+  }).join("") + `</div>`;
+}
+function legend(entries){ return `<div class="legend">` + entries.map(([l,c]) => `<span><i style="background:${c}"></i>${esc(l)}</span>`).join("") + `</div>`; }
+function donut(parts, centre, sub){
+  const tot = parts.reduce((a,p) => a+p.v, 0); const r = 54, C = 2*Math.PI*r; let off = 0;
+  const arcs = tot ? parts.filter(p => p.v).map(p => { const len = p.v/tot*C; const s = `<circle cx="75" cy="75" r="${r}" fill="none" stroke="${p.c}" stroke-width="20" stroke-dasharray="${len} ${C-len}" stroke-dashoffset="${-off}" transform="rotate(-90 75 75)" ${tipAttr(p.l, [["", fmt(p.v) + " (" + pct(p.v,tot) + "%)"]])}></circle>`; off += len; return s; }).join("") : "";
+  return `<div class="donut"><svg viewBox="0 0 150 150" role="img"><circle cx="75" cy="75" r="${r}" fill="none" stroke="#eef0f3" stroke-width="20"/>${arcs}<text x="75" y="76" text-anchor="middle" style="font:700 24px var(--font);fill:var(--ink)">${centre ?? fmt(tot)}</text><text x="75" y="96" text-anchor="middle" style="font:12px var(--font);fill:var(--muted)">${esc(sub||"")}</text></svg><div class="lg">${parts.map(p => `<div><i style="background:${p.c}"></i><span>${esc(p.l)}</span><b>${fmt(p.v)}</b><em>${pct(p.v,tot)}%</em></div>`).join("")}</div></div>`;
+}
+function niceMax(v){ if (v <= 5) return 5; const p = Math.pow(10, Math.floor(Math.log10(v))); const n = v/p; return (n<=1?1:n<=2?2:n<=2.5?2.5:n<=5?5:10)*p; }
+/* column chart: series [{label, tipTitle, value, segs?:[{v,c,t}]}]; every column carries a hover tooltip with its numbers */
+function columnChart(series, {height=240, line=null, lineLabel="7-day average", partialLast=false, labelEvery=1, color="#5b9bd5"}={}){
+  if (!series.length) return `<div class="empty">Nothing in this selection.</div>`;
+  const W = 900, H = height, L = 48, R = 12, T = 12, B = 30;
+  const maxV = niceMax(Math.max(...series.map(s => s.value), ...(line||[]).map(v => v||0), 1));
+  const iw = W-L-R, ih = H-T-B, bw = iw/series.length, gap = Math.max(1, Math.min(6, bw*.28));
+  const y = v => T + ih - v/maxV*ih;
+  let g = "";
+  for (let i=0;i<=4;i++){ const v = maxV*i/4; g += `<line class="grid" x1="${L}" x2="${W-R}" y1="${y(v)}" y2="${y(v)}"/><text x="${L-8}" y="${y(v)+4}" text-anchor="end">${fmt(Math.round(v))}</text>`; }
+  series.forEach((s,i) => {
+    const x = L + i*bw + gap/2, w = Math.max(1, bw-gap);
+    const last = partialLast && i === series.length-1;
+    const lines = (s.segs ? s.segs.filter(sg => sg.v).map(sg => [sg.t, fmt(sg.v), sg.c]) : []).concat([["Total", fmt(s.value)]]);
+    if (line && line[i] !== null && line[i] !== undefined) lines.push([lineLabel, fmt(line[i])]);
+    if (last) lines.push(["", "Today so far, day not over"]);
+    let col = "";
+    if (s.segs){ let acc = 0; const vis = s.segs.filter(sg => sg.v); vis.forEach((sg, k) => { const top = k === vis.length-1; col += `<rect class="bar" x="${x}" y="${y(acc+sg.v)}" width="${w}" height="${Math.max(0,y(acc)-y(acc+sg.v))}" fill="${sg.c}" opacity="${last?.5:1}" ${top?`rx="${Math.min(3,w/3)}"`:""}/>`; acc += sg.v; }); }
+    else col += `<rect class="bar" x="${x}" y="${y(s.value)}" width="${w}" height="${Math.max(0,y(0)-y(s.value))}" fill="${color}" opacity="${last?.5:1}" rx="${Math.min(3,w/3)}"/>`;
+    g += `<g class="col" ${tipAttr(s.tipTitle || s.label, lines)}><rect class="hit" x="${L+i*bw}" y="${T}" width="${bw}" height="${ih}"/>${col}</g>`;
+    if (i % labelEvery === 0 || i === series.length-1) g += `<text x="${x+w/2}" y="${H-10}" text-anchor="middle">${esc(s.label)}</text>`;
+  });
+  if (line){ const pts = line.map((v,i) => v===null||v===undefined ? null : `${L+i*bw+bw/2},${y(v)}`).filter(Boolean); g += `<polyline points="${pts.join(" ")}" fill="none" stroke="#e8821a" stroke-width="2.5" stroke-linejoin="round" pointer-events="none"/>`; }
+  return `<svg class="chart" viewBox="0 0 ${W} ${H}" role="img">${g}</svg>`;
+}
+function stackBar(parts){ const t = parts.reduce((a,p) => a+p.v, 0) || 1; return `<div class="stack">` + parts.map(p => `<i style="width:${(p.v/t*100).toFixed(2)}%;background:${p.c}" ${tipAttr(p.l, [["", fmt(p.v) + " (" + pct(p.v,t) + "%)"]])}></i>`).join("") + `</div>` + legend(parts.map(p => [`${p.l} · ${fmt(p.v)} (${pct(p.v,t)}%)`, p.c])).replace('class="legend"','class="legend" style="margin:10px 0 0"'); }
+
+/* ---------- tables: search, column filters, sort, 50-row pages, CSV + Excel ---------- */
+const TABLES = {};
+const pluralWord = w => /(s|x|ch|sh)$/.test(w) ? w + "es" : /[^aeiou]y$/.test(w) ? w.slice(0,-1) + "ies" : w + "s";
+const DL_ICON ='<svg viewBox="0 0 24 24"><path d="M12 4v11M7 10l5 5 5-5M5 20h14"/></svg>';
+function table(id, cols, data, {search=true, rowClick=null, sort=null, dir=-1, pageSize=25, filters=[], name="iNOPS report", empty="Nothing in this selection."}={}){
+  TABLES[id] = {cols, data, rowClick, sortK:sort, dir, q:"", f:{}, page:0, pageSize, filters, name, empty};
+  const fsel = filters.map((f,i) => { const vals = [...new Set(data.map(f.get))].filter(v => v !== "" && v !== null && v !== undefined).sort(); return `<select data-tfilter="${id}" data-fi="${i}" aria-label="${esc(f.label)}"><option value="">${esc(f.all || "All " + pluralWord(f.label.toLowerCase()))}</option>${vals.map(v => `<option>${esc(v)}</option>`).join("")}</select>`; }).join("");
+  return `<div class="tbar">${search ? `<input type="search" placeholder="Search" data-tsearch="${id}" aria-label="Search table">` : ""}${fsel}<span class="ex"><button class="btn sm" data-export="${id}" data-fmt="csv">${DL_ICON}CSV</button><button class="btn sm" data-export="${id}" data-fmt="xlsx">${DL_ICON}Excel</button></span></div><div class="tw" id="${id}-wrap">${tableBody(id)}</div>`;
+}
+function tableRows(id){
+  const t = TABLES[id]; let d = t.data;
+  t.filters.forEach((f,i) => { const v = t.f[i]; if (v) d = d.filter(r => String(f.get(r)) === v); });
+  if (t.q){ const q = t.q.toLowerCase(); d = d.filter(r => t.cols.some(c => String(c.sv ? c.sv(r) : c.v(r) ?? "").toLowerCase().includes(q))); }
+  if (t.sortK !== null){ const f = t.cols[t.sortK].v; d = [...d].sort((a,b) => { const x = f(a), y = f(b); return (x>y?1:x<y?-1:0) * t.dir; }); }
+  return d;
+}
+function tableBody(id){
+  const t = TABLES[id]; const all = tableRows(id); const total = all.length;
+  const pages = Math.max(1, Math.ceil(total / t.pageSize)); if (t.page >= pages) t.page = pages-1;
+  const d = all.slice(t.page*t.pageSize, (t.page+1)*t.pageSize);
+  if (!d.length) return `<div class="empty">${t.empty}</div>`;
+  const pager = `<div class="pager"><label>Rows per page <select data-psize="${id}" aria-label="Rows per page">${[10,25,50,100].map(n => `<option ${n===t.pageSize?"selected":""}>${n}</option>`).join("")}</select></label><span>${fmt(t.page*t.pageSize+1)}–${fmt(Math.min(total,(t.page+1)*t.pageSize))} of ${fmt(total)}</span><button class="btn sm" data-page="${id}" data-d="-1" ${t.page===0?"disabled":""} aria-label="Previous page">‹</button><span>Page ${t.page+1} of ${pages}</span><button class="btn sm" data-page="${id}" data-d="1" ${t.page>=pages-1?"disabled":""} aria-label="Next page">›</button></div>`;
+  return `<table><thead><tr>${t.cols.map((c,i) => c.noShow ? "" : `<th class="${c.r?"r":""}" data-sort="${id}" data-k="${i}">${c.h}${t.sortK===i?(t.dir>0?" ▲":" ▼"):""}</th>`).join("")}</tr></thead><tbody>` +
+    d.map(r => `<tr class="${t.rowClick?"click":""}" ${t.rowClick?`data-rclick="${t.rowClick}" data-id="${esc(r._id ?? "")}"`:""}>${t.cols.map(c => c.noShow ? "" : `<td class="${c.r?"r":""}">${c.html ? c.html(r) : esc(c.v(r))}</td>`).join("")}</tr>`).join("") + `</tbody></table>` + pager;
+}
+function rerenderTable(id){ const w = document.getElementById(id+"-wrap"); if (w) w.innerHTML = tableBody(id); }
+
+/* ---------- files: CSV, Excel, PDF snapshot ---------- */
+function toast(msg){ const el = document.createElement("div"); el.className = "toast"; el.textContent = msg; document.body.appendChild(el); setTimeout(() => el.remove(), 3200); }
+const loaded = {};
+function loadScript(src){ return loaded[src] || (loaded[src] = new Promise((ok, no) => { const s = document.createElement("script"); s.src = src; s.onload = ok; s.onerror = () => { delete loaded[src]; no(new Error("Could not load " + src)); }; document.head.appendChild(s); })); }
+async function saveFile(filename, data){
+  const cap = window.claude && typeof window.claude.use === "function" ? await window.claude.use("downloads").catch(() => null) : null;
+  if (cap){ try { await cap.save({filename, data}); toast("Saved " + filename); } catch(e){ if (e && e.code !== "declined") toast("Could not save the file here (" + (e.code || "error") + ")."); } return; }
+  const blob = data instanceof Blob ? data : new Blob([data]);
+  const a = document.createElement("a"); a.href = URL.createObjectURL(blob); a.download = filename; document.body.appendChild(a); a.click(); setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 2000);
+}
+const asOf = () => dlabelY(D.pulled_at_ist.slice(0,10)) + ", " + D.pulled_at_ist.slice(11,16) + " IST";
+const fileStamp = () => D.pulled_at_ist.slice(0,10);
+const safeName = s => s.replace(/[^\w\- ]+/g, "").replace(/\s+/g, "-").slice(0, 80);
+function exportMatrix(id){
+  const t = TABLES[id]; const cols = t.cols.filter(c => !c.noExport);
+  return [cols.map(c => c.h.replace(/<[^>]+>/g, "")), ...tableRows(id).map(r => cols.map(c => { const v = c.x ? c.x(r) : c.v(r); return v === null || v === undefined ? "" : v; }))];
+}
+async function exportTable(id, kind, btn){
+  const t = TABLES[id]; const m = exportMatrix(id); const base = safeName("iNOPS " + t.name + " " + fileStamp());
+  if (kind === "csv"){ const csv = "﻿" + m.map(r => r.map(v => { v = String(v); return /[",\n]/.test(v) ? '"' + v.replace(/"/g,'""') + '"' : v; }).join(",")).join("\r\n"); return saveFile(base + ".csv", csv); }
+  btn && (btn.disabled = true);
+  try {
+    await loadScript("https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js");
+    const ws = XLSX.utils.aoa_to_sheet(m); ws["!cols"] = m[0].map((h,i) => ({wch: Math.min(48, Math.max(10, ...m.slice(0,200).map(r => String(r[i]).length + 2)))}));
+    const wb = XLSX.utils.book_new(); XLSX.utils.book_append_sheet(wb, ws, "Report");
+    const info = XLSX.utils.aoa_to_sheet([["iNOPS report", t.name], ["Data as of", asOf()], ["Filters", scopeText()], ["Source", "inops.mgrant.in (production, read-only)"]]);
+    XLSX.utils.book_append_sheet(wb, info, "About");
+    await saveFile(base + ".xlsx", new Uint8Array(XLSX.write(wb, {type:"array", bookType:"xlsx"})));
+  } catch(e){ toast("Excel export failed: " + e.message); }
+  btn && (btn.disabled = false);
+}
+/* Snapshot: the current page (or open report panel) as one Excel workbook: cards, chart figures, then one sheet per table */
+/* Snapshot = print. Browsers print normally; inside the claude.ai viewer printing is blocked, so it saves the same print layout as a PDF. */
+async function printPage(btn){
+  closePop(); hideTip();
+  const inViewer = !!(window.claude && typeof window.claude.use === "function");
+  document.body.classList.toggle("print-drawer", !!$("#layer .drawer"));
+  if (!inViewer){ window.print(); return; }
+  btn.disabled = true;
+  try {
+    await loadScript("https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js");
+    await loadScript("https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js");
+    const target = $("#layer .drawer") || $("#main");
+    const canvas = await html2canvas(target, {scale:2, backgroundColor:"#ffffff", windowWidth:target.scrollWidth, height:target.scrollHeight, windowHeight:target.scrollHeight, scrollY:0, useCORS:true, ignoreElements: el => el.classList && ["tbar","pager","dsnap","x","info","filters"].some(c => el.classList.contains(c))});
+    const pdf = new window.jspdf.jsPDF({orientation:"landscape", unit:"pt", format:"a4"});
+    const pw = pdf.internal.pageSize.getWidth(), ph = pdf.internal.pageSize.getHeight(), m = 24, head = 30;
+    const n = NAV.find(x => x.id === route.sec), tab = n.tabs.find(t => t[0] === route.tab)[1];
+    const title = $("#layer .drawer") ? $("#layer .drawer h2").innerText : `${n.label} · ${tab}`;
+    const iw = pw - 2*m, scale = iw / canvas.width, sliceH = Math.floor((ph - m - head - m) / scale);
+    for (let y = 0, page = 0; y < canvas.height; y += sliceH, page++){
+      if (page) pdf.addPage();
+      pdf.setFontSize(11); pdf.setTextColor(30); pdf.text(`Amazon iNOPS · ${title}`, m, m + 8);
+      pdf.setFontSize(9); pdf.setTextColor(110); pdf.text(`Data as of ${asOf()} · ${scopeText()}`, m, m + 21);
+      const h = Math.min(sliceH, canvas.height - y); const c = document.createElement("canvas"); c.width = canvas.width; c.height = h;
+      c.getContext("2d").drawImage(canvas, 0, y, canvas.width, h, 0, 0, canvas.width, h);
+      pdf.addImage(c.toDataURL("image/jpeg", 0.92), "JPEG", m, m + head, iw, h * scale);
+    }
+    await saveFile(safeName(`iNOPS ${title} ${fileStamp()}`) + ".pdf", pdf.output("arraybuffer"));
+  } catch(e){ toast("Print failed: " + e.message); }
+  btn.disabled = false;
+}
+function snapshotMenu(btn){
+  closePop();
+  const p = document.createElement("div"); p.className = "pop menu"; p.id = "pop"; p.dataset.k = "snap";
+  p.innerHTML = `<h5>Download this ${$("#layer .drawer") ? "report" : "page"}</h5><button class="btn" data-snapfmt="xlsx">${DL_ICON}Excel (.xlsx)</button><button class="btn" data-snapfmt="csv">${DL_ICON}CSV (.csv)</button>`;
+  document.body.appendChild(p);
+  const r = btn.getBoundingClientRect(); p.style.left = Math.max(16, Math.min(innerWidth - p.offsetWidth - 16, r.right - p.offsetWidth)) + "px"; p.style.top = (r.bottom + 6) + "px";
+}
+function snapshotSections(){
+  const root = $("#layer .drawer") || $("#view");
+  const n = NAV.find(x => x.id === route.sec), tab = n.tabs.find(t => t[0] === route.tab)[1];
+  const title = root.matches(".drawer") ? root.querySelector("h2").innerText : `${n.label} · ${tab}`;
+  const out = [];
+  const summary = [["Amazon iNOPS", title], ["Data as of", asOf()], ["Filters", scopeText()], [], ["Card", "Value", "Note"]];
+  root.querySelectorAll(".kpi").forEach(k => summary.push([k.querySelector(".lbl").innerText, k.querySelector(".val").innerText.replace(/\s+/g, " "), (k.querySelector(".foot")||{}).innerText || ""]));
+  out.push({name:"Summary", aoa:summary});
+  const charts = [["Chart", "Item", "Value"]];
+  root.querySelectorAll(".card, section").forEach(c => { const h = c.querySelector("h3, h4"); const own = el => el.closest(".card, section") === c; c.querySelectorAll(".bl .row").forEach(r => { if (own(r)) charts.push([h ? h.innerText.trim() : "", r.querySelector(".l").innerText, r.querySelector(".v").innerText]); }); c.querySelectorAll(".donut .lg div").forEach(r => { if (own(r)) charts.push([h ? h.innerText.trim() : "", r.querySelector("span").innerText, r.querySelector("b").innerText]); }); });
+  if (charts.length > 1) out.push({name:"Charts", aoa:charts});
+  root.querySelectorAll("[id$='-wrap']").forEach(w => { const id = w.id.slice(0, -5); if (TABLES[id]) out.push({name:TABLES[id].name, aoa:exportMatrix(id)}); });
+  return {title, out};
+}
+const csvOf = m => m.map(r => r.map(v => { v = String(v ?? ""); return /[",\n]/.test(v) ? '"' + v.replace(/"/g,'""') + '"' : v; }).join(",")).join("\r\n");
+async function snapshot(kind){
+  closePop();
+  try {
+    const {title, out} = snapshotSections(); const base = safeName(`iNOPS ${title} ${fileStamp()}`);
+    if (kind === "csv") return saveFile(base + ".csv", "﻿" + out.map(s => csvOf([[s.name], ...s.aoa])).join("\r\n\r\n"));
+    await loadScript("https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js");
+    const wb = XLSX.utils.book_new(); const used = new Set();
+    out.forEach(s => { let nm = s.name.replace(/[\\\/\?\*\[\]:]/g, " ").slice(0, 28) || "Sheet"; let k = 2; while (used.has(nm)) nm = nm.slice(0, 25) + " " + k++; used.add(nm); const ws = XLSX.utils.aoa_to_sheet(s.aoa); ws["!cols"] = (s.aoa[0]||[]).map((h,i) => ({wch: Math.min(50, Math.max(12, ...s.aoa.slice(0,200).map(r => String(r[i] ?? "").length + 2)))})); XLSX.utils.book_append_sheet(wb, ws, nm); });
+    await saveFile(base + ".xlsx", new Uint8Array(XLSX.write(wb, {type:"array", bookType:"xlsx"})));
+  } catch(e){ toast("Download failed: " + e.message); }
+}
+
+/* ---------- info notes ---------- */
+const NOTES = {
+  forms_filled:["Total form submissions in the selected period, pillar and partner, and how many of them are in review or approved.","Every record created on iNOPS since go-live (1 Jul 2026), by the date it reached the server. Dhwani test accounts are excluded. Forms without a review step count as submitted only.","The simplest signal that the platform is being used in the field."],
+  delta7:["Submissions in the last 7 full days, compared with the 7 days before.","Today is left out because the day is not over.","Shows whether usage is growing or slowing."],
+  households:["Households surveyed through the Household Survey form.","One Household Survey record is one household.","The base of the Social Security programme."],
+  active_users:["Field users who submitted at least one form in the last 7 days, out of all field users with form access.","A field user is a partner account with access to at least one iNOPS form. Partner admin-only accounts are not counted.","Having access is not the same as using it."],
+  partners:["Partner NGOs with field users on iNOPS, and how many of them submitted in the selected period.","Partner is the NGO saved on each record.","Shows how wide adoption is across the partner base."],
+  daily:["Submissions per day, split by pillar, with the 7-day average as a line.","By the date the record reached the server. Mobile records count when the phone syncs. Today's bar is lighter because the day is not over. Hover a bar for its numbers.","Shows the rhythm of field work. Sundays and holidays are usually low."],
+  status:["Every field user, grouped by when they last submitted a form.","Active: submitted in the last 7 days. Less active: last submission 8–21 days ago. Inactive: no submission in over 21 days. Logged in, no submissions: has used the app but has no record. Never logged in: no activity at all.","Separates training gaps from people who stopped."],
+  mobile_logins:["The mobile app does not write a sign-in log, so sign-in counts miss most field users.","Usage is measured from submissions and the platform's last-activity time.","Avoids marking busy field staff as inactive."],
+  review:["Review status on forms that have a review step.","Review means submitted and awaiting a check. Approved means checked. Forms without a review step are shown separately.","A large Review backlog means records are not yet verified."],
+  compliance:["Donor compliance reports set up on each grant, and their status.","Missed since setup: fell due after the grant was set up on iNOPS and is not submitted. Backlog from setup: the due date had already passed on the day the grant was set up (FY 2026-27 grants were entered in October).","Shows which partners need to catch up on reporting."],
+  budget:["Planned budget against utilisation reported on iNOPS.","Utilisation comes from the budget plan lines filled by partners.","Zero utilisation means financial reporting has not started on the platform."],
+  gaps:["Forms that cannot collect data, and forms that are not being used.","A form with no user access cannot receive records.","These are setup gaps, not field performance."],
+  weekly_active:["Field users who submitted at least one form in each week.","A user counts once per week, however many forms they filed.","Shows whether the partner's team is working steadily."],
+  approvers:["Which accounts can move each form's records from Review to Approved.","From the workflow on each form: the Approve action needs the form's “Approver” role. Disabled accounts are left out.","If nobody on the client side holds the role, the review backlog can only grow."],
+  team_status:["How the Amazon team uses iNOPS.","Using it: edited or commented on at least one record. Signed in, no work: signed in or viewed pages only. Never signed in: no sign-in on record. Login As sessions by Dhwani staff are not counted as the person's own use.","Shows whether the client team is reviewing the programme on the platform."],
+  admin_access:["Amazon accounts that hold the System Manager role.","Read from each account's roles.","System Manager gives full control of the site, including settings and user access. Most reviewers need a read or approver role instead."],
+  signins:["Successful and failed web sign-ins per week.","From the platform's activity log. Mobile app use is not logged here.","Spot sign-in problems such as many failed attempts."],
+  freshness:["When each form and partner last received a record.","Latest record creation time.","A form or partner that has gone stale shows up here first."]
+};
+function showInfo(btn){
+  const n = NOTES[btn.dataset.info]; if (!n) return;
+  closePop();
+  const p = document.createElement("div"); p.className = "pop"; p.id = "pop"; p.dataset.k = btn.dataset.info;
+  p.innerHTML = `<h5>What this shows</h5><p>${esc(n[0])}</p><h5>How it's counted</h5><p>${esc(n[1])}</p><h5>Why it matters</h5><p>${esc(n[2])}</p>`;
+  document.body.appendChild(p);
+  const r = btn.getBoundingClientRect(); const pw = p.offsetWidth, ph = p.offsetHeight;
+  p.style.left = Math.min(window.innerWidth - pw - 16, Math.max(16, r.right - pw)) + "px";
+  let top = r.bottom + 8; if (top + ph > window.innerHeight - 10) top = Math.max(10, r.top - ph - 8); p.style.top = top + "px";
+}
+function closePop(){ const p = $("#pop"); if (p) p.remove(); }
+
+/* ---------- drill-down report: record counts by date, form, user ---------- */
+function drill(title, sub, pred){
+  const F = D.facts.filter(pred);
+  const data = F.map((f,i) => { const u = D.users[f[F_U]]; return {_id:i, d:D.days[f[F_DAY]], form:D.forms[f[F_FORM]].form, pillar:D.forms[f[F_FORM]].pillar, p:pName(f[F_P]), un:u ? u.nm : "—", ue:u ? u.e : "", st:STATUS_TXT[f[F_ST]], ch:f[F_MOB] ? "Mobile app" : "Web", n:f[F_N]}; });
+  const total = sum(F), users = new Set(F.map(f => f[F_U])).size, forms = new Set(F.map(f => f[F_FORM])).size, days = new Set(F.map(f => f[F_DAY])).size;
+  const cols = [
+    {h:"Date", v:r => r.d, html:r => `${dlabelY(r.d)} <span class="muted small">${dow(r.d)}</span>`, x:r => r.d},
+    {h:"Form", v:r => r.form}, {h:"Pillar", v:r => r.pillar}, {h:"Partner", v:r => r.p},
+    {h:"User", v:r => r.un, html:r => `<b>${esc(r.un)}</b><div class="muted small">${esc(r.ue)}</div>`, sv:r => r.un + " " + r.ue},
+    {h:"User email", v:r => r.ue, noShow:true}, {h:"Review status", v:r => r.st}, {h:"Channel", v:r => r.ch},
+    {h:"Records", r:1, v:r => r.n, html:r => `<b>${fmt(r.n)}</b>`}
+  ];
+  const tb = table("dd", cols, data, {sort:0, name:title, filters:[{label:"Form", get:r => r.form}, {label:"User", get:r => r.un}, {label:"Status", get:r => r.st}]});
+  drawer(`<h2>${esc(title)}</h2><div class="muted">${esc(sub)} · data as of ${esc(asOf())}</div>
+    <div class="grid g4" style="margin-top:16px">${kpi({icon:"forms", label:"Records", value:fmt(total)})}${kpi({icon:"people", tone:"t-purple", label:"Users", value:fmt(users)})}${kpi({icon:"target", tone:"t-teal", label:"Forms", value:fmt(forms)})}${kpi({icon:"clock", tone:"t-amber", label:"Days with records", value:fmt(days)})}</div>
+    <section><h4>Report</h4>${tb}</section>`);
+}
+const dd = (kind, a, b, label) => `<button class="cellbtn" data-dd="${kind}" data-a="${a}" data-b="${b ?? ""}">${label}</button>`;
+function openDrill(btn){
+  const k = btn.dataset.dd, a = btn.dataset.a, b = btn.dataset.b;
+  const inScope = f => { const d = D.days[f[F_DAY]]; const [x,y] = range(); return d >= x && d <= y && (!S.pillar || D.forms[f[F_FORM]].pillar === S.pillar); };
+  if (k === "pw"){ const p = +a, w = b; return drill(`${pName(p)} · week of ${dlabelY(w)}`, `${dlabel(w)} – ${dlabel(addDays(w,6))}`, f => f[F_P] === p && weekStart(D.days[f[F_DAY]]) === w && (!S.pillar || D.forms[f[F_FORM]].pillar === S.pillar)); }
+  if (k === "pt"){ const p = +a; return drill(`${pName(p)} · ${periodText()}`, scopeText(), f => f[F_P] === p && inScope(f)); }
+  if (k === "p7"){ const p = +a, y = addDays(D.today,-1); return drill(`${pName(p)} · last 7 days`, `${dlabel(addDays(y,-6))} – ${dlabel(y)}`, f => f[F_P] === p && D.days[f[F_DAY]] >= addDays(y,-6) && D.days[f[F_DAY]] <= y); }
+  if (k === "f"){ const i = +a; return drill(`${D.forms[i].form} · ${periodText()}`, scopeText(), f => f[F_FORM] === i && inScope(f) && (S.partner === "" || f[F_P] === +S.partner)); }
+  if (k === "u"){ const u = +a; return drill(`${D.users[u].nm} · all records`, D.users[u].e, f => f[F_U] === u); }
+  if (k === "rv"){ const i = +a; return drill(`${D.forms[i].form} · waiting in Review`, scopeText(), f => f[F_FORM] === i && f[F_ST] === 1 && inScope(f) && (S.partner === "" || f[F_P] === +S.partner)); }
+}
+
+/* copy e-mail addresses of the rows currently shown by a table's search and filters */
+async function copyEmails(id){
+  const t = TABLES[id]; const col = t.cols.find(c => /^(Email|User email)$/.test(c.h));
+  const list = [...new Set(tableRows(id).map(r => col ? col.v(r) : r.e).filter(Boolean))];
+  const text = list.join(", ");
+  try { await navigator.clipboard.writeText(text); toast(`Copied ${list.length} ${plural(list.length, "email address", "email addresses")}`); }
+  catch(e){ const ta = document.createElement("textarea"); ta.value = text; document.body.appendChild(ta); ta.select(); let ok = false; try { ok = document.execCommand("copy"); } catch(x){} ta.remove(); toast(ok ? `Copied ${list.length} email addresses` : "Copy is blocked here. Use the CSV download instead."); }
+}
+const copyBtn = id => `<button class="btn sm" data-copy="${id}"><svg viewBox="0 0 24 24"><rect x="8" y="8" width="12" height="12" rx="2"/><path d="M16 8V5a1 1 0 0 0-1-1H5a1 1 0 0 0-1 1v10a1 1 0 0 0 1 1h3"/></svg>Copy emails</button>`;
+
+/* ---------- views ---------- */
+const V = {};
+function last7(all){ const y = addDays(D.today,-1); return [sum(all.filter(f => { const d = D.days[f[F_DAY]]; return d >= addDays(y,-6) && d <= y; })), sum(all.filter(f => { const d = D.days[f[F_DAY]]; return d >= addDays(y,-13) && d <= addDays(y,-7); }))]; }
+function dailyChart(R, days){
+  const [a,b] = range(); const t = D.today;
+  const start = S.period === "all" ? addDays(t, -(days-1)) : (diffDays(a,b) > 90 ? addDays(b,-89) : a);
+  const m = new Map(); R.forEach(f => { const d = D.days[f[F_DAY]]; const o = m.get(d) || {}; const p = D.forms[f[F_FORM]].pillar; o[p] = (o[p]||0) + f[F_N]; m.set(d, o); });
+  const ds = []; for (let d = start; d <= b; d = addDays(d,1)) ds.push(d);
+  const tot = d => Object.values(m.get(d)||{}).reduce((x,y) => x+y, 0);
+  const series = ds.map(d => { const o = m.get(d)||{}; return {label:dlabel(d), tipTitle:`${dow(d)} ${dlabelY(d)}`, value:tot(d), segs:Object.keys(PILLAR_COL).map(p => ({v:o[p]||0, c:PILLAR_COL[p], t:p}))}; });
+  const avg = ds.map((d,i) => i < 6 ? null : Math.round(ds.slice(i-6,i+1).reduce((s,x) => s + tot(x), 0)/7));
+  if (b === t) avg[avg.length-1] = null;
+  return legend([...Object.entries(PILLAR_COL), ["7-day average", "#e8821a"]]) + columnChart(series, {line:avg, partialLast:b===t, labelEvery:Math.ceil(series.length/12), height:250});
+}
+
+V.overview_summary = () => {
+  const R = rows(), total = sum(R);
+  const [l7, p7] = last7(rows({allTime:true})); const dl = p7 ? Math.round((l7-p7)*100/p7) : 0;
+  const fIdx = n => D.forms.findIndex(f => f.form === n);
+  const hh = sum(R.filter(f => f[F_FORM] === fIdx("Household Survey"))), ppl = sum(R.filter(f => f[F_FORM] === fIdx("Household Beneficiary")));
+  const U = usersScoped(), act = U.filter(u => u.st === "active").length;
+  const onboarded = [...new Set(FIELD_USERS.filter(u => D.partners[u.p].id !== "(none)").map(u => u.p))].filter(p => S.partner === "" || p === +S.partner);
+  const pAct = new Set(R.map(f => f[F_P])).size;
+  const byPillar = group(R, f => D.forms[f[F_FORM]].pillar);
+  const byP = group(R, f => f[F_P]);
+  const byF = group(R, f => f[F_FORM]);
+  const cnt = Object.keys(ST).map(k => ({l:ST[k].label, v:U.filter(u => u.st === k).length, c:ST[k].col}));
+  return `${sectionHead("Field activity", scopeText())}
+  <div class="grid g5">
+    ${kpi({icon:"forms", label:"Forms submitted", value:fmt(total), foot:`${fmt(sum(R.filter(f => f[F_ST] === 1)))} in review · ${fmt(sum(R.filter(f => f[F_ST] === 2)))} approved`, key:"forms_filled", href:"forms-review"})}
+    ${kpi({icon:"trend", tone:dl >= 0 ? "t-green" : "t-amber", label:"Last 7 days", value:fmt(l7), foot:`${dlabel(addDays(D.today,-7))} – ${dlabel(addDays(D.today,-1))}`, key:"delta7", href:"overview-trend"})}
+    ${kpi({icon:"home", tone:"t-teal", label:"Households surveyed", value:fmt(hh), foot:`${fmt(ppl)} people enrolled`, key:"households"})}
+    ${kpi({icon:"people", tone:"t-purple", label:"Active field users", value:`${fmt(act)} <small>of ${fmt(U.length)}</small>`, progress:pct(act,U.length), foot:`${pct(act,U.length)}% submitted in the last 7 days`, key:"active_users", href:"users-status"})}
+    ${kpi({icon:"partner", tone:"t-amber", label:"Partners onboarded", value:fmt(onboarded.length), foot:`${pAct} submitted in this period`, key:"partners", href:"overview-partners"})}
+  </div>
+  ${card("Daily submissions", "Hover a bar for the day's numbers" + (range()[1]===D.today ? " · today's bar is still filling" : ""), dailyChart(R, 45), {key:"daily"})}
+  <div class="grid g3">
+    ${card("By pillar", periodText(), barList(Object.keys(PILLAR_COL).map(p => ({label:p, value:byPillar.get(p)||0, color:PILLAR_COL[p]}))) + `<div style="height:18px"></div><div class="small muted" style="margin-bottom:10px">Top 5 forms</div>` + barList([...byF].sort((a,b) => b[1]-a[1]).slice(0,5).map(([i,v]) => ({id:i, label:D.forms[i].form, value:v, color:PILLAR_COL[D.forms[i].pillar]})), {click:"form"}))}
+    ${card("By partner", periodText() + " · click a partner for detail", barList([...byP].sort((a,b) => b[1]-a[1]).map(([p,v]) => ({id:p, label:pName(p), value:v, color:"#5b9bd5"})), {click:"partner"}))}
+    ${card("Field user status", `${fmt(U.length)} accounts with form access`, donut(cnt, fmt(U.length), "users"), {key:"status"})}
+  </div>`;
+};
+
+V.overview_trend = () => {
+  const R = rows();
+  const wk = new Map(); R.forEach(f => { const w = weekStart(D.days[f[F_DAY]]); const p = D.forms[f[F_FORM]].pillar; const o = wk.get(w) || {}; o[p] = (o[p]||0) + f[F_N]; wk.set(w, o); });
+  const weeks = [...wk.keys()].sort(); const curW = weekStart(D.today);
+  const series = weeks.map(w => { const o = wk.get(w); const segs = Object.keys(PILLAR_COL).map(p => ({v:o[p]||0, c:PILLAR_COL[p], t:p})); return {label:dlabel(w), tipTitle:`Week of ${dlabelY(w)}`, value:segs.reduce((a,s) => a+s.v, 0), segs}; });
+  const last = weeks.slice(-8);
+  const pm = new Map(); R.forEach(f => { const w = weekStart(D.days[f[F_DAY]]); if (!last.includes(w)) return; const o = pm.get(f[F_P]) || {}; o[w] = (o[w]||0) + f[F_N]; pm.set(f[F_P], o); });
+  const data = [...pm].map(([p,o]) => ({_id:p, name:pName(p), o, tot:last.reduce((a,w) => a + (o[w]||0), 0)}));
+  const cols = [{h:"Partner", v:r => r.name, html:r => `<b>${esc(r.name)}</b>`}, ...last.map(w => ({h:dlabel(w) + (w===curW?"*":""), r:1, v:r => r.o[w]||0, html:r => r.o[w] ? dd("pw", r._id, w, fmt(r.o[w])) : `<span class="muted">0</span>`})), {h:"Total", r:1, v:r => r.tot, html:r => `<b>${dd("pt", r._id, "", fmt(r.tot))}</b>`}];
+  const tb = table("trendT", cols, data, {search:false, sort:cols.length-1, name:"Partner by week"});
+  return card("Submissions per week, by pillar", "Weeks start Monday · hover a bar for its numbers" + (weeks.includes(curW) ? " · this week is still in progress" : ""), legend(Object.entries(PILLAR_COL)) + columnChart(series, {partialLast:weeks[weeks.length-1]===curW, labelEvery:Math.ceil(series.length/14)}), {key:"daily"}) +
+    card("Partner by week", "Last 8 weeks, by week starting · click any number for the records behind it" + (last.includes(curW) ? " · * week in progress" : ""), tb);
+};
+
+function partnerRows(){
+  const R = rows(), Rall = rows({allTime:true});
+  const ids = new Set([...FIELD_USERS.map(u => u.p), ...D.facts.map(f => f[F_P]), ...D.grants.map(g => g.p)]);
+  const y = addDays(D.today,-1);
+  return [...ids].filter(p => S.partner === "" || p === +S.partner).map(p => {
+    const U = FIELD_USERS.filter(u => u.p === p), rr = R.filter(f => f[F_P] === p), ra = Rall.filter(f => f[F_P] === p);
+    return {_id:p, name:pName(p), users:U.length, active:U.filter(u => u.st==="active").length, recs:sum(rr), l7:sum(ra.filter(f => { const d = D.days[f[F_DAY]]; return d >= addDays(y,-6) && d <= y; })), forms:new Set(rr.map(f => f[F_FORM])).size, last:ra.length ? D.days[Math.max(...ra.map(f => f[F_DAY]))] : null, grant:D.grants.find(x => x.p === p)};
+  });
+}
+V.overview_partners = () => {
+  const cols = [
+    {h:"Partner", v:r => r.name, html:r => `<b>${esc(r.name)}</b>`},
+    {h:"Field users", r:1, v:r => r.users},
+    {h:"Active (7 days)", r:1, v:r => r.users ? r.active/r.users : -1, x:r => r.active, html:r => r.users ? `${r.active} <span class="muted small">(${pct(r.active,r.users)}%)</span>` : `<span class="muted">—</span>`},
+    {h:"Forms filled", r:1, v:r => r.recs, html:r => r.recs ? dd("pt", r._id, "", fmt(r.recs)) : "0"},
+    {h:"Last 7 days", r:1, v:r => r.l7, html:r => r.l7 ? dd("p7", r._id, "", fmt(r.l7)) : "0"},
+    {h:"Forms used", r:1, v:r => r.forms},
+    {h:"Last record", v:r => r.last || "", html:r => r.last ? `${dlabel(r.last)} <span class="muted small">${ago(r.last)}</span>` : `<span class="pill p-bad">None yet</span>`},
+    {h:"Grant", v:r => r.grant ? r.grant.grant : "", html:r => r.grant ? `<span class="pill p-good">${esc(r.grant.grant||r.grant.gaf)}</span>` : `<span class="pill p-idle">No grant</span>`}
+  ];
+  return card("Partner scorecard", scopeText() + " · click a partner name for detail, or a number for its records", table("partnersT", cols, partnerRows(), {rowClick:"partner", sort:3, name:"Partner scorecard"}));
+};
+
+V.users_status = () => {
+  const U = usersScoped();
+  const counts = Object.keys(ST).map(k => ({k, n:U.filter(u => u.st === k).length}));
+  const byP = new Map(); U.forEach(u => { const o = byP.get(u.p) || {}; o[u.st] = (o[u.st]||0)+1; byP.set(u.p, o); });
+  const items = [...byP].map(([p,o]) => ({id:p, label:pName(p), segs:Object.keys(ST).map(k => ({v:o[k]||0, c:ST[k].col, t:ST[k].label})), total:Object.values(o).reduce((a,b) => a+b, 0)})).sort((a,b) => b.total-a.total);
+  items.forEach(i => i.vtext = `${i.segs[0].v} of ${i.total}`);
+  const SI = {active:["check","t-green"], slowing:["clock","t-amber"], quiet:["pause","t-red"], opened:["user","t-purple"], never:["alert","t-grey"]};
+  const lastAct = U.filter(u => u.la && diffDays(u.la.slice(0,10), D.today) <= 7).length;
+  return `${sectionHead("Usage status", S.partner === "" ? "All partners" : pName(+S.partner))}<div class="grid g5">${counts.map(c => kpi({icon:SI[c.k][0], tone:SI[c.k][1], label:ST[c.k].label, value:fmt(c.n), foot:ST[c.k].desc, key:c.k==="active"?"status":"", href:c.k==="active"||c.k==="slowing"?"users-top":"users-inactive"})).join("")}</div>
+  <div class="grid g3">
+    <div class="span2">${card("Usage status by partner", "Active users of all field users · click a partner for its user list", legend(Object.values(ST).map(s => [s.label, s.col])) + barList(items, {click:"partner"}), {key:"status"})}</div>
+    ${card("User status", `${fmt(U.length)} accounts with form access`, donut(counts.map(c => ({l:ST[c.k].label, v:c.n, c:ST[c.k].col})), fmt(U.length), "users") + `<div style="height:16px"></div><div class="note"><b>${lastAct}</b> of ${U.length} field users used the platform in the last 7 days, including mobile sync. The mobile app does not log sign-ins, so status is based on submissions.</div>`, {key:"mobile_logins"})}
+  </div>`;
+};
+function userCols(extra=[]){
+  return [
+    {h:"User", v:r => r.nm, html:r => `<b>${esc(r.nm)}</b><div class="muted small">${esc(r.e)}</div>`, sv:r => r.nm + " " + r.e},
+    {h:"Email", v:r => r.e, html:r => "", noShow:true},
+    {h:"Partner", v:r => pName(r.p)},
+    {h:"Status", v:r => Object.keys(ST).indexOf(r.st), x:r => ST[r.st].label, html:r => `<span class="pill ${ST[r.st].cls}">${ST[r.st].label}</span>`, sv:r => ST[r.st].label},
+    ...extra
+  ];
+}
+const uFilters = [{label:"Partner", get:r => pName(r.p)}, {label:"Status", get:r => ST[r.st].label}];
+function userTable(id, extra, data, opt){ const cols = userCols(extra); const html = table(id, cols, data, {filters:uFilters, ...opt}); return html; }
+V.users_inactive = () => {
+  const U = usersScoped();
+  const never = U.filter(u => u.st === "opened" || u.st === "never").map(u => ({...u, _id:u.p}));
+  const quiet = U.filter(u => u.st === "quiet" || u.st === "slowing").map(u => ({...u, _id:u.p}));
+  const act = (txt, id) => `<div style="display:flex;gap:12px;align-items:center;justify-content:space-between;flex-wrap:wrap"><span><b>Next step:</b> ${txt}</span>${copyBtn(id)}</div>`;
+  return card(`Have access, never submitted <span class="pill p-plum">${never.length}</span>`, act("ask each partner to confirm these people have the app and their login, then run a short training.", "neverT"), userTable("neverT", [
+    {h:"Forms they can fill", r:1, v:r => r.acc.length, x:r => r.acc.map(i => D.forms[i].form).join(", "), html:r => `<span title="${esc(r.acc.map(i => D.forms[i].form).join(", "))}">${r.acc.length}</span>`},
+    {h:"Account created", v:r => r.cr, html:r => `${dlabelY(r.cr)} <span class="muted small">${ago(r.cr)}</span>`},
+    {h:"Last used platform", v:r => r.la || "", html:r => r.la ? ago(r.la) : `<span class="muted">never</span>`}
+  ], never, {sort:5, dir:1, rowClick:"partner", name:"Users never submitted"}), {key:"status"}) +
+  card(`Less active or inactive <span class="pill p-bad">${quiet.length}</span>`, act("check with the partner whether field work has paused or the person has left; disable accounts no longer needed.", "quietT"), userTable("quietT", [
+    {h:"Records", r:1, v:r => r.n, html:r => dd("u", D.users.indexOf(D.users.find(x => x.e === r.e)), "", fmt(r.n))},
+    {h:"Last submission", v:r => r.last || "", html:r => `${dlabelY(r.last)} <span class="muted small">${ago(r.last)}</span>`},
+    {h:"Last used platform", v:r => r.la || "", html:r => r.la ? ago(r.la) : "—"}
+  ], quiet, {sort:5, dir:1, name:"Users less active or inactive"}));
+};
+const uIndex = e => D.users.findIndex(x => x.e === e);
+V.users_top = () => {
+  const U = usersScoped().filter(u => u.n30 > 0).map(u => ({...u, _id:u.p, ui:uIndex(u.e)}));
+  const items = [...U].sort((a,b) => b.n30-a.n30).slice(0,15).map(u => ({label:u.nm + " · " + pName(u.p), value:u.n30, color:"#5b9bd5"}));
+  const tb = userTable("topT", [
+    {h:"Last 7 days", r:1, v:r => r.n7, html:r => fmt(r.n7)},
+    {h:"Last 30 days", r:1, v:r => r.n30, html:r => fmt(r.n30)},
+    {h:"All time", r:1, v:r => r.n, html:r => dd("u", r.ui, "", fmt(r.n))},
+    {h:"Forms used", r:1, v:r => r.used.length, x:r => r.used.map(i => D.forms[i].form).join(", "), html:r => `<span title="${esc(r.used.map(i => D.forms[i].form).join(", "))}">${r.used.length}</span>`},
+    {h:"Active since", v:r => r.first || "", html:r => dlabelY(r.first)}
+  ], U, {sort:5, name:"Most active users"});
+  return `<div class="grid g2">${card("Top 15 users, last 30 days", "Forms submitted · hover for the count", barList(items))}${card("Concentration", "How much of the last 30 days came from the busiest users", concentration(U))}</div>` + card("Most active users", "Filter by partner or status · sorted by the last 30 days · click a number for the records", tb);
+};
+function concentration(U){
+  const s = [...U].sort((a,b) => b.n30-a.n30), tot = s.reduce((a,u) => a+u.n30, 0);
+  const top5 = s.slice(0,5).reduce((a,u) => a+u.n30, 0), top10 = s.slice(0,10).reduce((a,u) => a+u.n30, 0);
+  return donut([{l:"Top 5 users", v:top5, c:"#5b9bd5"}, {l:"Users 6–10", v:top10-top5, c:"#a7c8e6"}, {l:"Everyone else", v:tot-top10, c:"#dfe5ec"}], fmt(tot), "forms") + `<div class="note" style="margin-top:14px"><b>${pct(top5,tot)}%</b> of last month's forms came from 5 people. High concentration means the programme depends on a few staff.</div>`;
+}
+V.users_all = () => {
+  const U = usersScoped().map(u => ({...u, _id:u.p, ui:uIndex(u.e)}));
+  return card("All field users", "Every partner account with form access · 50 per page", userTable("allU", [
+    {h:"Profile", v:r => r.pr, html:r => `<span class="small">${esc(r.pr || "—")}</span>`},
+    {h:"Records", r:1, v:r => r.n, html:r => r.n ? dd("u", r.ui, "", fmt(r.n)) : "0"},
+    {h:"Last submission", v:r => r.last || "", html:r => r.last ? dlabelY(r.last) : "—"},
+    {h:"Last used platform", v:r => r.la || "", html:r => r.la ? ago(r.la) : "never"},
+    ...(D.internal ? [{h:"Web sign-ins", r:1, v:r => r.lg}] : [])
+  ], U, {sort:5, pageSize:50, name:"All field users"}));
+};
+
+function formRows(){
+  const R = rows(), Rall = rows({allTime:true}); const y = addDays(D.today,-1);
+  return D.forms.map((f,i) => {
+    if (S.pillar && f.pillar !== S.pillar) return null;
+    const r = R.filter(x => x[F_FORM] === i), ra = Rall.filter(x => x[F_FORM] === i);
+    return {_id:i, ...f, recs:sum(r), all:sum(ra), l7:sum(ra.filter(x => { const d = D.days[x[F_DAY]]; return d >= addDays(y,-6) && d <= y; })), partners:new Set(r.map(x => x[F_P])).size,
+      access:FORM_ACCESS[i], last:ra.length ? D.days[Math.max(...ra.map(x => x[F_DAY]))] : null, review:sum(r.filter(x => x[F_ST]===1)), approved:sum(r.filter(x => x[F_ST]===2))};
+  }).filter(Boolean);
+}
+const formStateTxt = r => !r.access ? "No user access" : !r.all ? "Access, no records" : diffDays(r.last, D.today) > 14 ? "Stale" : "In use";
+const formStateHtml = r => `<span class="pill ${{"No user access":"p-bad","Access, no records":"p-warn","Stale":"p-warn","In use":"p-good"}[formStateTxt(r)]}">${formStateTxt(r)}</span>`;
+V.forms_catalogue = () => {
+  const data = formRows();
+  const cols = [
+    {h:"Pillar", v:r => r.pillar, html:r => `<span class="pill" style="background:${PILLAR_COL[r.pillar]}26;color:#3d434c">${esc(r.pillar)}</span>`},
+    {h:"Programme", v:r => r.programme},
+    {h:"Form", v:r => r.form, html:r => `<b>${esc(r.form)}</b>`},
+    {h:"Records", r:1, v:r => r.recs, html:r => r.recs ? dd("f", r._id, "", fmt(r.recs)) : "0"},
+    {h:"Last 7 days", r:1, v:r => r.l7, html:r => fmt(r.l7)},
+    {h:"Partners", r:1, v:r => r.partners},
+    {h:"Users with access", r:1, v:r => r.access},
+    {h:"Last record", v:r => r.last || "", html:r => r.last ? `${dlabel(r.last)} <span class="muted small">${ago(r.last)}</span>` : "—"},
+    {h:"State", v:r => formStateTxt(r), html:formStateHtml}
+  ];
+  const tb = table("formsT", cols, data, {rowClick:"form", sort:3, name:"All forms", filters:[{label:"Programme", get:r => r.programme}, {label:"State", get:formStateTxt}]});
+  const it = data.filter(r => r.recs).sort((a,b) => b.recs-a.recs).map(r => ({id:r._id, label:r.form, value:r.recs, color:PILLAR_COL[r.pillar]}));
+  return `<div class="grid g4">${kpi({icon:"forms", label:"Forms on iNOPS", value:data.length, foot:"across 3 pillars"})}${kpi({icon:"check", tone:"t-green", label:"Forms receiving data", value:data.filter(r => r.all).length, foot:"at least one record"})}${kpi({icon:"people", tone:"t-purple", label:"Forms with user access", value:data.filter(r => r.access).length, foot:"someone can fill them"})}${kpi({icon:"alert", tone:data.some(r => !r.access)?"t-red":"t-grey", label:"Forms with no access", value:data.filter(r => !r.access).length, foot:"cannot receive records", key:"gaps", href:"forms-gaps"})}</div>` +
+    card("Records by form", scopeText() + " · click a bar for detail", legend(Object.entries(PILLAR_COL)) + barList(it, {click:"form"})) +
+    card("All forms", "Filter by pillar, programme or state · click a number for the records", tb);
+};
+V.forms_review = () => {
+  const all = formRows(); const data = all.filter(r => r.has_status && r.recs), no = all.filter(r => !r.has_status && r.recs);
+  const rv = data.reduce((a,r) => a+r.review, 0), ap = data.reduce((a,r) => a+r.approved, 0), noRecs = no.reduce((a,r) => a+r.recs, 0);
+  const items = data.sort((a,b) => b.recs-a.recs).map(r => ({id:r._id, label:r.form, segs:[{v:r.approved, c:"#7cc79a", t:"Approved"}, {v:r.review, c:"#f6cd84", t:"Review"}, {v:r.recs-r.review-r.approved, c:"#dfe3e8", t:"Other"}], total:r.recs, vtext:`${pct(r.approved, r.recs)}% approved`}));
+  return `<div class="grid g3"><div class="span2"><div class="grid g3">${kpi({icon:"clock", tone:"t-amber", label:"Waiting in Review", value:fmt(rv), key:"review", foot:"submitted, not yet checked"})}${kpi({icon:"check", tone:"t-green", label:"Approved", value:fmt(ap), foot:`${pct(ap, rv+ap)}% of records with a review step`})}${kpi({icon:"forms", tone:"t-grey", label:"No review step", value:fmt(noRecs), foot:`records on ${no.length} forms`})}</div></div>${card("Approval status", scopeText(), donut([{l:"Review", v:rv, c:"#f6cd84"}, {l:"Approved", v:ap, c:"#7cc79a"}, {l:"No review step", v:noRecs, c:"#dfe3e8"}], null, "records"))}</div>` +
+    approvalGap(data) +
+    `<div class="grid g2">${card("How long records have waited", "Records in Review, by days since they were submitted", reviewAge())}${card("Review status by form", scopeText(), legend([["Approved","#7cc79a"],["Review","#f6cd84"]]) + barList(items, {click:"form"}), {key:"review"})}</div>` +
+    card("Forms with no review step", "These records are final once submitted", barList(no.sort((a,b) => b.recs-a.recs).map(r => ({id:r._id, label:r.form, value:r.recs, color:"#c4cad2"})), {click:"form"}));
+};
+function reviewAge(){
+  const R = rows().filter(f => f[F_ST] === 1);
+  const B = [["Up to 7 days",0,7,"#f6cd84"],["8–30 days",8,30,"#f2b06a"],["31–60 days",31,60,"#f0a39b"],["Over 60 days",61,1e9,"#e57d73"]];
+  return barList(B.map(([l,a,b,c]) => ({label:l, value:sum(R.filter(f => { const d = diffDays(D.days[f[F_DAY]], D.today); return d >= a && d <= b; })), color:c})));
+}
+function approvalGap(data){
+  const rowsA = data.filter(r => r.review).map(r => ({_id:r._id, form:r.form, waiting:r.review, who:D.formApprovers[r._id] || []}));
+  const amazonCan = (D.clientTeam || []).filter(u => u.approver).length;
+  const onlyDhwani = rowsA.every(r => r.who.every(e => /@dhwaniris\.com$/i.test(e)));
+  const msg = !amazonCan && onlyDhwani
+    ? `<b>No Amazon account can approve field records.</b> Approving needs the form's “Approver” role, and only ${[...new Set(rowsA.flatMap(r => r.who))].map(esc).join(", ") || "no account"} holds it. Records will stay in Review until the portal admin adds the approver roles to an Amazon role profile and assigns it.`
+    : `Approvers are set up for ${rowsA.filter(r => r.who.length).length} of ${rowsA.length} forms with records waiting.`;
+  return card("Who can approve", "Review → Approved needs the form's Approver role", `<div class="note" style="margin-bottom:12px;background:${!amazonCan && onlyDhwani ? "#fdf1e3" : "var(--soft)"}">${msg}</div>` +
+    table("apprT", [{h:"Form", v:r => r.form, html:r => `<b>${esc(r.form)}</b>`}, {h:"Waiting in Review", r:1, v:r => r.waiting, html:r => dd("rv", r._id, "", fmt(r.waiting))}, {h:"Accounts that can approve", r:1, v:r => r.who.length, html:r => r.who.length ? String(r.who.length) : `<span class="pill p-bad">None</span>`}, {h:"Who", v:r => r.who.join(", "), html:r => `<span class="small">${esc(r.who.join(", ") || "—")}</span>`}], rowsA, {search:false, sort:1, pageSize:10, name:"Who can approve"}), {key:"approvers"});
+}
+
+/* ---------- Amazon team ---------- */
+const teamState = u => !u.enabled ? "Disabled" : (u.edits + u.comments) > 0 ? "Using it" : (u.logins > 0 || u.views > 0) ? "Signed in, no work" : "Never signed in";
+const TEAM_COL = {"Using it":"#7cc79a", "Signed in, no work":"#f6cd84", "Never signed in":"#d3d8de", "Disabled":"#eef0f3"};
+const TEAM_PILL = {"Using it":"p-good", "Signed in, no work":"p-warn", "Never signed in":"p-idle", "Disabled":"p-idle"};
+V.team_usage = () => {
+  const T = (D.clientTeam || []).map(u => ({...u, _id:u.e, state:teamState(u)}));
+  const on = T.filter(u => u.enabled);
+  const c = k => on.filter(u => u.state === k).length;
+  const views = on.reduce((a,u) => a+u.views, 0), acts = on.reduce((a,u) => a+u.edits+u.comments, 0);
+  const sys = on.filter(u => u.sysmgr).length;
+  const tb = table("teamT", [
+    {h:"Person", v:r => r.nm, html:r => `<b>${esc(r.nm)}</b><div class="muted small">${esc(r.e)}</div>`, sv:r => r.nm + " " + r.e},
+    {h:"Email", v:r => r.e, noShow:true},
+    {h:"Status", v:r => r.state, html:r => `<span class="pill ${TEAM_PILL[r.state]}">${r.state}</span>`},
+    {h:"Sign-ins", r:1, v:r => r.logins},
+    {h:"Last sign-in", v:r => r.ll || "", html:r => r.ll ? `${dlabelY(r.ll.slice(0,10))} <span class="muted small">${ago(r.ll)}</span>` : `<span class="muted">never</span>`},
+    {h:"Pages viewed", r:1, v:r => r.views},
+    {h:"Records edited", r:1, v:r => r.edits},
+    {h:"Comments", r:1, v:r => r.comments},
+    {h:"Access level", v:r => (r.sysmgr ? "System Manager" : "Standard") + (r.impersonate ? ", can Login As" : ""), html:r => (r.sysmgr ? `<span class="pill p-warn">System Manager</span> ` : `<span class="pill p-idle">Standard</span> `) + (r.impersonate ? `<span class="pill p-warn">Can Login As</span>` : "")},
+    {h:"Account created", v:r => r.cr, html:r => dlabelY(r.cr)}
+  ], T, {sort:3, name:"Amazon team", filters:[{label:"Status", get:r => r.state}]});
+  const ret = D.retention && D.retention["Activity Log"];
+  return `<div class="grid g5">${kpi({icon:"people", label:"Amazon accounts", value:fmt(on.length), foot:"enabled, @amazon.com"})}${kpi({icon:"check", tone:"t-green", label:"Signed in", value:`${fmt(on.length - c("Never signed in"))} <small>of ${fmt(on.length)}</small>`, foot:"at least once"})}${kpi({icon:"forms", tone:"t-teal", label:"Pages viewed", value:fmt(views), foot:"across the team"})}${kpi({icon:"target", tone:acts?"t-green":"t-amber", label:"Actions taken", value:fmt(acts), foot:"records edited or commented"})}${kpi({icon:"alert", tone:sys?"t-amber":"t-grey", label:"Full admin access", value:fmt(sys), foot:"System Manager role", key:"admin_access"})}</div>
+  <div class="grid g3">${card("Team status", "Using it = edited or commented on a record. Viewing pages alone = signed in, no work.", donut(["Using it","Signed in, no work","Never signed in"].map(k => ({l:k, v:c(k), c:TEAM_COL[k]})), fmt(on.length), "accounts"), {key:"team_status"})}
+  <div class="span2">${card("Amazon team accounts", `<div style="display:flex;gap:12px;align-items:center;justify-content:space-between;flex-wrap:wrap"><span>Sign-ins exclude Login As sessions. Activity and page-view history is kept for ${ret || 90} days.</span>${copyBtn("teamT")}</div>`, tb)}</div></div>`;
+};
+V.forms_channel = () => {
+  const R = rows(); const mob = sum(R.filter(f => f[F_MOB] === 1)), web = sum(R.filter(f => f[F_MOB] === 0));
+  const byF = new Map(); R.forEach(f => { const o = byF.get(f[F_FORM]) || [0,0]; o[f[F_MOB]] += f[F_N]; byF.set(f[F_FORM], o); });
+  const it = [...byF].sort((a,b) => (b[1][0]+b[1][1]) - (a[1][0]+a[1][1])).map(([i,o]) => ({id:i, label:D.forms[i].form, segs:[{v:o[1], c:"#5b9bd5", t:"Mobile app"}, {v:o[0], c:"#f2b06a", t:"Web"}], total:o[0]+o[1], vtext:`${pct(o[1], o[0]+o[1])}% mobile`}));
+  const hrs = D.hourly.map((v,h) => ({label:(h%12||12) + (h<12?"am":"pm"), tipTitle:`${h}:00–${h}:59 IST`, value:v}));
+  return `<div class="grid g2">${card("Records by channel", scopeText(), donut([{l:"Mobile app", v:mob, c:"#5b9bd5"}, {l:"Web", v:web, c:"#f2b06a"}], null, "records"))}${card("When records reach the server", "All time · by hour (IST) · mobile records arrive when the phone syncs", columnChart(hrs, {height:210, labelEvery:3}))}</div>` +
+    card("Channel by form", "", legend([["Mobile app","#5b9bd5"],["Web","#f2b06a"]]) + barList(it, {click:"form"}));
+};
+V.forms_gaps = () => {
+  const data = formRows();
+  const noAcc = data.filter(r => !r.access), accNo = data.filter(r => r.access && !r.all), stale = data.filter(r => r.all && diffDays(r.last, D.today) > 14);
+  // compact rows: form name with its pillar and programme underneath; the export still carries them as columns
+  const fc = extra => [{h:"Form", v:r => r.form, html:r => `<b>${esc(r.form)}</b><div class="muted small">${esc([r.pillar, r.programme].filter(x => x && x !== "-").join(" · "))}</div>`}, {h:"Pillar", v:r => r.pillar, noShow:true}, {h:"Programme", v:r => r.programme, noShow:true}, ...extra];
+  const opt = name => ({search:false, rowClick:"form", pageSize:10, name, empty:"None."});
+  return card(`No user access <span class="pill p-bad">${noAcc.length}</span>`, "No account holds the role for these forms. Add the role to a partner role profile.", table("gapNo", fc([{h:"Users with access", r:1, v:r => r.access}]), noAcc, opt("Forms with no user access")), {key:"gaps"}) +
+    `<div class="grid g2">${card(`Access given, no records <span class="pill p-warn">${accNo.length}</span>`, "Users can fill these, but nobody has yet.", table("gapAcc", fc([{h:"Users with access", r:1, v:r => r.access}]), accNo, {...opt("Forms with access but no records"), sort:3}))}
+    ${card(`Gone stale <span class="pill p-warn">${stale.length}</span>`, "Had records, nothing in the last 14 days.", table("gapStale", fc([{h:"Last record", v:r => r.last, html:r => dlabelY(r.last)}]), stale, {...opt("Stale forms"), sort:3, dir:1}))}</div>`;
+};
+
+function fieldRecs(p){ return D.facts.filter(f => f[F_P] === p).reduce((a,f) => a+f[F_N], 0); }
+V.grants_portfolio = () => {
+  const G = D.grants.filter(g => S.partner === "" || g.p === +S.partner);
+  const bud = G.reduce((a,g) => a+g.budget, 0);
+  const byF = new Map(); G.forEach(g => byF.set(g.focus, (byF.get(g.focus)||0) + g.budget));
+  const cols = [
+    {h:"Grant", v:r => r.grant || r.gaf, html:r => `<b>${esc(r.grant||"—")}</b><div class="muted small">${esc(r.gaf)}</div>`},
+    {h:"Partner", v:r => pName(r.p)},
+    {h:"Project", v:r => r.name, html:r => `<span class="small">${esc(r.name)}</span>`},
+    {h:"Focus area", v:r => r.focus},
+    {h:"Budget", r:1, v:r => r.budget, html:r => inr(r.budget)},
+    {h:"Period", v:r => r.start, x:r => `${r.start} to ${r.end}`, html:r => `<span class="small">${dlabelY(r.start)} – ${dlabelY(r.end)}</span>`},
+    {h:"GAF stage", v:r => r.stage || r.wf, html:r => `<span class="pill p-good">${esc(r.stage||r.wf)}</span>`},
+    {h:"KPIs", r:1, v:r => r.outputs + r.outcomes, html:r => `<span title="${r.outputs} outputs, ${r.outcomes} outcomes">${r.outputs + r.outcomes}</span>`},
+    {h:"Field records", r:1, v:r => fieldRecs(r.p), html:r => fieldRecs(r.p) ? fmt(fieldRecs(r.p)) : `<span class="pill p-bad">0</span>`}
+  ];
+  return `<div class="grid g4">${kpi({icon:"grant", tone:"t-green", label:"Active grants", value:G.filter(g => g.gstatus==="Active").length, foot:`${G.length} approved GAFs`})}${kpi({icon:"rupee", label:"Total grant budget", value:inr(bud), foot:"FY 2026-27", href:"grants-budget"})}${kpi({icon:"target", tone:"t-teal", label:"Output & outcome KPIs", value:fmt(G.reduce((a,g) => a+g.outputs+g.outcomes, 0)), foot:"set up across grants"})}${kpi({icon:"partner", tone:D.dd.some(d => d.st !== "Approved")?"t-amber":"t-grey", label:"Due diligence pending", value:D.dd.filter(d => d.st !== "Approved").length, foot:`${D.dd.filter(d => d.st==="Approved").length} approved`, href:"grants-link"})}</div>
+  <div class="grid g3"><div class="span2">${card("Budget by grant", "Planned budget · click a bar for detail", barList([...G].sort((a,b) => b.budget-a.budget).map(g => ({id:g.gaf, label:pName(g.p), value:g.budget, color:"#5b9bd5"})), {fmtV:inr, click:"grant"}))}</div>${card("Budget by focus area", "", barList([...byF].sort((a,b) => b[1]-a[1]).map(([f,v]) => ({label:f, value:v, color:"#6cc3a0"})), {fmtV:inr}))}</div>` +
+    card("All grants", "Click a row for compliance, budget and field detail", table("grantsT", cols, G.map(g => ({...g, _id:g.gaf})), {rowClick:"grant", sort:4, name:"Grants", filters:[{label:"Focus area", get:r => r.focus}]}));
+};
+V.grants_compliance = () => {
+  const G = D.grants.filter(g => S.partner === "" || g.p === +S.partner);
+  const t = k => G.reduce((a,g) => a + (g.comp[k]||0), 0);
+  const C2 = {Submitted:["#7cc79a","Submitted"], Due:["#f6cd84","Due"], OverdueSince:["#f0a39b","Missed since setup"], OverdueAtLoad:["#f7d0cb","Backlog from setup"], Planned:["#dfe3e8","Planned"]};
+  const items = G.map(g => ({id:g.gaf, label:pName(g.p), segs:Object.keys(C2).map(k => ({v:g.comp[k]||0, c:C2[k][0], t:C2[k][1]})), total:Object.keys(C2).reduce((a,k) => a+(g.comp[k]||0), 0)})).sort((a,b) => b.segs[2].v - a.segs[2].v || b.segs[3].v - a.segs[3].v);
+  items.forEach(i => i.vtext = `${i.segs[2].v} missed · ${i.segs[3].v} backlog`);
+  const od = []; G.forEach(g => g.comp_list.forEach(([n,d,bl]) => od.push({_id:g.gaf, p:g.p, n, d, bl})));
+  const tb = table("odT", [{h:"Partner", v:r => pName(r.p)}, {h:"Report", v:r => r.n}, {h:"Due date", v:r => r.d, html:r => dlabelY(r.d)}, {h:"Type", v:r => r.bl ? "Backlog from setup" : "Missed since setup", html:r => r.bl ? `<span class="pill p-warn">Backlog from setup</span>` : `<span class="pill p-bad">Missed since setup</span>`}, {h:"Days late", r:1, v:r => diffDays(r.d, D.today), html:r => `<span class="pill p-bad">${diffDays(r.d, D.today)}</span>`}], od, {rowClick:"grant", sort:4, name:"Overdue compliance reports", filters:[{label:"Partner", get:r => pName(r.p)}, {label:"Type", get:r => r.bl ? "Backlog from setup" : "Missed since setup"}]});
+  return `<div class="grid g5">${kpi({icon:"check", tone:"t-green", label:"Submitted", value:t("Submitted")})}${kpi({icon:"clock", tone:"t-amber", label:"Due now", value:t("Due")})}${kpi({icon:"alert", tone:t("OverdueSince")?"t-red":"t-grey", label:"Missed since setup", value:t("OverdueSince"), key:"compliance", foot:"fell due after the grant was set up"})}${kpi({icon:"pause", tone:"t-amber", label:"Backlog from setup", value:t("OverdueAtLoad"), foot:"already past due on day one"})}${kpi({icon:"target", label:"Planned", value:t("Planned"), foot:"not yet due"})}</div>` +
+    card("Compliance reports by grant", "All reports set up on each grant · hover for counts", legend(Object.values(C2).map(([c,l]) => [l,c])) + barList(items, {click:"grant"}), {key:"compliance"}) +
+    card("Overdue reports", "Most days late first", tb);
+};
+V.grants_budget = () => {
+  const G = D.grants.filter(g => S.partner === "" || g.p === +S.partner);
+  const pl = G.reduce((a,g) => a+g.planned, 0), ut = G.reduce((a,g) => a+g.utilised, 0), tr = G.reduce((a,g) => a+g.tranche_sum, 0);
+  const items = [...G].sort((a,b) => b.planned-a.planned).map(g => ({id:g.gaf, label:pName(g.p), segs:[{v:g.utilised, c:"#7cc79a", t:"Utilised"}, {v:Math.max(0, g.planned-g.utilised), c:"#dfe5ec", t:"Not yet utilised"}], total:g.planned, vtext:`${pct(g.utilised, g.planned)}% of ${inr(g.planned)}`}));
+  return `<div class="grid g4">${kpi({icon:"rupee", label:"Planned budget", value:inr(pl), foot:"budget plan lines"})}${kpi({icon:"trend", tone:ut?"t-green":"t-amber", label:"Utilisation reported", value:inr(ut), foot:`${pct(ut,pl)}% of planned`, key:"budget", progress:pct(ut,pl)})}${kpi({icon:"grant", tone:"t-teal", label:"Tranches planned", value:fmt(G.reduce((a,g) => a+g.tranches, 0)), foot:inr(tr) + " across all tranches"})}${kpi({icon:"alert", tone:G.some(g => !g.utilised)?"t-amber":"t-grey", label:"Grants with no utilisation", value:G.filter(g => !g.utilised).length, foot:`of ${G.length} grants`})}</div>` +
+    card("Utilisation by grant", "Green is reported utilisation", legend([["Utilised","#7cc79a"],["Not yet utilised","#dfe5ec"]]) + barList(items, {click:"grant", fmtV:inr}), {key:"budget"});
+};
+V.grants_link = () => {
+  const everP = new Set(D.facts.map(f => f[F_P]));
+  const both = D.grants.filter(g => everP.has(g.p)), gOnly = D.grants.filter(g => !everP.has(g.p));
+  const fOnly = [...everP].filter(p => !D.partnerHasGrant.has(p) && D.partners[p].id !== "(none)");
+  const opt = name => ({search:false, rowClick:"partner", pageSize:10, name, empty:"None."});
+  const pc = {h:"Partner", v:r => pName(r._id), html:r => `<b>${esc(pName(r._id))}</b>${r.focus ? `<div class="muted small">${esc(r.focus)}${r.budget ? " · " + inr(r.budget) : ""}</div>` : ""}`};
+  const recC = {h:"Field records", r:1, v:r => fieldRecs(r._id), html:r => fmt(fieldRecs(r._id))};
+  return `<div class="grid g2">
+    ${card(`Grant and field data <span class="pill p-good">${both.length}</span>`, "Working as intended", table("lkBoth", [pc, {h:"Focus area", v:r => r.focus, noShow:true}, recC], both.map(g => ({...g, _id:g.p})), {...opt("Grant and field data"), sort:2}))}
+    ${card(`Grant, no field data <span class="pill p-bad">${gOnly.length}</span>`, "The grant is active but no form has been filled. Check user setup and training.", table("lkGrant", [pc, {h:"Budget", v:r => r.budget, noShow:true}, {h:"Field users", r:1, v:r => FIELD_USERS.filter(u => u.p === r._id).length}], gOnly.map(g => ({...g, _id:g.p})), opt("Grant but no field data")))}
+  </div><div class="grid g2">
+    ${card(`Field data, no grant on iNOPS <span class="pill p-idle">${fOnly.length}</span>`, "Partners submitting forms whose grant is not set up on iNOPS yet.", table("lkField", [pc, recC], fOnly.map(p => ({_id:p})), {...opt("Field data but no grant"), sort:1}))}
+    ` + card("Partner due diligence", "", table("ddT", [{h:"Partner", v:r => pName(r.p), html:r => `<b>${esc(pName(r.p))}</b>`}, {h:"Record", v:r => r.id}, {h:"Created", v:r => r.cr, html:r => dlabelY(r.cr)}, {h:"Status", v:r => r.st, html:r => `<span class="pill ${r.st==="Approved"?"p-good":"p-warn"}">${esc(r.st)}</span>`}], D.dd.map(d => ({...d, _id:d.p})), {...opt("Partner due diligence"), rowClick:null})) + `</div>`;
+};
+
+V.logs_signins = () => {
+  const ds = Object.keys(D.loginDays).sort(); const start = ds[0] || D.today;
+  const all = []; for (let d = weekStart(start); d <= D.today; d = addDays(d,7)) all.push(d);
+  const wk = all.map(w => { let ok=0, bad=0; for (let i=0;i<7;i++){ const x = D.loginDays[addDays(w,i)]; if (x){ ok += x[0]; bad += x[1]; } } return {label:dlabel(w), tipTitle:"Week of " + dlabelY(w), value:ok+bad, segs:[{v:ok, c:"#5b9bd5", t:"Successful"}, {v:bad, c:"#f0a39b", t:"Failed"}]}; });
+  const ok = wk.reduce((a,w) => a+w.segs[0].v, 0), bad = wk.reduce((a,w) => a+w.segs[1].v, 0);
+  return `<div class="note"><b>Internal view.</b> The mobile app does not write sign-in records, so this chart covers web sign-ins only and does not measure field adoption.</div>
+  <div class="grid g3">${kpi({icon:"check", tone:"t-green", label:"Successful web sign-ins", value:fmt(ok), key:"signins"})}${kpi({icon:"alert", tone:"t-red", label:"Failed sign-ins", value:fmt(bad), foot:`${pct(bad, ok+bad)}% of attempts`})}${kpi({icon:"clock", tone:"t-grey", label:"Errors logged, last 30 days", value:fmt(D.internal.error_log_30d), foot:"Error Log on the site"})}</div>` +
+    card("Web sign-ins per week", "Weeks start Monday", legend([["Successful","#5b9bd5"],["Failed","#f0a39b"]]) + columnChart(wk, {labelEvery:Math.ceil(wk.length/12), partialLast:true}), {key:"signins"});
+};
+V.logs_loginas = () => {
+  const L = (D.internal.impersonations || []).map((x,i) => ({...x, _id:i}));
+  return `<div class="note">When someone uses <b>Login As</b>, iNOPS records a sign-in for the person being impersonated. These sessions are removed from everyone's sign-in counts and usage status on this dashboard.</div>` +
+    card(`Login As sessions <span class="pill p-acc">${L.length}</span>`, "Who opened a session as another user", table("impT", [{h:"When", v:r => r.at, html:r => `${dlabelY(r.at.slice(0,10))} ${esc(r.at.slice(11,16))}`}, {h:"Signed in as", v:r => r.user}, {h:"Done by", v:r => r.by}], L, {sort:0, name:"Login As sessions", filters:[{label:"Done by", all:"Anyone", get:r => r.by}]}));
+};
+V.logs_freshness = () => {
+  const fr = formRows().filter(r => r.last).sort((a,b) => a.last < b.last ? -1 : 1);
+  const pr = partnerRows().filter(r => r.last).sort((a,b) => a.last < b.last ? -1 : 1);
+  const cols = nm => [{h:nm, v:r => r.form || r.name}, {h:"Last record", v:r => r.last, html:r => dlabelY(r.last)}, {h:"Days since", r:1, v:r => diffDays(r.last, D.today), html:r => { const a = diffDays(r.last, D.today); return `<span class="pill ${a<=2?"p-good":a<=14?"p-warn":"p-bad"}">${a}</span>`; }}];
+  return `<div class="grid g2">${card("By form", "Oldest first", table("frF", cols("Form"), fr, {search:false, sort:2, name:"Freshness by form"}), {key:"freshness"})}${card("By partner", "Oldest first", table("frP", cols("Partner"), pr, {search:false, sort:2, name:"Freshness by partner"}))}</div>`;
+};
+
+/* ---------- drawers ---------- */
+function drawer(html){ $("#layer").innerHTML = `<div class="scrim" data-close="1"></div><aside class="drawer" role="dialog" aria-modal="true"><span class="dsnap"><button class="btn sm" data-print="1" title="Print this report"><svg viewBox="0 0 24 24"><path d="M7 9V4h10v5M7 17H5a1 1 0 0 1-1-1v-6a1 1 0 0 1 1-1h14a1 1 0 0 1 1 1v6a1 1 0 0 1-1 1h-2"/><rect x="7" y="14" width="10" height="6"/></svg>Print</button><button class="btn sm" data-snap="1" title="Download this report as Excel or CSV"><svg viewBox="0 0 24 24"><path d="M12 4v11M7 10l5 5 5-5M5 20h14"/></svg>Download</button></span><button class="x" data-close="1" aria-label="Close">×</button>${html}</aside>`; $("#layer .x").focus(); }
+function closeDrawer(){ $("#layer").innerHTML = ""; }
+function last30Chart(F){
+  const ds = []; for (let d = addDays(D.today,-29); d <= D.today; d = addDays(d,1)) ds.push(d);
+  const bd = group(F, f => D.days[f[F_DAY]]);
+  return columnChart(ds.map(d => ({label:dlabel(d), tipTitle:`${dow(d)} ${dlabelY(d)}`, value:bd.get(d)||0})), {height:170, partialLast:true, labelEvery:5});
+}
+function partnerDrawer(p){
+  p = +p; const Ra = D.facts.filter(f => f[F_P] === p);
+  const byF = group(Ra, f => f[F_FORM]);
+  const U = FIELD_USERS.filter(u => u.p === p).map(u => ({...u, _id:p, ui:uIndex(u.e)}));
+  const cnt = k => U.filter(u => u.st === k).length;
+  // weekly active users: distinct submitters per week, last 8 weeks
+  const cw = weekStart(D.today); const weeks = []; for (let i = 7; i >= 0; i--) weeks.push(addDays(cw, -7*i));
+  const wu = weeks.map(w => new Set(Ra.filter(f => weekStart(D.days[f[F_DAY]]) === w).map(f => f[F_U])).size);
+  const wkSeries = weeks.map((w,i) => ({label:dlabel(w), tipTitle:"Week of " + dlabelY(w), value:wu[i]}));
+  const tb = userTable("pUsers", [
+    {h:"Last 30 days", r:1, v:r => r.n30, html:r => fmt(r.n30)},
+    {h:"All time", r:1, v:r => r.n, html:r => r.n ? dd("u", r.ui, "", fmt(r.n)) : "0"},
+    {h:"Last submission", v:r => r.last || "", html:r => r.last ? dlabelY(r.last) : "—"}
+  ], U, {sort:5, name:pName(p) + " field users", filters:[{label:"Status", get:r => ST[r.st].label}]});
+  drawer(`<h2>${esc(pName(p))}</h2><div class="muted">${fmt(sum(Ra))} records all time · data as of ${esc(asOf())}</div>
+  <div class="grid g4" style="margin-top:16px">${kpi({icon:"people", label:"Field users enrolled", value:fmt(U.length)})}${kpi({icon:"check", tone:"t-green", label:"Active (7 days)", value:fmt(cnt("active")), foot:`${pct(cnt("active"),U.length)}% of users`})}${kpi({icon:"pause", tone:"t-red", label:"Less active or inactive", value:fmt(cnt("slowing") + cnt("quiet"))})}${kpi({icon:"user", tone:"t-purple", label:"Never submitted", value:fmt(cnt("opened") + cnt("never"))})}</div>
+  <section><h4>Active users per week ${info("weekly_active")}</h4>${columnChart(wkSeries, {height:170, partialLast:true, color:"#7cc79a"})}</section>
+  <section><h4>Records, last 30 days</h4>${last30Chart(Ra)}</section>
+  <section><h4>Forms</h4>${barList([...byF].sort((a,b) => b[1]-a[1]).map(([i,v]) => ({id:i, label:D.forms[i].form, value:v, color:PILLAR_COL[D.forms[i].pillar]})))}</section>
+  <section><h4>Field users</h4>${tb}</section>`);
+}
+function formDrawer(i){
+  i = +i; const f = D.forms[i]; const Ra = D.facts.filter(x => x[F_FORM] === i);
+  const byP = group(Ra, x => x[F_P]); const U = FIELD_USERS.filter(u => u.acc.includes(i));
+  drawer(`<h2>${esc(f.form)}</h2><div class="muted">${esc(f.pillar)} · ${esc(f.programme)} · form name on iNOPS: ${esc(f.doctype)}</div>
+  <div class="grid g3" style="margin-top:16px">${kpi({icon:"forms", label:"Records", value:Ra.length ? dd("f", i, "", fmt(sum(Ra))) : "0"})}${kpi({icon:"people", tone:U.length?"t-purple":"t-red", label:"Users with access", value:U.length})}${kpi({icon:"check", tone:"t-green", label:"Users who submitted", value:U.filter(u => u.used.includes(i)).length})}</div>
+  <section><h4>Records, last 30 days</h4>${last30Chart(Ra)}</section>
+  <section><h4>By partner</h4>${barList([...byP].sort((a,b) => b[1]-a[1]).map(([p,v]) => ({label:pName(p), value:v})))}</section>
+  ${!U.length ? `<div class="note"><b>No account can fill this form.</b> Add the form's role to the right partner role profile on iNOPS, then assign that profile to field users.</div>` : ""}`);
+}
+function grantDrawer(id){
+  const g = D.grants.find(x => x.gaf === id); if (!g) return;
+  drawer(`<h2>${esc(pName(g.p))}</h2><div class="muted">${esc(g.grant)} · ${esc(g.gaf)} · ${esc(g.name)}</div>
+  <div class="grid g4" style="margin-top:16px">${kpi({icon:"rupee", label:"Budget", value:inr(g.budget)})}${kpi({icon:"grant", tone:"t-teal", label:"Tranches", value:g.tranches, foot:inr(g.tranche_sum)})}${kpi({icon:"target", tone:"t-purple", label:"KPIs", value:g.outputs+g.outcomes, foot:`${g.outputs} outputs · ${g.outcomes} outcomes`})}${kpi({icon:"forms", tone:fieldRecs(g.p)?"t-green":"t-red", label:"Field records", value:fmt(fieldRecs(g.p))})}</div>
+  <section><h4>Compliance reports</h4>${stackBar([{l:"Submitted",v:g.comp.Submitted||0,c:"#7cc79a"},{l:"Due",v:g.comp.Due||0,c:"#f6cd84"},{l:"Missed since setup",v:g.comp.OverdueSince||0,c:"#f0a39b"},{l:"Backlog from setup",v:g.comp.OverdueAtLoad||0,c:"#f7d0cb"},{l:"Planned",v:g.comp.Planned||0,c:"#dfe3e8"}])}</section>
+  <section><h4>Overdue</h4>${g.comp_list.length ? table("gOd", [{h:"Report", v:r => r.n, html:r => `${esc(r.n)}${r.bl ? ` <span class="pill p-warn">backlog</span>` : ""}`}, {h:"Due", v:r => r.d, html:r => dlabelY(r.d)}, {h:"Days late", r:1, v:r => diffDays(r.d, D.today)}], g.comp_list.map(([n,d,bl]) => ({n,d,bl})), {search:false, sort:2, name:pName(g.p) + " overdue reports"}) : `<div class="muted">Nothing overdue.</div>`}</section>
+  <section><h4>Budget</h4><div class="muted">Planned ${inr(g.planned)} · utilised ${inr(g.utilised)} (${pct(g.utilised, g.planned)}%) · ${dlabelY(g.start)} – ${dlabelY(g.end)}</div></section>
+  <section><a class="btn" href="https://inops.mgrant.in/app/grant/${encodeURIComponent(g.grant)}" target="_blank" rel="noopener">Open grant on iNOPS ↗</a></section>`);
+}
+
+/* ---------- shell ---------- */
+function renderNav(){
+  let html = "", grp = "";
+  NAV.forEach(n => { if (n.grp !== grp){ grp = n.grp; html += `<div class="grp">${esc(grp)}</div>`; } html += `<a href="#${n.id}-${n.tabs[0][0]}" class="${route.sec===n.id?"on":""}">${ICON[n.id]}<span>${esc(n.label)}</span>${n.tag?`<span class="tag">${n.tag}</span>`:""}</a>`; });
+  $("#side").innerHTML = html;
+}
+function renderFilters(){
+  const pIds = [...new Set([...FIELD_USERS.map(u => u.p), ...D.facts.map(f => f[F_P]), ...D.grants.map(g => g.p)])].filter(p => D.partners[p].id !== "(none)").sort((a,b) => pName(a).localeCompare(pName(b)));
+  const off = route.sec === "logs" || route.sec === "team"; $("#filters").hidden = off; if (off) return;
+  $("#filters").innerHTML = `<div class="chips" role="group" aria-label="Period">${[["all","All time"],["90","90 days"],["30","30 days"],["7","7 days"],["custom","Custom"]].map(([k,l]) => `<button data-period="${k}" class="${S.period===k?"on":""}">${l}</button>`).join("")}</div>
+  ${S.period==="custom" ? `<div class="fl set"><label for="fFrom">From</label><input type="date" id="fFrom" value="${S.from}"></div><div class="fl set"><label for="fTo">To</label><input type="date" id="fTo" value="${S.to}"></div>` : ""}
+  <div class="fl ${S.pillar?"set":""}"><label for="fPillar">Pillar</label><select id="fPillar"><option value="">All pillars</option>${Object.keys(PILLAR_COL).map(p => `<option ${p===S.pillar?"selected":""}>${p}</option>`).join("")}</select></div>
+  <div class="fl ${S.partner?"set":""}"><label for="fPartner">Partner</label><select id="fPartner"><option value="">All partners</option>${pIds.map(p => `<option value="${p}" ${String(p)===S.partner?"selected":""}>${esc(pName(p))}</option>`).join("")}</select></div>
+  ${(S.period!=="all"||S.partner||S.pillar) ? `<button class="btn sm" id="fClear">Clear filters</button>` : ""}
+  <span class="scope">${esc(scopeText())}</span>`;
+}
+function render(){
+  parseHash();
+  const n = NAV.find(x => x.id === route.sec);
+  renderNav();
+  $("#pgTitle").textContent = n.label;
+  $("#printHead").innerHTML = `<b>Amazon iNOPS</b> · data as of ${esc(asOf())}${route.sec === "team" ? "" : " · " + esc(scopeText())}`;
+  $("#tabs").innerHTML = n.tabs.map(([k,l]) => `<a role="tab" href="#${n.id}-${k}" class="${route.tab===k?"on":""}" aria-selected="${route.tab===k}">${esc(l)}</a>`).join("");
+  if (S.partner !== "" && !D.partners[+S.partner]) S.partner = "";
+  renderFilters(); closePop(); hideTip();
+  try { $("#view").innerHTML = V[route.sec + "_" + route.tab](); }
+  catch(e){ console.error(e); $("#view").innerHTML = `<div class="card"><b>This view could not be drawn.</b><div class="muted small">${esc(e.message)}</div></div>`; }
+  $("#side").classList.remove("open");
+}
+
+/* ---------- tooltip ---------- */
+const tipEl = () => $("#tip");
+function showTip(el, e){
+  let d; try { d = JSON.parse(el.getAttribute("data-tip")); } catch(x){ return; }
+  const [title, lines] = d; const t = tipEl();
+  t.innerHTML = `<b>${esc(title)}</b>` + lines.map(([k,v,c]) => `<div class="tr"><span>${c ? `<i style="background:${c}"></i>` : ""}${esc(k)}</span><span>${esc(v)}</span></div>`).join("");
+  t.hidden = false; moveTip(e);
+}
+function moveTip(e){ const t = tipEl(); if (t.hidden) return; const w = t.offsetWidth, h = t.offsetHeight; let x = e.clientX + 14, y = e.clientY + 14; if (x + w > innerWidth - 8) x = e.clientX - w - 14; if (y + h > innerHeight - 8) y = e.clientY - h - 14; t.style.left = x + "px"; t.style.top = y + "px"; }
+function hideTip(){ const t = tipEl(); if (t) t.hidden = true; }
+let tipTarget = null;
+function onPointer(e){
+  const el = e.target.closest && e.target.closest("[data-tip]");
+  if (!el){ if (tipTarget){ tipTarget = null; hideTip(); } return; }
+  if (el !== tipTarget || tipEl().hidden){ tipTarget = el; showTip(el, e); } else moveTip(e);
+}
+document.addEventListener("mouseover", onPointer);
+document.addEventListener("mousemove", onPointer);
+document.addEventListener("scroll", () => { tipTarget = null; hideTip(); }, true);
+
+/* ---------- events ---------- */
+document.addEventListener("click", e => {
+  const t = e.target;
+  const inf = t.closest("[data-info]"); if (inf){ e.preventDefault(); e.stopPropagation(); if ($("#pop") && $("#pop").dataset.k === inf.dataset.info) return closePop(); return showInfo(inf); }
+  if (!t.closest(".pop")) closePop();
+  const cp = t.closest("[data-copy]"); if (cp){ e.stopPropagation(); return copyEmails(cp.dataset.copy); }
+  const ex = t.closest("[data-export]"); if (ex){ e.stopPropagation(); return exportTable(ex.dataset.export, ex.dataset.fmt, ex); }
+  const ddb = t.closest("[data-dd]"); if (ddb){ e.stopPropagation(); e.preventDefault(); return openDrill(ddb); }
+  if (t.closest("[data-close]")) return closeDrawer();
+  if (t.closest("#snapBtn") || t.closest("[data-print]")) return printPage(t.closest("#snapBtn") || t.closest("[data-print]"));
+  const sb = t.closest("[data-snap]"); if (sb){ e.stopPropagation(); if ($("#pop") && $("#pop").dataset.k === "snap") return closePop(); return snapshotMenu(sb); }
+  const sf = t.closest("[data-snapfmt]"); if (sf) return snapshot(sf.dataset.snapfmt);
+  const per = t.closest("[data-period]"); if (per){ S.period = per.dataset.period; if (S.period==="custom" && !S.from){ S.from = addDays(D.today,-29); S.to = D.today; } saveS(); return render(); }
+  if (t.id === "fClear"){ S.period="all"; S.partner=""; S.pillar=""; saveS(); return render(); }
+  const pg = t.closest("[data-page]"); if (pg){ TABLES[pg.dataset.page].page += +pg.dataset.d; return rerenderTable(pg.dataset.page); }
+  const th = t.closest("[data-sort]"); if (th){ const T = TABLES[th.dataset.sort], k = +th.dataset.k; if (T.sortK === k) T.dir *= -1; else { T.sortK = k; T.dir = -1; } T.page = 0; return rerenderTable(th.dataset.sort); }
+  const rc = t.closest("[data-rclick]") || t.closest("[data-click]"); if (rc && !t.closest("a") && !t.closest("select") && !t.closest("input")){ const kind = rc.dataset.rclick || rc.dataset.click, id = rc.dataset.id; if (kind==="partner") partnerDrawer(id); else if (kind==="form") formDrawer(id); else if (kind==="grant") grantDrawer(id); return; }
+  if (t.closest("#menuBtn")) $("#side").classList.toggle("open");
+});
+document.addEventListener("change", e => {
+  const t = e.target;
+  if (t.dataset && t.dataset.psize){ const T = TABLES[t.dataset.psize]; T.pageSize = +t.value; T.page = 0; return rerenderTable(t.dataset.psize); }
+  if (t.dataset && t.dataset.tfilter){ const T = TABLES[t.dataset.tfilter]; T.f[t.dataset.fi] = t.value; T.page = 0; return rerenderTable(t.dataset.tfilter); }
+  if (t.id === "fPartner"){ S.partner = t.value; saveS(); render(); }
+  if (t.id === "fPillar"){ S.pillar = t.value; saveS(); render(); }
+  if (t.id === "fFrom"){ S.from = t.value; saveS(); render(); }
+  if (t.id === "fTo"){ S.to = t.value; saveS(); render(); }
+});
+document.addEventListener("input", e => { const id = e.target.dataset && e.target.dataset.tsearch; if (id){ TABLES[id].q = e.target.value; TABLES[id].page = 0; rerenderTable(id); } });
+document.addEventListener("keydown", e => { if (e.key === "Escape"){ closePop(); closeDrawer(); hideTip(); } });
+window.addEventListener("hashchange", () => { closeDrawer(); render(); });
+
+/* ---------- boot ---------- */
+function start(data, live){
+  D = data;
+  if (!D.internal) NAV = NAV.filter(n => n.id !== "logs");
+  derive();
+  const dt = D.pulled_at_ist;
+  $("#asat").innerHTML = `Data as of <b>${esc(dlabelY(dt.slice(0,10)))}, ${esc(dt.slice(11,16))} IST</b>`;
+  if (live){ const b = $("#refreshBtn"); b.hidden = false; b.onclick = () => location.reload(); }
+  $("#openPortal").href = PORTAL;
+  render();
+}
+function load(){
+  const raw = document.getElementById("inops-data").textContent.trim();
+  if (raw.startsWith("{")) return start(JSON.parse(raw), false);
+  fetch(LIVE_ENDPOINT, {credentials:"same-origin", headers:{Accept:"application/json"}})
+    .then(r => { if (!r.ok) throw new Error(r.status === 403 ? "You do not have access to this dashboard. Ask the iNOPS admin to add the dashboard role to your account." : "The iNOPS server returned " + r.status + "."); return r.json(); })
+    .then(j => start(j.message, true))
+    .catch(err => { $("#view").innerHTML = `<div class="card"><b>Could not load iNOPS data.</b><p class="muted">${esc(err.message)}</p></div>`; });
+}
+load();
+})();
+</script>

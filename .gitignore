@@ -1,0 +1,7 @@
+snapshot.json
+data.json
+inops-adoption*.html
+site/
+node_modules/
+.credentials
+*.env
