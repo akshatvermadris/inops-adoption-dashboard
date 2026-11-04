@@ -1,9 +1,9 @@
 name: Refresh dashboard
 
-# Every Monday 09:00 IST (03:30 UTC), plus a manual "Run workflow" button.
+# Every day 09:00 IST (03:30 UTC), plus a manual "Run workflow" button.
 on:
   schedule:
-    - cron: "30 3 * * 1"
+    - cron: "30 3 * * *"
   workflow_dispatch:
 
 permissions:
