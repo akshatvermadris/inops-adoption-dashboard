@@ -1,9 +1,12 @@
 name: Refresh dashboard
 
-# Every day 09:00 IST (03:30 UTC), plus a manual "Run workflow" button.
+# GitHub starts scheduled runs late at busy times (often 15-60 min, worst on :00/:30), so:
+#   main run 08:17 IST (02:47 UTC) to be ready before 09:00, backup 09:47 IST (04:17 UTC) in case one is skipped.
+# Plus a manual "Run workflow" button.
 on:
   schedule:
-    - cron: "30 3 * * *"
+    - cron: "47 2 * * *"
+    - cron: "17 4 * * *"
   workflow_dispatch:
 
 permissions:
