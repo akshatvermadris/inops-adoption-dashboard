@@ -1,0 +1,648 @@
+{
+ "source": "2026 goal sheet and Page 0, as loaded in the IN Ops CE Impact wireframe (Page 0 close 2026-09-30). Not stored on iNOPS.",
+ "page0_asof": "2026-09-30",
+ "page0_months": [
+  "2026-04",
+  "2026-05",
+  "2026-06",
+  "2026-07",
+  "2026-08",
+  "2026-09"
+ ],
+ "pillars": {
+  "A.1": {
+   "name": "Food Security",
+   "lead": "Tejal",
+   "sdg": [
+    2,
+    3
+   ]
+  },
+  "A.2": {
+   "name": "Livelihoods",
+   "lead": "Ashish",
+   "sdg": [
+    5,
+    8
+   ]
+  },
+  "A.3": {
+   "name": "Social Security",
+   "lead": "Gaurav",
+   "sdg": [
+    1,
+    10
+   ]
+  },
+  "A.4": {
+   "name": "Waste Management",
+   "lead": "",
+   "sdg": [
+    12
+   ]
+  },
+  "B": {
+   "name": "Associate Welfare",
+   "lead": "",
+   "sdg": [
+    1,
+    8
+   ]
+  },
+  "C": {
+   "name": "Volunteering",
+   "lead": "",
+   "sdg": [
+    17
+   ]
+  }
+ },
+ "indicators": [
+  {
+   "id": "A.1.1",
+   "pil": "A.1",
+   "kind": "touched",
+   "name": "Lives touched through food security awareness",
+   "short": "Food security awareness",
+   "sdg": [
+    2
+   ],
+   "goal_q": {
+    "Q1": 41622,
+    "Q2": 56054,
+    "Q3": 56054,
+    "Q4": 56054
+   },
+   "goal_fy": 209782,
+   "page0": [
+    14401,
+    8747,
+    16588,
+    12926,
+    53655,
+    16586
+   ]
+  },
+  {
+   "id": "A.1.2",
+   "pil": "A.1",
+   "kind": "touched",
+   "name": "Lives touched: Counselling and Care support",
+   "short": "Counselling & care via Anganwadi workers",
+   "sdg": [
+    2,
+    3
+   ],
+   "goal_q": {
+    "Q1": 0,
+    "Q2": 29540,
+    "Q3": 44310,
+    "Q4": 44310
+   },
+   "goal_fy": 118160,
+   "page0": [
+    5017,
+    7400,
+    15421,
+    15308,
+    3267,
+    5464
+   ]
+  },
+  {
+   "id": "A.1.3",
+   "pil": "A.1",
+   "kind": "impacted",
+   "name": "Lives impacted through ICDS ecosystem strengthening",
+   "short": "ICDS ecosystem strengthening",
+   "sdg": [
+    2,
+    3
+   ],
+   "goal_q": {
+    "Q1": 0,
+    "Q2": 17550,
+    "Q3": 26325,
+    "Q4": 26325
+   },
+   "goal_fy": 70200,
+   "page0": [
+    2424,
+    4563,
+    8175,
+    10873,
+    15077,
+    19227
+   ]
+  },
+  {
+   "id": "A.1.4",
+   "pil": "A.1",
+   "kind": "impacted",
+   "name": "Lives impacted through Morning Nutrition Programmed",
+   "short": "Morning Nutrition Programme",
+   "sdg": [
+    2,
+    4
+   ],
+   "goal_q": {
+    "Q1": 153858,
+    "Q2": 0,
+    "Q3": 183966,
+    "Q4": 183966
+   },
+   "goal_fy": 521790,
+   "page0": [
+    0,
+    0,
+    0,
+    35030,
+    70828,
+    68065
+   ]
+  },
+  {
+   "id": "A.1.5",
+   "pil": "A.1",
+   "kind": "impacted",
+   "name": "Lives impacted through Pantry Donations + Orphan Donation",
+   "short": "Pantry & orphanage food donations",
+   "sdg": [
+    2,
+    12
+   ],
+   "goal_q": {
+    "Q1": 184385,
+    "Q2": 184385,
+    "Q3": 184385,
+    "Q4": 184385
+   },
+   "goal_fy": 737541,
+   "page0": [
+    14937,
+    12930,
+    15274,
+    53107,
+    32602,
+    23026
+   ]
+  },
+  {
+   "id": "A.2.1",
+   "pil": "A.2",
+   "kind": "touched",
+   "name": "Lives touched : Livelihood’s awareness campaigns",
+   "short": "Livelihood awareness campaigns",
+   "sdg": [
+    8
+   ],
+   "goal_q": {
+    "Q1": 5250,
+    "Q2": 4450,
+    "Q3": 5825,
+    "Q4": 5825
+   },
+   "goal_fy": 21350,
+   "page0": [
+    2832,
+    2436,
+    1848,
+    1712,
+    1467,
+    211
+   ]
+  },
+  {
+   "id": "A.2.2",
+   "pil": "A.2",
+   "kind": "impacted",
+   "name": "Lives impacted : Skill development and enterprise promotion",
+   "short": "Skill development & enterprise promotion",
+   "sdg": [
+    8,
+    5
+   ],
+   "goal_q": {
+    "Q1": 1775,
+    "Q2": 1475,
+    "Q3": 1475,
+    "Q4": 1475
+   },
+   "goal_fy": 6200,
+   "page0": [
+    647,
+    487,
+    1053,
+    362,
+    875,
+    365
+   ]
+  },
+  {
+   "id": "A.2.3",
+   "pil": "A.2",
+   "kind": "touched",
+   "name": "Lives touched : Promotion of menstrual hygiene practices",
+   "short": "Menstrual hygiene practices",
+   "sdg": [
+    5,
+    3
+   ],
+   "goal_q": {
+    "Q1": 111800,
+    "Q2": 99496,
+    "Q3": 105212,
+    "Q4": 95212
+   },
+   "goal_fy": 412287,
+   "page0": [
+    59511,
+    36649,
+    40546,
+    30792,
+    46111,
+    49076
+   ]
+  },
+  {
+   "id": "A.3.1",
+   "pil": "A.3",
+   "kind": "touched",
+   "name": "Lives touched : Building financial wellbeing awareness (in communities)",
+   "short": "Financial wellbeing awareness",
+   "sdg": [
+    1,
+    10
+   ],
+   "goal_q": {
+    "Q1": 47685,
+    "Q2": 55575,
+    "Q3": 55575,
+    "Q4": 55574
+   },
+   "goal_fy": 214408,
+   "page0": [
+    20621,
+    20674,
+    25950,
+    21020,
+    30896,
+    41511
+   ]
+  },
+  {
+   "id": "A.3.2",
+   "pil": "A.3",
+   "kind": "impacted",
+   "name": "Lives impacted : Enrollments to social entitlements schemes (in communities)",
+   "short": "Enrolment to social entitlement schemes",
+   "sdg": [
+    1,
+    10
+   ],
+   "goal_q": {
+    "Q1": 31334,
+    "Q2": 61799,
+    "Q3": 61794,
+    "Q4": 61798
+   },
+   "goal_fy": 216724,
+   "page0": [
+    17538,
+    16408,
+    19735,
+    21589,
+    19295,
+    27804
+   ]
+  },
+  {
+   "id": "A.4.1",
+   "pil": "A.4",
+   "kind": "touched",
+   "name": "Lives touched : Community led waste management in collaboration with WW sustainability",
+   "short": "Community-led waste management",
+   "sdg": [
+    12,
+    11
+   ],
+   "goal_q": {
+    "Q1": 9000,
+    "Q2": 9000,
+    "Q3": 9000,
+    "Q4": 9000
+   },
+   "goal_fy": 36000,
+   "page0": [
+    2054,
+    2902,
+    3935,
+    2421,
+    5232,
+    7097
+   ]
+  },
+  {
+   "id": "B.1.1",
+   "pil": "B",
+   "kind": "impacted",
+   "name": "Lives impacted : Enrollment to Social Security Schemes for associates (Samridhi Initiative)",
+   "short": "Samridhi – associate scheme enrolments",
+   "sdg": [
+    1
+   ],
+   "goal_q": {
+    "Q1": 1272,
+    "Q2": 8181,
+    "Q3": 1272,
+    "Q4": 1272
+   },
+   "goal_fy": 45000,
+   "page0": [
+    0,
+    691,
+    1667,
+    871,
+    2711,
+    2392
+   ]
+  },
+  {
+   "id": "B.1.2",
+   "pil": "B",
+   "kind": "impacted",
+   "name": "Lives impacted : Paridhi Scholarships",
+   "short": "Pratidhi scholarships",
+   "sdg": [
+    4
+   ],
+   "goal_q": {
+    "Q1": 0,
+    "Q2": 0,
+    "Q3": 2500,
+    "Q4": 0
+   },
+   "goal_fy": 5000,
+   "page0": [
+    0,
+    0,
+    0,
+    0,
+    287,
+    936
+   ]
+  },
+  {
+   "id": "B.1.3",
+   "pil": "B",
+   "kind": "count",
+   "name": "Number of Ashray Centers setup",
+   "short": "Ashray rest centres set up",
+   "sdg": [
+    8
+   ],
+   "goal_q": {
+    "Q1": 0,
+    "Q2": 50,
+    "Q3": 50,
+    "Q4": 50
+   },
+   "goal_fy": 150,
+   "page0": [
+    0,
+    0,
+    26,
+    12,
+    7,
+    165
+   ]
+  },
+  {
+   "id": "B.1.4",
+   "pil": "B",
+   "kind": "touched",
+   "name": "Lives touched: visit by delivery associates",
+   "short": "Visits by delivery associates",
+   "sdg": [
+    8
+   ],
+   "goal_q": {
+    "Q1": 135000,
+    "Q2": 144000,
+    "Q3": 225000,
+    "Q4": 225000
+   },
+   "goal_fy": 1407148,
+   "page0": [
+    22340,
+    13648,
+    15670,
+    21682,
+    34174,
+    32290
+   ]
+  },
+  {
+   "id": "C.1.1",
+   "pil": "C",
+   "kind": "count",
+   "name": "Unique Volunteers BB",
+   "short": "Unique volunteers (BB)",
+   "sdg": [
+    17
+   ],
+   "goal_q": {
+    "Q1": 897,
+    "Q2": 2990,
+    "Q3": 1196,
+    "Q4": 897
+   },
+   "goal_fy": 5979,
+   "page0": [
+    665,
+    2903,
+    151,
+    130,
+    230,
+    1537
+   ]
+  },
+  {
+   "id": "C.1.2",
+   "pil": "C",
+   "kind": "count",
+   "name": "Unique Volunteers BB (SBV)",
+   "short": "Unique volunteers (BB · SBV)",
+   "sdg": [
+    17
+   ],
+   "goal_q": {
+    "Q1": 201,
+    "Q2": 671,
+    "Q3": 268,
+    "Q4": 201
+   },
+   "goal_fy": 1341,
+   "page0": [
+    0,
+    16,
+    0,
+    0,
+    0,
+    52
+   ]
+  },
+  {
+   "id": "C.1.3",
+   "pil": "C",
+   "kind": "count",
+   "name": "Unique Volunteers",
+   "short": "Unique volunteers",
+   "sdg": [
+    17
+   ],
+   "goal_q": {
+    "Q1": 18510,
+    "Q2": 61699,
+    "Q3": 24680,
+    "Q4": 18510
+   },
+   "goal_fy": 123398,
+   "page0": [
+    1883,
+    51621,
+    1007,
+    1019,
+    785,
+    11737
+   ]
+  },
+  {
+   "id": "C.1.4",
+   "pil": "C",
+   "kind": "touched",
+   "name": "Lives touched",
+   "short": "Lives touched by volunteers (Miles)",
+   "sdg": [
+    17
+   ],
+   "goal_q": {
+    "Q1": 51547,
+    "Q2": 171823,
+    "Q3": 68729,
+    "Q4": 51547
+   },
+   "goal_fy": 343645,
+   "page0": [
+    7180,
+    192205,
+    4456,
+    2887,
+    5206,
+    56935
+   ]
+  }
+ ],
+ "partner_q3_goals": [
+  {
+   "name": "SAAD Foundation",
+   "ngo": "NGO-0013",
+   "goals": {
+    "A.1.1": 12205,
+    "A.2.3": 7084,
+    "A.3.1": 2679,
+    "A.3.2": 4796
+   }
+  },
+  {
+   "name": "READ India",
+   "ngo": "NGO-0064",
+   "goals": {
+    "A.1.1": 14441,
+    "A.2.3": 10751,
+    "A.3.1": 2781,
+    "A.3.2": 3098
+   }
+  },
+  {
+   "name": "Way for Life",
+   "ngo": "NGO-0062",
+   "goals": {
+    "A.1.1": 16586,
+    "A.2.3": 11248,
+    "A.3.1": 8396,
+    "A.3.2": 12046
+   }
+  },
+  {
+   "name": "Akshaya Patra",
+   "ngo": "NGO-0029",
+   "goals": {
+    "A.1.1": 12822,
+    "A.1.4": 183966
+   }
+  },
+  {
+   "name": "SNEHA",
+   "ngo": "NGO-1263",
+   "goals": {
+    "A.1.2": 44310,
+    "A.1.3": 26325
+   }
+  },
+  {
+   "name": "Access",
+   "ngo": "NGO-4533",
+   "goals": {
+    "A.2.1": 3750,
+    "A.2.2": 525
+   }
+  },
+  {
+   "name": "GAME",
+   "ngo": "NGO-0135",
+   "goals": {
+    "A.2.1": 1300,
+    "A.2.2": 750
+   }
+  },
+  {
+   "name": "RTP",
+   "ngo": null,
+   "goals": {
+    "A.2.1": 775,
+    "A.2.2": 200
+   }
+  },
+  {
+   "name": "Pinkishe",
+   "ngo": "NGO-0006",
+   "goals": {
+    "A.2.3": 46000
+   }
+  },
+  {
+   "name": "She & WE",
+   "ngo": "NGO-0124",
+   "goals": {
+    "A.2.3": 30412
+   }
+  },
+  {
+   "name": "HHH",
+   "ngo": "NGO-0024",
+   "goals": {
+    "A.3.1": 26644,
+    "A.3.2": 28286
+   }
+  },
+  {
+   "name": "Jan Sahas",
+   "ngo": "NGO-0105",
+   "goals": {
+    "A.3.1": 15075,
+    "A.3.2": 13568
+   }
+  }
+ ]
+}
