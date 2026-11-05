@@ -13,3 +13,5 @@ fs.writeFileSync("inops-adoption-internal.html", wrap(embed(full))); // Dhwani i
 fs.writeFileSync("inops-adoption-live-shell.html", tpl);             // no data: fetches the live endpoint when hosted on iNOPS
 fs.mkdirSync("site", { recursive: true }); fs.writeFileSync("site/index.html", wrap(page)); fs.writeFileSync("site/.nojekyll", "");
 console.log("ok", (page.length / 1024).toFixed(0) + " KB");
+// CE Impact wireframe: same page, opens on the CE Impact section
+fs.writeFileSync("inops-ce-impact.html", embed({ ...client, home: "ce" }));

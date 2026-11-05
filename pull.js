@@ -65,6 +65,56 @@ async function meta(dt) { return (await api(`/api/method/frappe.desk.form.load.g
   out.admin_roles = await api("/api/method/frappe.client.get_list", { doctype: "Has Role", parent: "User", fields: ["parent", "role"], filters: [["parenttype", "=", "User"], ["role", "in", ["System Manager", "Impersonate User", "mGrant Donor Admin"]]], limit_page_length: 0 }).catch(e => { out.warnings.push("admin roles: " + e.message); return []; });
   out.log_retention = ((await api("/api/resource/Log%20Settings/Log%20Settings")).logs_to_clear || []).map(x => ({ dt: x.ref_doctype, days: x.days }));
   out.has_role = await api("/api/method/frappe.client.get_list", { doctype: "Has Role", parent: "User", fields: ["parent", "role"], filters: [["parenttype", "=", "User"], ["role", "like", "%Full Access"]], limit_page_length: 0 }).catch(e => { out.warnings.push("has_role: " + e.message); return []; });
+  // ---- CE Impact: aggregate value fields per record (no names, no beneficiary details) ----
+  const IMPACT = {
+    "ICE Form": ["thematic_area", "initiative", "grand_total"],
+    "Hunger Awareness Form": ["total_participants"],
+    "MCH Activity Form": ["awareness_population", "pw_registered", "children_registered", "children_anthropometry", "children_malnourished_referred"],
+    "Monthly Meal Donation Form": ["meals_distributed", "students_received_meals"],
+    "Food Rescue Form": ["quantity", "value"],
+    "Food Distribution Form": ["bene_total", "quantity"],
+    "Training": ["ent_attendees"],
+    "Member Enrolment": [],
+    "Enterprise Master": [],
+    "Enterprise Progress Visit": ["monthly_income", "monthly_sales"],
+    "Menstrual Hygiene Training": ["mh_trainees", "mh_improved_knowledge"],
+    "Menstrual Hygiene Champion": ["mh_women_reached"],
+    "Menstrual Hygiene Period Van": ["mh_van_reached"],
+    "Sanitary Pad Unit Visit": ["mh_napkins_made", "mh_revenue", "mh_women_count"],
+    "Menstrual Hygiene Micro-Entrepreneur": ["mh_packets_sold", "mh_me_income"],
+    "Champion": [], "Micro-Entrepreneur Master": [], "Manufacturing Unit Master": [],
+    "Household Survey": ["member_count"],
+    "Household Beneficiary": [],
+    "Scheme Application": ["lifecycle_status", "benefit_received_status", "scheme", "beneficiary"],
+    "Social Entitlements Enrolment Form": ["total_interactions", "new_applications_initiated"],
+    "Samridhi Mela Site Visit": ["name", "total_enrollments"]
+  };
+  out.impact = {};
+  for (const [dt, fl] of Object.entries(IMPACT)) {
+    try {
+      const one = ((await api(`/api/resource/${encodeURIComponent(dt)}?fields=["*"]&limit_page_length=1`).catch(() => [])) || [])[0] || {};
+      // location: Gen-2 forms use state/district/block/gram_panchayat; Gen-1 forms use zone/state/district/site
+      const extra = ["approval_status", "zone", "state", "district", "block", "gram_panchayat", "site", "submitted_by"].filter(k => k in one);
+      const rows = await list(dt, ["owner", "partner_name", "creation", ...extra, ...fl]);
+      out.impact[dt] = { fields: ["owner", "partner_name", "creation", ...extra, ...fl], rows: rows.map(r => ["owner", "partner_name", "creation", ...extra, ...fl].map(k => r[k] ?? null)) };
+    } catch (e) { out.warnings.push("impact " + dt + ": " + e.message); }
+  }
+  // location masters: State = Amazon zone, District = state (province), Block = facility, Gram Panchayat = BU-site
+  out.geo = {
+    zones: await list("State", ["name", "state_name"]).catch(() => []),
+    provinces: await list("District", ["name", "district_name", "state"]).catch(() => []),
+    blocks: await list("Block", ["name", "block_name", "district"]).catch(() => []),
+    sites: await list("Gram Panchayat", ["name", "gram_pachayat_name", "block", "district", "state"]).catch(() => [])
+  };
+  // MoU KPI targets on the grant side (Project Output planning table)
+  try {
+    const po = await list("Project Output", ["name", "project_proposal", "kpi", "frequency"]);
+    for (const p of po) { try { const d = await api(`/api/resource/Project%20Output/${encodeURIComponent(p.name)}`); p.plan = (d.planning_table || []).map(x => [x.year || "", x.quarter || "", +x.target || 0]); } catch { p.plan = []; } }
+    const kp = [...new Set(po.map(p => p.kpi).filter(Boolean))];
+    const names = kp.length ? await list("KPIs", ["name", "kpi_name", "kpi_type"], [["name", "in", kp]]) : [];
+    out.mou = { outputs: po, kpis: names };
+  } catch (e) { out.warnings.push("mou: " + e.message); out.mou = { outputs: [], kpis: [] }; }
+
   out.error_log_30d = await api(`/api/method/frappe.client.get_count?doctype=Error%20Log&filters=${encodeURIComponent(JSON.stringify([["creation", ">", new Date(Date.now() - 30 * 864e5).toISOString().slice(0, 10)]]))}`);
 
   fs.writeFileSync(path.join(__dirname, "snapshot.json"), JSON.stringify(out));

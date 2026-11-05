@@ -175,6 +175,46 @@ svg.chart rect.bar{cursor:pointer;transition:opacity .1s}
 svg.chart g.col:hover rect.bar{opacity:.8}
 svg.chart rect.hit{fill:transparent}
 .note{font-size:13px;color:var(--muted);background:var(--soft);border-radius:8px;padding:10px 12px}
+/* Partners page */
+.phead{display:flex;flex-wrap:wrap;gap:14px;align-items:center;justify-content:space-between;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px 18px;margin-bottom:16px;box-shadow:0 1px 2px rgba(16,24,40,.04)}
+.phead .ph-l{display:flex;gap:14px;align-items:flex-start;min-width:0}
+.phead .ph-l .ic{flex:none;width:40px;height:40px;border-radius:10px;display:grid;place-items:center}
+.phead .ph-l .ic svg{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.phead h2{margin:0;font-size:20px;font-weight:600;letter-spacing:-.01em}
+.ph-pills{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+.ph-r{display:flex;gap:10px;align-items:flex-end;flex-wrap:wrap}
+.ph-r select{min-width:220px;max-width:100%}
+.pdir{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:14px}
+.pcard{display:flex;flex-direction:column;gap:10px;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px;text-decoration:none;color:var(--ink);box-shadow:0 1px 2px rgba(16,24,40,.04);transition:border-color .15s,box-shadow .15s}
+.pcard:hover{border-color:#9cc3e6;box-shadow:0 4px 12px rgba(16,24,40,.08)}
+.pc-h{display:flex;justify-content:space-between;gap:8px;align-items:flex-start}
+.pc-h b{font-size:15px;line-height:1.3}
+.pc-n{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.pc-n span{display:block;font-size:20px;font-weight:700}
+.pc-n em{font-style:normal;font-size:13px;color:var(--muted);font-weight:500}
+.pc-n small{color:var(--muted);font-size:12px}
+.kv{display:grid;grid-template-columns:max-content 1fr;gap:7px 18px;margin:0;font-size:13px}
+.kv dt{color:var(--muted)}
+.kv dd{margin:0;font-weight:500;min-width:0;overflow-wrap:anywhere}
+.kvrow{display:flex;justify-content:space-between;gap:10px;align-items:center;padding:8px 0;border-bottom:1px solid var(--line)}
+.kvrow:last-child{border-bottom:0}
+/* CE Impact */
+.ring{width:64px;height:64px;flex:none}
+.ring text{font:700 13px var(--font);fill:var(--ink)}
+.pcard2{display:flex;flex-direction:column;gap:12px}
+.pc2-h{display:flex;justify-content:space-between;align-items:flex-start;gap:12px}
+.eyebrow{font-size:11px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+.pc2-n{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.pc2-n span{display:block;font-size:22px;font-weight:700}
+.pc2-n small{color:var(--muted);font-size:12px}
+.pc2-l>div{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:7px 0;border-bottom:1px solid var(--line);font-size:13px}
+.pc2-l>div:last-child{border-bottom:0}
+.pbar{display:inline-block;width:70px;height:6px;border-radius:4px;background:var(--soft);margin-right:8px;vertical-align:middle;overflow:hidden}
+.pbar i{display:block;height:100%}
+.mini{border:1px solid var(--line);border-radius:10px;padding:12px 14px;min-width:0}
+.mini .num{font-size:20px;font-weight:700}
+tr.grp td{background:var(--soft);padding-top:10px}
+tr.tot td{font-weight:600;border-top:1px solid #cfd5dd}
 .note b{color:var(--ink)}
 #tip{position:fixed;z-index:60;pointer-events:none;background:#1f2937;color:#fff;font-size:12.5px;line-height:1.45;padding:8px 10px;border-radius:8px;box-shadow:0 6px 18px rgba(0,0,0,.18);max-width:260px}
 #tip b{font-weight:600}
@@ -307,23 +347,36 @@ const ICON = {
   forms:'<svg viewBox="0 0 24 24"><rect x="5" y="3" width="14" height="18" rx="2"/><path d="M9 8h6M9 12h6M9 16h4"/></svg>',
   grants:'<svg viewBox="0 0 24 24"><path d="M4 7h16v12H4z"/><path d="M9 7V5h6v2M4 12h16"/></svg>',
   logs:'<svg viewBox="0 0 24 24"><path d="M12 7v5l3 2"/><circle cx="12" cy="12" r="9"/></svg>',
-  team:'<svg viewBox="0 0 24 24"><rect x="3" y="7" width="18" height="13" rx="2"/><path d="M9 7V5h6v2M3 13h18"/></svg>'
+  team:'<svg viewBox="0 0 24 24"><rect x="3" y="7" width="18" height="13" rx="2"/><path d="M9 7V5h6v2M3 13h18"/></svg>',
+  partner:'<svg viewBox="0 0 24 24"><path d="M4 21V8l8-5 8 5v13"/><path d="M9 21v-6h6v6M9 11h.01M15 11h.01"/></svg>',
+  ce:'<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1"/></svg>',
+  prog:'<svg viewBox="0 0 24 24"><path d="M4 19h16M7 16V9M12 16V5M17 16v-4"/></svg>',
+  pil:'<svg viewBox="0 0 24 24"><path d="M3 21h18M5 21V10M10 21V10M14 21V10M19 21V10M2 10l10-6 10 6z"/></svg>'
 };
 let NAV = [
   {id:"overview", label:"Overview", sub:"How iNOPS is being used across partners, forms and field users", grp:"Amazon CSR", tabs:[["summary","Summary"],["trend","Weekly trend"],["partners","Partner scorecard"]]},
+  {id:"partner", label:"Partners", sub:"One partner at a time: forms, users, activity and grant", grp:"Amazon CSR", tabs:[["profile","Profile"],["forms","Forms & submissions"],["users","Field users"],["access","Access & activity"],["grant","Grant & compliance"]]},
   {id:"users", label:"Field users", sub:"Who has access, who is filling forms, who has stopped", grp:"Amazon CSR", tabs:[["status","Status overview"],["inactive","Needs follow-up"],["top","Top contributors"],["all","User directory"]]},
   {id:"forms", label:"Forms", sub:"Every iNOPS form: volume, review status and coverage", grp:"Amazon CSR", tabs:[["catalogue","Form summary"],["review","Approvals"],["channel","Submission channel"],["gaps","Setup gaps"]]},
   {id:"grants", label:"Grants", sub:"GAFs, grants, compliance reporting and budget", grp:"Amazon CSR", tabs:[["portfolio","Grant portfolio"],["compliance","Compliance reporting"],["budget","Budget & tranches"],["link","Grants vs field activity"]]},
   {id:"team", label:"Amazon team", sub:"", grp:"Amazon CSR", tabs:[["usage","Team activity"]]},
+  {id:"ce", label:"Leadership", sub:"", grp:"CE Impact", tabs:[["overview","Overview"],["zones","Zones & sites"],["indicators","Indicators & sources"],["trend","Month by month"]]},
+  {id:"prog", label:"Programme", sub:"", grp:"CE Impact", tabs:[["coverage","Indicator coverage"],["partners","Partner performance"],["officers","GM/PM officers"],["quality","Data quality"],["mou","MoU KPIs"],["funds","Funds"]]},
+  {id:"pil", label:"Pillar", sub:"", grp:"CE Impact", tabs:[["food","Food Security"],["liv","Livelihoods"],["soc","Social Security"]]},
   {id:"logs", label:"Logs", sub:"Web sign-ins and data freshness", grp:"Dhwani internal", tag:"INTERNAL", tabs:[["signins","Web sign-ins"],["freshness","Data freshness"],["loginas","Login As sessions"]]}
 ];
 let route = {sec:"overview", tab:"summary"};
 function parseHash(){
   const h = (location.hash||"").replace(/^#/,"");
-  const [sec, tab] = h.split("-");
-  const n = NAV.find(x => x.id === sec) || NAV[0];
-  route = {sec:n.id, tab:(n.tabs.find(t => t[0] === tab) || n.tabs[0])[0]};
+  const [sec, tab, ...rest] = h.split("-");
+  const n = NAV.find(x => x.id === sec) || NAV.find(x => D && x.id === D.home) || NAV[0];
+  // Partners section carries the NGO id in the link: #partner-forms-NGO-0012
+  route = {sec:n.id, tab:(n.tabs.find(t => t[0] === tab) || n.tabs[0])[0], pid:n.id === "partner" ? decodeURIComponent(rest.join("-")) || null : null};
 }
+/* partner in view: the Partners page's own partner, else the Partner filter */
+function curP(){ if (!route.pid) return null; const i = D.partners.findIndex(p => p.id === route.pid); return i < 0 ? null : i; }
+function scopeP(){ return route.sec === "partner" ? curP() : S.partner === "" ? null : +S.partner; }
+function partnerIds(){ return [...new Set([...FIELD_USERS.map(u => u.p), ...D.facts.map(f => f[F_P]), ...D.grants.map(g => g.p)])].filter(p => D.partners[p].id !== "(none)").sort((a,b) => pName(a).localeCompare(pName(b))); }
 
 /* ---------- derived data ---------- */
 // facts: [day, form, partner, status, mobile, user, count]
@@ -346,7 +399,7 @@ function range(){
 }
 function rows(opts={}){
   const [a,b] = opts.allTime ? ["2000-01-01","2999-12-31"] : range();
-  const P = S.partner === "" ? null : +S.partner;
+  const P = scopeP();
   return D.facts.filter(f => {
     const d = D.days[f[F_DAY]];
     if (d < a || d > b) return false;
@@ -357,9 +410,9 @@ function rows(opts={}){
 }
 const sum = arr => arr.reduce((a,f) => a + f[F_N], 0);
 function group(arr, keyFn){ const m = new Map(); arr.forEach(f => { const k = keyFn(f); m.set(k, (m.get(k)||0) + f[F_N]); }); return m; }
-function usersScoped(){ return FIELD_USERS.filter(u => S.partner === "" || u.p === +S.partner); }
+function usersScoped(){ const P = scopeP(); return FIELD_USERS.filter(u => P === null || u.p === P); }
 function periodText(){ const [a,b] = range(); return S.period === "all" ? "Since " + dlabelY(D.go_live || "2026-07-01") : S.period === "custom" ? dlabelY(a) + " – " + dlabelY(b) : "Last " + S.period + " days"; }
-function scopeText(){ return [periodText(), S.pillar || "All pillars", S.partner === "" ? "All partners" : D.partners[+S.partner].name].join(" · "); }
+function scopeText(){ if (CE_SECS.has(route.sec)) return ceScope(); const P = scopeP(); return [periodText(), S.pillar || "All pillars", P === null ? "All partners" : D.partners[P].name].join(" · "); }
 const pName = p => D.partners[p] ? D.partners[p].name : "—";
 
 /* ---------- small renderers ---------- */
@@ -408,7 +461,7 @@ function niceMax(v){ if (v <= 5) return 5; const p = Math.pow(10, Math.floor(Mat
 /* column chart: series [{label, tipTitle, value, segs?:[{v,c,t}]}]; every column carries a hover tooltip with its numbers */
 function columnChart(series, {height=240, line=null, lineLabel="7-day average", partialLast=false, labelEvery=1, color="#5b9bd5"}={}){
   if (!series.length) return `<div class="empty">Nothing in this selection.</div>`;
-  const W = 900, H = height, L = 48, R = 12, T = 12, B = 30;
+  const W = 900, H = height, L = 62, R = 12, T = 12, B = 30;
   const maxV = niceMax(Math.max(...series.map(s => s.value), ...(line||[]).map(v => v||0), 1));
   const iw = W-L-R, ih = H-T-B, bw = iw/series.length, gap = Math.max(1, Math.min(6, bw*.28));
   const y = v => T + ih - v/maxV*ih;
@@ -610,9 +663,12 @@ function openDrill(btn){
   if (k === "pw"){ const p = +a, w = b; return drill(`${pName(p)} · week of ${dlabelY(w)}`, `${dlabel(w)} – ${dlabel(addDays(w,6))}`, f => f[F_P] === p && weekStart(D.days[f[F_DAY]]) === w && (!S.pillar || D.forms[f[F_FORM]].pillar === S.pillar)); }
   if (k === "pt"){ const p = +a; return drill(`${pName(p)} · ${periodText()}`, scopeText(), f => f[F_P] === p && inScope(f)); }
   if (k === "p7"){ const p = +a, y = addDays(D.today,-1); return drill(`${pName(p)} · last 7 days`, `${dlabel(addDays(y,-6))} – ${dlabel(y)}`, f => f[F_P] === p && D.days[f[F_DAY]] >= addDays(y,-6) && D.days[f[F_DAY]] <= y); }
-  if (k === "f"){ const i = +a; return drill(`${D.forms[i].form} · ${periodText()}`, scopeText(), f => f[F_FORM] === i && inScope(f) && (S.partner === "" || f[F_P] === +S.partner)); }
+  const P = scopeP();
+  if (k === "f"){ const i = +a; return drill(`${D.forms[i].form} · ${periodText()}`, scopeText(), f => f[F_FORM] === i && inScope(f) && (P === null || f[F_P] === P)); }
   if (k === "u"){ const u = +a; return drill(`${D.users[u].nm} · all records`, D.users[u].e, f => f[F_U] === u); }
-  if (k === "rv"){ const i = +a; return drill(`${D.forms[i].form} · waiting in Review`, scopeText(), f => f[F_FORM] === i && f[F_ST] === 1 && inScope(f) && (S.partner === "" || f[F_P] === +S.partner)); }
+  if (k === "rv"){ const i = +a; return drill(`${D.forms[i].form} · waiting in Review`, scopeText(), f => f[F_FORM] === i && f[F_ST] === 1 && inScope(f) && (P === null || f[F_P] === P)); }
+  if (k === "pf"){ const p = +a, i = +b; return drill(`${pName(p)} · ${D.forms[i].form}`, scopeText(), f => f[F_P] === p && f[F_FORM] === i && inScope(f)); }
+  if (k === "pst"){ const p = +a, st = +b; return drill(`${pName(p)} · ${STATUS_TXT[st]}`, scopeText(), f => f[F_P] === p && f[F_ST] === st && inScope(f)); }
 }
 
 /* copy e-mail addresses of the rows currently shown by a table's search and filters */
@@ -729,7 +785,12 @@ function userCols(extra=[]){
   ];
 }
 const uFilters = [{label:"Partner", get:r => pName(r.p)}, {label:"Status", get:r => ST[r.st].label}];
-function userTable(id, extra, data, opt){ const cols = userCols(extra); const html = table(id, cols, data, {filters:uFilters, ...opt}); return html; }
+function userTable(id, extra, data, opt){
+  // on a partner's own page the Partner column and filter add nothing
+  const inP = route.sec === "partner" && !$("#layer .drawer");
+  const cols = userCols(extra).map(c => inP && c.h === "Partner" ? {...c, noShow:true} : c);
+  return table(id, cols, data, {filters:inP ? uFilters.slice(1) : uFilters, ...opt});
+}
 V.users_inactive = () => {
   const U = usersScoped();
   const never = U.filter(u => u.st === "opened" || u.st === "never").map(u => ({...u, _id:u.p}));
@@ -951,6 +1012,452 @@ V.logs_freshness = () => {
   return `<div class="grid g2">${card("By form", "Oldest first", table("frF", cols("Form"), fr, {search:false, sort:2, name:"Freshness by form"}), {key:"freshness"})}${card("By partner", "Oldest first", table("frP", cols("Partner"), pr, {search:false, sort:2, name:"Freshness by partner"}))}</div>`;
 };
 
+/* ---------- CE Impact: framework indicators from iNOPS forms ---------- */
+const CE_SECS = new Set(["ce","prog","pil"]);
+const MONTHS_LONG = ["January","February","March","April","May","June","July","August","September","October","November","December"];
+const mLabel = k => MON[+k.slice(5,7)-1] + " " + k.slice(0,4);
+const mRange = k => { const y = +k.slice(0,4), m = +k.slice(5,7); const py = m === 1 ? y-1 : y, pm = m === 1 ? 12 : m-1; return `26 ${MON[pm-1]} – 25 ${MON[m-1]}`; };
+const qOf = k => "Q" + Math.ceil(+k.slice(5,7)/3);
+// where each indicator comes from, and what is still open
+const CE_NOTE = {
+  "A.1.1":"ICE Form food-security sessions (both food KPIs, including ‘Nutrition access & support’) and the Hunger Awareness form. Akshaya Patra's school awareness is reported outside iNOPS.",
+  "A.1.2":"MCH Activity Form · population covered for awareness (SNEHA). No SNEHA records since go-live.",
+  "A.1.3":"MCH Activity Form · pregnant women + children registered with ICDS. Counting rule to confirm with SNEHA.",
+  "A.1.4":"MNP Monthly Reporting form · students who received meals. Form is live; Akshaya Patra has not submitted on it yet.",
+  "A.1.5":"Pantry Distribution · total beneficiaries. Pantry Collection holds items, not people, so it is not counted here.",
+  "A.2.1":"ICE Form livelihood-awareness sessions and BuddhiMoney Training participants. AccessDev, GAME and RTP awareness is not filed on iNOPS yet.",
+  "A.2.2":"Member Enrolment · members enrolled (GAME). Counting rule is an open Amazon decision: enrolled, trained or completed.",
+  "A.2.3":"ICE Form menstrual-hygiene sessions + MH Training trainees + Women Champion Visit reach + Period Van reach (split columns summed).",
+  "A.3.1":"ICE Form financial-wellbeing sessions + Social Entitlements Enrolment Form interactions.",
+  "A.3.2":"Scheme Application · applications filed (Applied or later) + Social Entitlements Enrolment Form new applications. Rule open: unique people, applications or benefits delivered.",
+  "A.4.1":"No form on iNOPS. Jan Sahas reports waste management outside the platform.",
+  "B.1.1":"Samriddhi Mela Site Visit · total enrolments. One record with 71 lakh enrolments is left out as an entry error.",
+  "B.1.2":"No form on iNOPS. Pratidhi scholarships (Buddy4Study) are reported outside the platform.",
+  "B.1.3":"No form on iNOPS. The Ashray form is on hold and does not capture centres set up.",
+  "B.1.4":"No form on iNOPS. There is no field for delivery-associate visits.",
+  "C.1.1":"Goodera platform, outside iNOPS.", "C.1.2":"Goodera platform, outside iNOPS.", "C.1.3":"Goodera platform, outside iNOPS.", "C.1.4":"Goodera platform, outside iNOPS."
+};
+const CE_RULE = new Set(["A.1.3","A.2.2","A.3.2"]);
+const SRC = {live:["Live on iNOPS","p-good"], empty:["Form ready, no records","p-warn"], rule:["Live · rule to confirm","p-plum"], none:["Not on iNOPS","p-idle"]};
+const PILLARS = [["A.1","Food Security","food","#f2b06a"],["A.2","Livelihoods","liv","#6cc3a0"],["A.3","Social Security","soc","#5b9bd5"]];
+const ceInd = () => D.impact.goals.indicators;
+const ceMet = () => D.impact.metrics;
+function ceMonthsSel(){
+  const M = D.impact.months, k = S.ceP || "all";
+  if (k === "all") return M;
+  if (/^Q\d$/.test(k)) return M.filter(m => qOf(m) === k);
+  return M.filter(m => m === k);
+}
+function ceFacts({months=ceMonthsSel(), partner=S.ceProgP, appr=S.ceApp, zone=S.ceZ}={}){
+  const set = new Set(months.map(m => D.impact.months.indexOf(m)));
+  const P = partner === undefined || partner === "" ? null : +partner;
+  const Z = zone === undefined || zone === "" ? null : +zone;
+  return D.impact.facts.filter(f => set.has(f[0]) && (P === null || f[2] === P) && (Z === null || f[6] === Z) && (appr !== "appr" || f[3] === 1));
+}
+/* approved-only twin of a fact set, for the All vs Approved split shown side by side */
+const apprOf = F => F.filter(f => f[3] === 1);
+const siteOf = f => D.impact.sites[f[7]] || {code:"", name:"(no site)", bu:"Unassigned", zone:"", prov:""};
+const indVal = (id, F) => F.reduce((a,f) => a + (ceMet()[f[1]].ind === id ? f[4] : 0), 0);
+const metVal = (id, F) => { const i = ceMet().findIndex(m => m.id === id); return F.reduce((a,f) => a + (f[1] === i ? f[4] : 0), 0); };
+function goalFor(ind, months){ return Math.round(months.reduce((a,m) => a + (ind.goal_q[qOf(m)] || 0)/3, 0)); }
+function page0For(ind, months){ const P0 = D.impact.goals.page0_months; let v = 0, any = false; months.forEach(m => { const i = P0.indexOf(m); if (i >= 0){ v += ind.page0[i] || 0; any = true; } }); return any ? v : null; }
+function indSrc(id, Fall){
+  const mets = ceMet().filter(m => m.ind === id); if (!mets.length) return "none";
+  const has = Fall.some(f => ceMet()[f[1]].ind === id && f[4]); if (!has) return "empty";
+  return CE_RULE.has(id) ? "rule" : "live";
+}
+const band = p => p === null ? ["No goal","p-idle"] : p >= 100 ? ["Achieved","p-good"] : p >= 85 ? ["On track","p-good"] : p >= 60 ? ["Making progress","p-warn"] : ["Needs focus","p-bad"];
+const srcPill = k => `<span class="pill ${SRC[k][1]}">${SRC[k][0]}</span>`;
+function ceScope(){ const k = S.ceP || "all"; const per = k === "all" ? "Since go-live (MBR months)" : /^Q/.test(k) ? `${k} ${D.impact.months.filter(m => qOf(m) === k).map(mLabel).join(", ")}` : `${mLabel(k)} (${mRange(k)})`; return [per, S.ceProgP ? pName(+S.ceProgP) : "All partners", S.ceZ ? D.impact.zones[+S.ceZ] + " zone" : "All zones", S.ceApp === "appr" ? "Approved records only" : "All records (includes Review)"].join(" · "); }
+function renderCeFilters(){
+  const f = $("#filters"); f.hidden = false;
+  const M = D.impact.months, qs = [...new Set(M.map(qOf))];
+  const ps = [...new Set(D.impact.facts.map(x => x[2]))].filter(p => D.partners[p] && D.partners[p].id !== "(none)").sort((a,b) => pName(a).localeCompare(pName(b)));
+  f.innerHTML = `<div class="fl ${S.ceP && S.ceP!=="all"?"set":""}"><label for="ceP">MBR period</label><select id="ceP"><option value="all">Since go-live</option>${qs.map(q => `<option value="${q}" ${S.ceP===q?"selected":""}>${q} 2026</option>`).join("")}${M.map(m => `<option value="${m}" ${S.ceP===m?"selected":""}>${mLabel(m)} · ${mRange(m)}${m === M[M.length-1] ? " (open)" : ""}</option>`).join("")}</select></div>
+  ${route.sec === "pil" ? "" : `<div class="fl ${S.ceProgP?"set":""}"><label for="ceProgP">Partner</label><select id="ceProgP"><option value="">All partners</option>${ps.map(p => `<option value="${p}" ${String(p)===S.ceProgP?"selected":""}>${esc(pName(p))}</option>`).join("")}</select></div>`}
+  <div class="fl ${S.ceZ?"set":""}"><label for="ceZ">Zone</label><select id="ceZ"><option value="">All zones</option>${D.impact.zones.map((z,i) => z ? `<option value="${i}" ${String(i)===S.ceZ?"selected":""}>${esc(z)}</option>` : "").join("")}</select></div>
+  <div class="chips" role="group" aria-label="Approval">${[["all","All records"],["appr","Approved only"]].map(([k,l]) => `<button data-ceapp="${k}" class="${(S.ceApp||"all")===k?"on":""}">${l}</button>`).join("")}</div>
+  <span class="scope">${esc(ceScope())}</span>`;
+}
+function ring(p, col){ const r = 26, C = 2*Math.PI*r, v = Math.max(0, Math.min(100, p ?? 0)); return `<svg class="ring" viewBox="0 0 64 64" role="img" aria-label="${p ?? 0}%"><circle cx="32" cy="32" r="${r}" fill="none" stroke="#eef0f3" stroke-width="7"/><circle cx="32" cy="32" r="${r}" fill="none" stroke="${col}" stroke-width="7" stroke-linecap="round" stroke-dasharray="${C*v/100} ${C}" transform="rotate(-90 32 32)"/><text x="32" y="36" text-anchor="middle">${p === null ? "—" : p + "%"}</text></svg>`; }
+const ceMarker = F => { const rv = F.filter(f => f[3] === 0).reduce((a,f) => a + f[5], 0); const tot = F.reduce((a,f) => a + f[5], 0); return `<div class="note" style="margin-bottom:16px"><b>Counted only from records filled on iNOPS</b> (not partner Excel). ${S.ceApp === "appr" ? "Showing <b>approved records only</b>." : `Numbers show <b>all records</b>, with the <b>approved</b> part beside them: ${fmt(tot - rv)} of ${fmt(tot)} records are approved, ${fmt(rv)} are still in Review.`} Months run 26th to 25th, as in the MBR. Goals come from the 2026 goal sheet, which is not on iNOPS.</div>`; };
+function ceDrill(title, pred){
+  const F = ceFacts().filter(pred);
+  const data = F.map((f,i) => ({_id:i, m:D.impact.months[f[0]], met:ceMet()[f[1]].label, dt:ceMet()[f[1]].dt, ind:ceMet()[f[1]].ind || "Outcome", p:pName(f[2]), st:f[3] ? "Approved" : "Review", v:f[4], n:f[5], z:D.impact.zones[f[6]] || "", s:siteOf(f)}));
+  const tb = table("ceDd", [{h:"MBR month", v:r => r.m, html:r => mLabel(r.m)}, {h:"Indicator", v:r => r.ind}, {h:"Counted from", v:r => r.met, html:r => `${esc(r.met)}<div class="muted small">${esc(r.dt)}</div>`}, {h:"Partner", v:r => r.p}, {h:"Zone", v:r => r.z}, {h:"Site", v:r => r.s.name, html:r => `${esc(r.s.name)}<div class="muted small">${esc(r.s.bu)}</div>`}, {h:"Status", v:r => r.st}, {h:"Records", r:1, v:r => r.n}, {h:"Value", r:1, v:r => r.v, html:r => `<b>${fmt(r.v)}</b>`}], data, {sort:0, name:title, filters:[{label:"Partner", get:r => r.p}, {label:"Counted from", all:"All sources", get:r => r.met}]});
+  drawer(`<h2>${esc(title)}</h2><div class="muted">${esc(ceScope())} · data as of ${esc(asOf())}</div><div class="grid g3" style="margin-top:16px">${kpi({icon:"target", label:"Value", value:fmt(F.reduce((a,f) => a+f[4], 0))})}${kpi({icon:"forms", tone:"t-teal", label:"Records", value:fmt(F.reduce((a,f) => a+f[5], 0))})}${kpi({icon:"partner", tone:"t-amber", label:"Partners", value:new Set(F.map(f => f[2])).size})}</div><section><h4>Where the number comes from</h4>${tb}</section>`);
+}
+const ceBtn = (kind, a, b, label) => `<button class="cellbtn" data-cedd="${kind}" data-a="${esc(a)}" data-b="${esc(b ?? "")}">${label}</button>`;
+function openCeDrill(btn){
+  const k = btn.dataset.cedd, a = btn.dataset.a, b = btn.dataset.b;
+  const indOf = f => ceMet()[f[1]].ind;
+  if (k === "ind") return ceDrill(`${a} · ${(ceInd().find(x => x.id === a)||{}).short || ""}`, f => indOf(f) === a);
+  if (k === "indm") return ceDrill(`${a} · ${mLabel(b)}`, f => indOf(f) === a && D.impact.months[f[0]] === b);
+  if (k === "indp") return ceDrill(`${a} · ${pName(+b)}`, f => indOf(f) === a && f[2] === +b);
+  if (k === "met") return ceDrill((ceMet().find(m => m.id === a)||{}).label || a, f => ceMet()[f[1]].id === a);
+  if (k === "kind") return ceDrill(a === "touched" ? "Lives touched" : "Lives impacted", f => { const i = ceInd().find(x => x.id === indOf(f)); return i && i.kind === a; });
+}
+
+function ceIndicatorRows(F, months){
+  const Fall = D.impact.facts;
+  return ceInd().map(ind => {
+    const v = indVal(ind.id, F), g = goalFor(ind, months), src = indSrc(ind.id, Fall);
+    const partners = new Set(F.filter(f => ceMet()[f[1]].ind === ind.id && f[4]).map(f => f[2])).size;
+    return {_id:ind.id, ...ind, v, g, p:g && src !== "none" ? pct(v,g) : null, src, partners};
+  });
+}
+V.ce_overview = () => {
+  const months = ceMonthsSel(), F = ceFacts(), rows = ceIndicatorRows(F, months);
+  const sumK = k => rows.filter(r => r.kind === k && r.src !== "none").reduce((a,r) => a + r.v, 0), gK = k => rows.filter(r => r.kind === k && r.src !== "none").reduce((a,r) => a + r.g, 0);
+  const t = sumK("touched"), i = sumK("impacted"), gt = gK("touched"), gi = gK("impacted");
+  const FA = apprOf(F), apK = k => rows.filter(r => r.kind === k && r.src !== "none").reduce((a,r) => a + indVal(r.id, FA), 0);
+  const withData = rows.filter(r => r.v).length, measurable = rows.filter(r => r.src !== "none").length;
+  const parts = new Set(F.filter(f => ceMet()[f[1]].ind && f[4]).map(f => f[2])).size;
+  const pill = PILLARS.map(([code, name, tab, col]) => {
+    const R = rows.filter(r => r.pil === code), lt = R.filter(r => r.kind === "touched"), li = R.filter(r => r.kind === "impacted");
+    const vt = lt.reduce((a,r) => a+r.v, 0), vi = li.reduce((a,r) => a+r.v, 0), g = R.filter(r => r.src !== "none").reduce((a,r) => a+r.g, 0);
+    const p = g ? pct(vt+vi, g) : null; const lead = (D.impact.goals.pillars[code]||{}).lead;
+    return `<section class="card pcard2"><div class="pc2-h"><div><div class="eyebrow">${code}${lead ? " · Lead: " + esc(lead) : ""}</div><h3 style="margin:2px 0 0">${name}</h3></div>${ring(p, col)}</div>
+      <div class="pc2-n"><div><span class="num">${fmt(vt)}</span><small>lives touched · approved ${fmt(lt.reduce((a,r) => a + indVal(r.id, FA), 0))}</small></div><div><span class="num">${fmt(vi)}</span><small>lives impacted · approved ${fmt(li.reduce((a,r) => a + indVal(r.id, FA), 0))}</small></div></div>
+      <div class="pc2-l">${R.map(r => `<div><span>${r.id} ${esc(r.short)}</span>${r.src === "none" ? srcPill("none") : r.src === "empty" ? srcPill("empty") : `<span class="pill ${band(r.p)[1]}">${r.p === null ? "—" : r.p + "%"}</span>`}</div>`).join("")}</div>
+      <a href="#pil-${tab}">Open pillar view →</a></section>`;
+  }).join("");
+  const M = D.impact.months;
+  const mk = kind => columnChart(M.map(m => { const Fm = ceFacts({months:[m]}); const v = rows.filter(r => r.kind === kind && r.src !== "none").reduce((a,r) => a + indVal(r.id, Fm), 0); return {label:MON[+m.slice(5,7)-1], tipTitle:`${mLabel(m)} · ${mRange(m)}`, value:v}; }), {height:200, partialLast:true, color:kind === "touched" ? "#5b9bd5" : "#6cc3a0", line:M.map(m => rows.filter(r => r.kind === kind && r.src !== "none").reduce((a,r) => a + goalFor(r, [m]), 0)), lineLabel:"Goal (goal sheet)"});
+  const outside = rows.filter(r => r.src === "none");
+  return ceMarker(F) + `<div class="grid g4">
+    ${kpi({icon:"people", label:"Lives touched", value:ceBtn("kind","touched","",fmt(t)), progress:gt ? pct(t,gt) : null, foot:`<b>Approved: ${fmt(apK("touched"))}</b> · ${gt ? `${pct(t,gt)}% of ${fmt(gt)} goal` : "no goal for these months"}`})}
+    ${kpi({icon:"check", tone:"t-green", label:"Lives impacted", value:ceBtn("kind","impacted","",fmt(i)), progress:gi ? pct(i,gi) : null, foot:`<b>Approved: ${fmt(apK("impacted"))}</b> · ${gi ? `${pct(i,gi)}% of ${fmt(gi)} goal` : "no goal for these months"}`})}
+    ${kpi({icon:"target", tone:"t-teal", label:"Indicators with iNOPS data", value:`${withData} <small>of ${ceInd().length}</small>`, foot:`${measurable} have a form on iNOPS · ${ceInd().length - measurable} reported outside`, href:"ce-indicators"})}
+    ${kpi({icon:"partner", tone:"t-amber", label:"Partners reporting", value:fmt(parts), foot:"submitted a counted form in this period", href:"prog-partners"})}
+  </div>
+  ${sectionHead("Where we stand against goal", "Indicators with a form on iNOPS · goal = quarter goal ÷ 3 per MBR month")}
+  <div class="grid g3">${pill}</div>
+  <div class="grid g2">${card("Lives touched by MBR month", "Bars from iNOPS · orange line is the goal-sheet goal · last month still open", mk("touched"))}${card("Lives impacted by MBR month", "Bars from iNOPS · orange line is the goal-sheet goal", mk("impacted"))}</div>
+  ${card(`Reported outside iNOPS <span class="pill p-idle">${outside.length}</span>`, "These framework lines have no form on the platform, so this dashboard cannot count them", `<div class="pc2-l">${outside.map(r => `<div><span><b>${r.id}</b> ${esc(r.short)} <span class="muted small">· ${esc(CE_NOTE[r.id] || "")}</span></span>${srcPill("none")}</div>`).join("")}</div>`)}`;
+};
+V.ce_indicators = () => {
+  const months = ceMonthsSel(), F = ceFacts(), rows = ceIndicatorRows(F, months);
+  const Q3 = D.impact.months.filter(m => qOf(m) === "Q3"), F3 = ceFacts({months:Q3});
+  const FA = apprOf(F); rows.forEach(r => { r.a = indVal(r.id, FA); });
+  rows.forEach(r => { r.p0 = page0For(r, Q3); r.i3 = indVal(r.id, F3); r.cap = r.p0 && r.src !== "none" ? pct(r.i3, r.p0) : null; });
+  const cnt = k => rows.filter(r => r.src === k).length;
+  const cols = [
+    {h:"Indicator", v:r => r.id, html:r => `<b>${r.id}</b> ${esc(r.short)}<div class="muted small">${r.kind === "touched" ? "Lives touched" : r.kind === "impacted" ? "Lives impacted" : "Count"}</div>`, sv:r => r.id + " " + r.short},
+    {h:"Name", v:r => r.short, noShow:true},
+    {h:"On iNOPS", v:r => SRC[r.src][0], html:r => srcPill(r.src)},
+    {h:"All records", r:1, v:r => r.v, html:r => r.v ? ceBtn("ind", r.id, "", fmt(r.v)) : r.src === "none" ? `<span class="muted">—</span>` : "0"},
+    {h:"Approved", r:1, v:r => r.a, html:r => r.src === "none" ? `<span class="muted">—</span>` : fmt(r.a)},
+    {h:"Page 0, Jul–Sep", r:1, v:r => r.p0 ?? -1, x:r => r.p0 ?? "", html:r => r.p0 === null ? "—" : fmt(r.p0)},
+    {h:"iNOPS, Jul–Sep", r:1, v:r => r.i3, html:r => r.src === "none" ? "—" : fmt(r.i3)},
+    {h:"Share on iNOPS", r:1, v:r => r.cap ?? -1, x:r => r.cap ?? "", html:r => r.cap === null ? "—" : `<span class="pill ${r.cap >= 90 ? "p-good" : r.cap >= 40 ? "p-warn" : "p-bad"}">${r.cap}%</span>`},
+    {h:"How it is counted", v:r => CE_NOTE[r.id] || "", html:r => `<span class="small">${esc(CE_NOTE[r.id] || "")}</span>`}
+  ];
+  return ceMarker(F) + `<div class="grid g4">${kpi({icon:"check", tone:"t-green", label:"Live on iNOPS", value:cnt("live"), foot:"computed from forms today"})}${kpi({icon:"alert", tone:"t-purple", label:"Live, rule to confirm", value:cnt("rule"), foot:"Amazon or partner decision needed"})}${kpi({icon:"clock", tone:"t-amber", label:"Form ready, no records", value:cnt("empty"), foot:"partner has not filed on iNOPS"})}${kpi({icon:"pause", tone:"t-grey", label:"Not on iNOPS", value:cnt("none"), foot:"no form; reported outside"})}</div>` +
+    card("Every framework indicator, and where it comes from", `“Share on iNOPS” compares iNOPS with Page 0 for Jul–Sep: how much of what Amazon reads today the platform already captures. Click a value for the records behind it.`, table("ceIndT", cols, rows, {sort:null, pageSize:25, name:"CE indicators and sources", filters:[{label:"Status", all:"All statuses", get:r => SRC[r.src][0]}]})) + ceDq();
+};
+function ceDq(){
+  const q = D.impact.dq;
+  const rows = [
+    ["Samriddhi Mela entry error", q.sam_outliers.length ? q.sam_outliers.map(o => `${o[0]} (${o[1]}, ${o[2]}): ${fmt(o[3])} enrolments`).join("; ") : "none", "Left out of B.1.1. Ask the partner to correct the record.", q.sam_outliers.length],
+    ["Scheme Application status fields disagree", `${fmt(q.sa_status_conflict)} applications say benefit received = Yes while the lifecycle is not ‘Benefit Received’`, "A.3.2 benefits use the lifecycle field. Decide which field is the source of truth.", q.sa_status_conflict],
+    ["ICE records with no indicator", `${fmt(q.ice_unmapped)} records (${fmt(q.ice_unmapped_lives)} lives)`, "Need an initiative or thematic area.", q.ice_unmapped],
+    ["Lives touched = lives impacted on ICE Form", "The two ICE totals are the same number on every record", "ICE counts as lives touched only, never as impacted.", 1]
+  ];
+  return card("Data checks", "Problems found in the iNOPS records that change a number", `<div class="pc2-l">${rows.map(([a,b,c,n]) => `<div><span><b>${esc(a)}</b><br><span class="small">${esc(b)}</span><br><span class="muted small">${esc(c)}</span></span><span class="pill ${n ? "p-warn" : "p-good"}">${n ? "Check" : "OK"}</span></div>`).join("")}</div>`);
+}
+V.ce_trend = () => {
+  const M = D.impact.months, rows = ceInd().filter(i => ceMet().some(m => m.ind === i.id));
+  const Fm = M.map(m => ceFacts({months:[m]}));
+  const data = rows.map(ind => ({_id:ind.id, ...ind, mv:Fm.map(F => indVal(ind.id, F)), gv:M.map(m => goalFor(ind, [m]))}));
+  const cols = [{h:"Indicator", v:r => r.id, html:r => `<b>${r.id}</b> ${esc(r.short)}<div class="muted small">${r.kind === "touched" ? "Lives touched" : "Lives impacted"}</div>`, sv:r => r.id + " " + r.short},
+    ...M.map((m,j) => ({h:MON[+m.slice(5,7)-1] + (j === M.length-1 ? "*" : ""), r:1, v:r => r.mv[j], html:r => r.mv[j] ? `${ceBtn("indm", r.id, m, fmt(r.mv[j]))}${r.gv[j] ? `<div class="muted small">${pct(r.mv[j], r.gv[j])}% of goal</div>` : ""}` : `<span class="muted">0</span>`})),
+    {h:"Total", r:1, v:r => r.mv.reduce((a,b) => a+b, 0), html:r => `<b>${fmt(r.mv.reduce((a,b) => a+b, 0))}</b>`}];
+  return ceMarker(ceFacts({months:M})) + card("Indicators by MBR month", `Each month runs 26th to 25th · * ${mLabel(M[M.length-1])} is still open · click a number for its records`, table("ceTrT", cols, data, {search:false, sort:null, name:"CE indicators by month"}));
+};
+V.prog_coverage = () => {
+  const months = ceMonthsSel(), F = ceFacts(), rows = ceIndicatorRows(F, months).filter(r => r.src !== "none"), FA = apprOf(F);
+  const at = rows.filter(r => r.p !== null && r.p >= 100).length;
+  const cols = [
+    {h:"Indicator", v:r => r.id, html:r => `<b>${r.id}</b> ${esc(r.short)}<div class="muted small">${r.kind === "touched" ? "Lives touched" : "Lives impacted"} · ${r.partners} ${plural(r.partners,"partner","partners")}</div>`, sv:r => r.id + " " + r.short},
+    {h:"Actual (all records)", r:1, v:r => r.v, html:r => r.v ? ceBtn("ind", r.id, "", fmt(r.v)) : "0"},
+    {h:"Approved", r:1, v:r => indVal(r.id, FA)},
+    {h:"Goal", r:1, v:r => r.g, html:r => r.g ? fmt(r.g) : "—"},
+    {h:"% of goal", r:1, v:r => r.p ?? -1, x:r => r.p ?? "", html:r => r.p === null ? "—" : `<div class="pbar"><i style="width:${Math.min(100, r.p)}%;background:${r.p >= 100 ? "#7cc79a" : r.p >= 85 ? "#a8d8b6" : r.p >= 60 ? "#f6cd84" : "#f0a39b"}"></i></div>${r.p}%`},
+    {h:"Status", v:r => band(r.p)[0], html:r => r.src === "empty" ? srcPill("empty") : `<span class="pill ${band(r.p)[1]}">${band(r.p)[0]}</span>${r.src === "rule" ? ` <span class="pill p-plum">rule to confirm</span>` : ""}`}
+  ];
+  const pil = PILLARS.map(([code, name, , col]) => { const R = rows.filter(r => r.pil === code); const v = R.reduce((a,r) => a+r.v, 0), g = R.reduce((a,r) => a+r.g, 0); return {label:name, value:v, total:Math.max(v,g), segs:[{v, c:col, t:"Actual"}], vtext:g ? `${fmt(v)} · ${pct(v,g)}% of ${fmt(g)}` : fmt(v)}; });
+  return ceMarker(F) + `<div class="grid g4">${kpi({icon:"people", label:"Lives touched", value:fmt(rows.filter(r => r.kind === "touched").reduce((a,r) => a+r.v, 0))})}${kpi({icon:"check", tone:"t-green", label:"Lives impacted", value:fmt(rows.filter(r => r.kind === "impacted").reduce((a,r) => a+r.v, 0))})}${kpi({icon:"target", tone:"t-teal", label:"Indicators at or above goal", value:`${at} <small>of ${rows.length}</small>`, foot:"indicators with a form on iNOPS"})}${kpi({icon:"grant", tone:"t-amber", label:"MoU KPIs with targets", value:`${D.impact.mou.filter(x => x[5]).length} <small>of ${D.impact.mou.length}</small>`, foot:"on the grants, not yet linked to forms", href:"prog-mou"})}</div>` +
+    card("Pillars against goal", ceScope() + " · touched and impacted summed per pillar", barList(pil)) +
+    card("Indicator coverage", "Achieved ≥ 100% · On track 85–99% · Making progress 60–84% · Needs focus below 60%. Goals from the 2026 goal sheet.", table("ceCovT", cols, rows, {search:false, sort:null, name:"Indicator coverage"}));
+};
+V.prog_partners = () => {
+  const months = ceMonthsSel(), F = ceFacts({partner:""}); const inds = ceInd().filter(i => F.some(f => ceMet()[f[1]].ind === i.id && f[4]));
+  const ps = [...new Set(F.filter(f => ceMet()[f[1]].ind).map(f => f[2]))].filter(p => !S.ceProgP || p === +S.ceProgP);
+  const isQ3 = months.length && months.every(m => qOf(m) === "Q3") && months.length === 3;
+  const PG = Object.fromEntries((D.impact.partner_goals || []).filter(x => x.p !== null).map(x => [x.p, x.goals]));
+  const data = ps.map(p => { const Fp = F.filter(f => f[2] === p); return {_id:p, name:pName(p), vals:Object.fromEntries(inds.map(i => [i.id, indVal(i.id, Fp)])), recs:Fp.filter(f => ceMet()[f[1]].ind).reduce((a,f) => a+f[5], 0)}; });
+  const cols = [{h:"Partner", v:r => r.name, html:r => `<b>${esc(r.name)}</b><div class="muted small">${fmt(r.recs)} records</div>`},
+    ...inds.map(i => ({h:i.id, r:1, v:r => r.vals[i.id], html:r => { const v = r.vals[i.id], g = isQ3 && PG[r._id] ? PG[r._id][i.id] : null; return v ? `${ceBtn("indp", i.id, r._id, fmt(v))}${g ? `<div class="small"><span class="pill ${band(pct(v,g))[1]}">${pct(v,g)}% of ${fmt(g)}</span></div>` : ""}` : `<span class="muted">—</span>`; }}))];
+  return ceMarker(F) + card("Partner performance by indicator", `${ceScope()} · ${isQ3 ? "partner goals are the Q3 goals from the goal sheet" : "choose Q3 2026 in the period to compare with partner goals"} · click a number for its records`, table("cePartT", cols, data, {sort:1, name:"Partner performance by indicator"}) + `<div class="muted small" style="margin-top:10px">${inds.map(i => `<b>${i.id}</b> ${esc(i.short)}`).join(" · ")}</div>`);
+};
+V.prog_mou = () => {
+  const R = D.impact.mou.filter(x => !S.ceProgP || x[0] === +S.ceProgP).map((x,i) => ({_id:i, p:x[0], gaf:x[1], kpi:x[2], type:x[3], freq:x[4], tot:x[5], q:[x[6],x[7],x[8],x[9]]}));
+  const byP = new Map(); R.forEach(r => { const o = byP.get(r.p) || [0,0]; o[0]++; if (r.tot) o[1]++; byP.set(r.p, o); });
+  const cols = [{h:"Partner", v:r => pName(r.p), html:r => `<b>${esc(pName(r.p))}</b><div class="muted small">${esc(r.gaf)}</div>`}, {h:"GAF", v:r => r.gaf, noShow:true}, {h:"MoU KPI", v:r => r.kpi, html:r => `<span class="small">${esc(r.kpi)}</span>`}, {h:"Type", v:r => r.type}, {h:"Frequency", v:r => r.freq},
+    ...["Q1","Q2","Q3","Q4"].map((q,j) => ({h:q + " target", r:1, v:r => r.q[j], html:r => r.q[j] ? fmt(r.q[j]) : `<span class="muted">—</span>`})),
+    {h:"Total target", r:1, v:r => r.tot, html:r => r.tot ? `<b>${fmt(r.tot)}</b>` : `<span class="pill p-warn">No target</span>`},
+    {h:"Achievement on iNOPS", v:r => "Not linked", html:r => `<span class="pill p-idle">Not linked</span>`}];
+  return `<div class="note" style="margin-bottom:16px"><b>Partial on iNOPS.</b> Each grant's MoU KPIs and their quarterly targets are on the platform. Achievement against them is not: the forms are not linked to these KPIs, and nothing has been entered as grant-side achievement. Linking needs a signed-off form-to-KPI map.</div>` +
+    `<div class="grid g4">${kpi({icon:"target", label:"MoU KPIs on iNOPS", value:fmt(R.length), foot:`${byP.size} partners`})}${kpi({icon:"check", tone:"t-green", label:"With a target", value:fmt(R.filter(r => r.tot).length), foot:`${pct(R.filter(r => r.tot).length, R.length)}% of KPIs`})}${kpi({icon:"alert", tone:"t-amber", label:"No target entered", value:fmt(R.filter(r => !r.tot).length)})}${kpi({icon:"pause", tone:"t-grey", label:"Achievement linked", value:"0", foot:"no form feeds a MoU KPI yet"})}</div>` +
+    card("KPIs by partner", "Bars show KPIs with a target", barList([...byP].sort((a,b) => b[1][0]-a[1][0]).map(([p,o]) => ({label:pName(p), total:o[0], segs:[{v:o[1], c:"#7cc79a", t:"With target"}, {v:o[0]-o[1], c:"#f6cd84", t:"No target"}], vtext:`${o[1]} of ${o[0]}`})))) +
+    card("Every MoU KPI", "Targets as entered on each grant (Year 1 quarters)", table("ceMouT", cols, R, {sort:0, dir:1, name:"MoU KPIs", filters:[{label:"Partner", get:r => pName(r.p)}, {label:"Type", get:r => r.type}]}));
+};
+V.prog_funds = () => {
+  const G = D.grants.filter(g => !S.ceProgP || g.p === +S.ceProgP);
+  const bud = G.reduce((a,g) => a+g.budget, 0), ut = G.reduce((a,g) => a+g.utilised, 0), tr = G.reduce((a,g) => a+g.tranche_sum, 0);
+  return `<div class="note" style="margin-bottom:16px"><b>Partial on iNOPS.</b> Approved grant budgets and tranches are on the platform. Spend is not: no partner has entered utilisation, so spend and “cost per life” still come from utilisation certificates outside iNOPS.</div>` +
+    `<div class="grid g4">${kpi({icon:"rupee", label:"Approved grant budget", value:inr(bud), foot:`${G.length} grants`})}${kpi({icon:"grant", tone:"t-teal", label:"Tranches planned", value:inr(tr)})}${kpi({icon:"trend", tone:ut?"t-green":"t-amber", label:"Spend reported on iNOPS", value:inr(ut), foot:`${pct(ut,bud)}% of budget`})}${kpi({icon:"alert", tone:"t-amber", label:"Grants with no spend entered", value:G.filter(g => !g.utilised).length, foot:`of ${G.length}`})}</div>` +
+    card("Budget by partner", "Approved budget on iNOPS · click for the grant", barList([...G].sort((a,b) => b.budget-a.budget).map(g => ({id:g.gaf, label:pName(g.p), segs:[{v:g.utilised, c:"#7cc79a", t:"Spent (reported)"}, {v:Math.max(0,g.budget-g.utilised), c:"#dfe5ec", t:"Not reported"}], total:g.budget, vtext:inr(g.budget)})), {click:"grant", fmtV:inr}));
+};
+const PIL_OUT = {food:["fr_items","fr_value","fd_items","mch_anthro","mch_nrc","mnp_meals"], liv:["pads","pad_rev","me_packets","me_income","champions","mes","units","mh_knowledge","enterprises","epv"], soc:["hh","hh_members","hb","sa_benefit"]};
+function pillarView(code, key){
+  const [, name, , col] = PILLARS.find(p => p[0] === code); const lead = (D.impact.goals.pillars[code]||{}).lead;
+  const months = ceMonthsSel(), F = ceFacts({partner:""}), M = D.impact.months;
+  const R = ceIndicatorRows(F, months).filter(r => r.pil === code);
+  const ks = R.map(r => kpi({icon:r.kind === "touched" ? "people" : "check", tone:r.src === "none" || r.p === null ? "t-grey" : band(r.p)[1] === "p-good" ? "t-green" : band(r.p)[1] === "p-warn" ? "t-amber" : "t-red", label:`${r.id} ${r.short}`, value:r.src === "none" ? "—" : r.v ? ceBtn("ind", r.id, "", fmt(r.v)) : "0", progress:r.p, foot:r.src === "none" ? "not on iNOPS" : r.src === "empty" ? "form ready, no records" : `<b>Approved: ${fmt(indVal(r.id, apprOf(F)))}</b> · ` + (r.g ? `${r.p}% of ${fmt(r.g)} goal` : "no goal")}));
+  // partner x month per indicator
+  const blocks = R.filter(r => r.src !== "none").map(r => {
+    const ps = [...new Set(F.filter(f => ceMet()[f[1]].ind === r.id && f[4]).map(f => f[2]))];
+    if (!ps.length) return `<tr class="grp"><td colspan="${M.length + 3}"><b>${r.id} · ${esc(r.short)}</b> <span class="muted small">· no records on iNOPS yet</span></td></tr>`;
+    const line = p => M.map(m => indVal(r.id, ceFacts({months:[m], partner:p})));
+    return `<tr class="grp"><td colspan="${M.length + 3}"><b>${r.id} · ${esc(r.short)}</b> <span class="muted small">· ${r.kind === "touched" ? "lives touched" : "lives impacted"}</span></td></tr>` +
+      ps.map(p => { const v = line(p), tot = v.reduce((a,b) => a+b, 0); return {p, v, tot}; }).sort((a,b) => b.tot-a.tot).map(({p, v, tot}) => `<tr><td>${esc(pName(p))}</td>${v.map((x,j) => `<td class="r">${x ? ceBtn("indm", r.id, M[j], fmt(x)) : `<span class="muted">0</span>`}</td>`).join("")}<td class="r"><b>${fmt(tot)}</b></td><td class="r">${ceBtn("indp", r.id, p, "Records")}</td></tr>`).join("") +
+      `<tr class="tot"><td>All partners</td>${M.map(m => `<td class="r">${fmt(indVal(r.id, ceFacts({months:[m], partner:""})))}</td>`).join("")}<td class="r"><b>${fmt(indVal(r.id, ceFacts({months:M, partner:""})))}</b></td><td></td></tr>`;
+  }).join("");
+  const outs = PIL_OUT[key].map(id => ({id, m:ceMet().find(m => m.id === id), v:metVal(id, F)})).filter(o => o.m);
+  const isMoney = id => /value|rev|income/.test(id);
+  return `<div class="phead"><div class="ph-l"><span class="ic" style="background:${col}33;color:#3d434c">${KI.target}</span><div><h2>${name}</h2><div class="muted small">${code} · ${lead ? "Pillar lead " + esc(lead) + " · " : ""}${R.length} framework indicators · ${R.filter(r => r.src !== "none").length} with a form on iNOPS</div></div></div></div>` +
+    ceMarker(F) + `<div class="grid g${Math.min(5, Math.max(2, R.length))}">${ks.join("")}</div>` +
+    card("Partner performance by indicator", `By MBR month · ${mLabel(M[M.length-1])} is still open · click a number for its records`, `<div class="tw"><table><thead><tr><th>Partner</th>${M.map(m => `<th class="r">${MON[+m.slice(5,7)-1]}</th>`).join("")}<th class="r">Total</th><th></th></tr></thead><tbody>${blocks}</tbody></table></div>`) +
+    card("Outcomes captured on iNOPS", "Programme results beyond reach, from the same forms · " + ceScope(), `<div class="grid g4">${outs.map(o => `<div class="mini"><div class="num">${o.v ? ceBtn("met", o.id, "", isMoney(o.id) ? inr(o.v) : fmt(o.v)) : "0"}</div><div class="small">${esc(o.m.label)}</div><div class="muted small">${esc(o.m.dt)}</div></div>`).join("")}</div>`) +
+    (key === "soc" ? socialExtras() : "");
+}
+function socialExtras(){
+  const sa = D.impact.sa, L = sa.life;
+  const order = ["Identified","Applied","Under Review","Re-applied","Approved","Benefit Received"];
+  const funnel = order.filter(k => L[k]).map(k => ({label:k, value:L[k], color:k === "Benefit Received" ? "#7cc79a" : k === "Approved" ? "#a8d8b6" : "#a7c8e6"}));
+  const apps = order.slice(1).reduce((a,k) => a + (L[k]||0), 0);
+  const rule = [["Unique people with an application", sa.unique], ["Applications filed (used for A.3.2)", apps], ["Benefits delivered (lifecycle = Benefit Received)", L["Benefit Received"] || 0]];
+  const sch = sa.schemes.map(([s,o]) => ({label:s, total:o[0], segs:[{v:o[2], c:"#7cc79a", t:"Benefit received"}, {v:o[1]-o[2], c:"#a7c8e6", t:"Applied, in progress"}, {v:o[0]-o[1], c:"#dfe3e8", t:"Identified only"}], vtext:`${fmt(o[0])}`}));
+  const pt = table("ceSaP", [{h:"Partner", v:r => pName(r[0]), html:r => `<b>${esc(pName(r[0]))}</b>`}, {h:"Applications", r:1, v:r => r[1]}, {h:"Unique people", r:1, v:r => r[2]}, {h:"Benefit received (lifecycle)", r:1, v:r => r[3]}, {h:"Benefit = Yes (status field)", r:1, v:r => r[4]}, {h:"Completion", r:1, v:r => r[1] ? r[3]/r[1] : 0, x:r => pct(r[3], r[1]) + "%", html:r => `${pct(r[3], r[1])}%`}], sa.partners.map(r => Object.assign([...r], {_id:r[0]})), {search:false, sort:1, name:"Scheme applications by partner"});
+  return `<div class="grid g2">${card("Scheme Application funnel", "Since go-live · all partners · by lifecycle status", barList(funnel))}${card("A.3.2 counting rule — Amazon decision", "The same records give three different answers", `<div class="pc2-l">${rule.map(([l,v]) => `<div><span>${esc(l)}</span><b class="num">${fmt(v)}</b></div>`).join("")}</div><div class="note" style="margin-top:12px">${fmt(D.impact.dq.sa_status_conflict)} applications say “benefit received = Yes” while their lifecycle is not ‘Benefit Received’. The two fields need one source of truth.</div>`)}</div>` +
+    `<div class="grid g2">${card("Top schemes", "Applications by scheme · green = benefit received", legend([["Benefit received","#7cc79a"],["Applied, in progress","#a7c8e6"],["Identified only","#dfe3e8"]]) + barList(sch))}${card("Applications by partner", "Since go-live", pt)}</div>`;
+}
+/* Zones & sites: zone = Amazon zone (State master), BU from the site code prefix (INFC / AMZL / ATS / UFF) */
+V.ce_zones = () => {
+  const F = ceFacts(), FA = apprOf(F), I = D.impact, inds = ceInd().filter(i => ceMet().some(m => m.ind === i.id));
+  const kindOf = f => { const ind = ceMet()[f[1]].ind; const x = ind && ceInd().find(i => i.id === ind); return x ? x.kind : null; };
+  const lives = (Fx, k) => Fx.reduce((a,f) => a + (kindOf(f) === k ? f[4] : 0), 0);
+  const Fi = F.filter(f => ceMet()[f[1]].ind);
+  // zones
+  const zr = I.zones.map((z,i) => { const Fz = Fi.filter(f => f[6] === i); return {_id:i, z:z || "No zone", t:lives(Fz,"touched"), im:lives(Fz,"impacted"), ta:lives(apprOf(Fz),"touched"), ia:lives(apprOf(Fz),"impacted"), sites:new Set(Fz.map(f => f[7])).size, parts:new Set(Fz.map(f => f[2])).size, byInd:Object.fromEntries(inds.map(x => [x.id, indVal(x.id, Fz)]))}; }).filter(r => r.t || r.im);
+  // BU
+  const BU = ["INFC","AMZL","ATS","UFF","Unassigned"];
+  const br = BU.map(b => { const Fb = Fi.filter(f => siteOf(f).bu === b); return {b, t:lives(Fb,"touched"), im:lives(Fb,"impacted"), sites:new Set(Fb.map(f => f[7])).size, master:I.allSites.filter(s => s.bu === b).length}; });
+  // sites
+  const sm = new Map(); Fi.forEach(f => { const o = sm.get(f[7]) || {s:siteOf(f), t:0, im:0, ta:0, n:0, parts:new Set(), last:-1}; const k = kindOf(f); if (k === "touched") o.t += f[4]; if (k === "impacted") o.im += f[4]; if (f[3]) o.ta += f[4]; o.n += f[5]; o.parts.add(f[2]); o.last = Math.max(o.last, f[0]); sm.set(f[7], o); });
+  const sr = [...sm].map(([i,o]) => ({_id:i, ...o, parts:[...o.parts].map(pName).join(", ")}));
+  const active = new Set(sr.map(r => r.s.code)), silent = I.allSites.filter(s => !active.has(s.code) && (!S.ceZ || s.zone === I.zones[+S.ceZ]));
+  const zCols = [{h:"Zone", v:r => r.z, html:r => `<b>${esc(r.z)}</b>`}, {h:"Lives touched", r:1, v:r => r.t}, {h:"Approved", r:1, v:r => r.ta}, {h:"Lives impacted", r:1, v:r => r.im}, {h:"Approved ", r:1, v:r => r.ia}, {h:"Sites", r:1, v:r => r.sites}, {h:"Partners", r:1, v:r => r.parts}];
+  const heat = `<div class="tw"><table><thead><tr><th>Indicator</th>${zr.map(r => `<th class="r">${esc(r.z)}</th>`).join("")}</tr></thead><tbody>${inds.map(x => { const vals = zr.map(r => r.byInd[x.id]); const mx = Math.max(...vals, 1); return `<tr><td><b>${x.id}</b> ${esc(x.short)}</td>${vals.map(v => `<td class="r" style="background:rgba(91,155,213,${v ? (0.08 + 0.42*v/mx).toFixed(2) : 0})">${v ? fmt(v) : `<span class="muted">0</span>`}</td>`).join("")}</tr>`; }).join("")}</tbody></table></div>`;
+  const sCols = [{h:"BU-site", v:r => r.s.name, html:r => `<b>${esc(r.s.name)}</b><div class="muted small">${esc(r.s.code)}</div>`}, {h:"BU", v:r => r.s.bu}, {h:"Zone", v:r => r.s.zone}, {h:"State", v:r => r.s.prov}, {h:"Partners", v:r => r.parts, html:r => `<span class="small">${esc(r.parts)}</span>`}, {h:"Records", r:1, v:r => r.n}, {h:"Lives touched", r:1, v:r => r.t}, {h:"Lives impacted", r:1, v:r => r.im}, {h:"Approved lives", r:1, v:r => r.ta}, {h:"Last month", v:r => r.last, x:r => D.impact.months[r.last], html:r => mLabel(D.impact.months[r.last])}];
+  return ceMarker(F) + `<div class="grid g4">${kpi({icon:"target", label:"Zones reporting", value:zr.length, foot:zr.map(r => r.z).join(" · ")})}${kpi({icon:"home", tone:"t-teal", label:"BU-sites reporting", value:`${sr.length} <small>of ${I.allSites.length}</small>`, foot:"sites in the iNOPS site master"})}${kpi({icon:"alert", tone:"t-amber", label:"Sites with no BU", value:br[4].sites, foot:"community sites added by partners; not an Amazon BU code"})}${kpi({icon:"pause", tone:"t-grey", label:"Sites with no records", value:silent.length, foot:"in the master, nothing filed in this period"})}</div>` +
+    `<div class="grid g2">${card("By zone", "Lives touched and impacted · approved beside all records", table("ceZT", zCols, zr, {search:false, sort:1, name:"CE by zone"}))}${card("By business unit", "BU comes from the site code (INFC-, AMZL-, ATS-, UFF-). Sites without a code count at IN Ops but in no BU.", table("ceBuT", [{h:"BU", v:r => r.b, html:r => `<b>${esc(r.b)}</b>`}, {h:"Lives touched", r:1, v:r => r.t}, {h:"Lives impacted", r:1, v:r => r.im}, {h:"Sites reporting", r:1, v:r => r.sites, html:r => `${r.sites} <span class="muted small">of ${r.master}</span>`}], br, {search:false, sort:null, name:"CE by BU"}))}</div>` +
+    card("Zone × indicator", "Darker = larger share of that indicator", heat) +
+    card("Every BU-site", "Sites with at least one record in this period · click a column to sort", table("ceSiteT", sCols, sr, {sort:6, name:"CE by BU-site", filters:[{label:"BU", all:"All BUs", get:r => r.s.bu}, {label:"Zone", get:r => r.s.zone}]})) +
+    card(`Sites with no records <span class="pill p-warn">${silent.length}</span>`, "In the iNOPS site master but nothing filed in this period — a silent site is a gap, not an absence", table("ceSilT", [{h:"BU-site", v:r => r.name, html:r => `<b>${esc(r.name)}</b><div class="muted small">${esc(r.code)}</div>`}, {h:"BU", v:r => r.bu}, {h:"Zone", v:r => r.zone}, {h:"State", v:r => r.prov}], silent.map((s,i) => ({_id:i, ...s})), {sort:2, dir:1, pageSize:10, name:"Sites with no records", filters:[{label:"BU", all:"All BUs", get:r => r.bu}, {label:"Zone", get:r => r.zone}]}));
+};
+/* GM/PM officers: ICE Form only. Target 750 lives per officer per month is the flat target in the goal pack (Decision L, to calibrate). */
+V.prog_officers = () => {
+  const I = D.impact, M = ceMonthsSel(), mset = new Set(M.map(m => I.months.indexOf(m)));
+  const O = I.officers.filter(o => mset.has(o[0]) && (!S.ceProgP || o[2] === +S.ceProgP) && (!S.ceZ || o[3] === +S.ceZ));
+  const by = new Map(); O.forEach(o => { const x = by.get(o[1]) || {u:o[1], p:o[2], z:o[3], role:o[8], n:0, lives:0, appr:0, months:new Set(), sites:0, m:{}}; x.n += o[4]; x.lives += o[5]; x.appr += o[6]; x.months.add(o[0]); x.sites = Math.max(x.sites, o[7]); x.m[o[0]] = (x.m[o[0]]||0) + o[5]; by.set(o[1], x); });
+  const last = I.months.length - 1, TARGET = 750;
+  const R = [...by.values()].map(x => { const full = [...x.months].filter(i => i !== last); const avg = full.length ? Math.round(full.reduce((a,i) => a + (x.m[i]||0), 0) / full.length) : null; const u = D.users[x.u]; return {_id:x.p, ...x, nm:u ? u.nm : "—", e:u ? u.e : "", mcount:x.months.size, avg}; });
+  const gm = R.filter(r => r.role === "GM"), pm = R.filter(r => r.role === "PM");
+  const over = R.filter(r => r.avg !== null && r.avg >= TARGET).length, under = R.filter(r => r.avg !== null && r.avg < TARGET*0.6).length;
+  const cols = [{h:"Officer", v:r => r.nm, html:r => `<b>${esc(r.nm)}</b><div class="muted small">${esc(r.e)}</div>`, sv:r => r.nm + " " + r.e}, {h:"Email", v:r => r.e, noShow:true}, {h:"Role", v:r => r.role, html:r => `<span class="pill ${r.role === "GM" ? "p-acc" : "p-plum"}">${r.role === "GM" ? "Gram Mitra" : r.role === "PM" ? "Pragati Mitra" : "Other"}</span>`},
+    {h:"Partner", v:r => pName(r.p)}, {h:"Zone", v:r => I.zones[r.z] || ""}, {h:"Sites", r:1, v:r => r.sites}, {h:"Sessions", r:1, v:r => r.n}, {h:"Approved", r:1, v:r => r.appr}, {h:"Lives reached", r:1, v:r => r.lives},
+    {h:"Avg per full month", r:1, v:r => r.avg ?? -1, x:r => r.avg ?? "", html:r => r.avg === null ? `<span class="muted">—</span>` : `<span class="pill ${r.avg >= TARGET ? "p-good" : r.avg >= TARGET*0.6 ? "p-warn" : "p-bad"}">${fmt(r.avg)}</span> <span class="muted small">${pct(r.avg, TARGET)}%</span>`},
+    ...I.months.map((m,i) => ({h:MON[+m.slice(5,7)-1] + (i === last ? "*" : ""), r:1, v:r => r.m[i] || 0, html:r => r.m[i] ? fmt(r.m[i]) : `<span class="muted">—</span>`}))];
+  const top = [...R].sort((a,b) => b.lives - a.lives).slice(0, 15).map(r => ({label:`${r.nm} · ${pName(r.p).slice(0,22)}`, value:r.lives, color:r.role === "GM" ? "#5b9bd5" : "#b49ad8"}));
+  return `<div class="note" style="margin-bottom:16px">GM/PM officers are the ICEP surveyors (SAAD, READ India, Way for Life) filing the <b>ICE Form</b>. Role comes from their iNOPS role profile (<i>ICEP- Surveyor_GM</i> = Gram Mitra, <i>ICEP- Surveyor</i> = Pragati Mitra). The <b>750 lives per officer per month</b> target is the flat target in the goal pack and is still to be calibrated by Amazon (it ignores cluster size). The current month is left out of the average.</div>` +
+    `<div class="grid g4">${kpi({icon:"people", label:"Officers filing", value:R.length, foot:`${gm.length} Gram Mitra · ${pm.length} Pragati Mitra`})}${kpi({icon:"target", tone:"t-teal", label:"Lives reached", value:fmt(R.reduce((a,r) => a+r.lives, 0)), foot:`approved sessions: ${fmt(R.reduce((a,r) => a+r.appr, 0))}`})}${kpi({icon:"check", tone:"t-green", label:"At or above 750 a month", value:over, foot:"average of full months"})}${kpi({icon:"alert", tone:"t-red", label:"Below 60% of target", value:under, foot:"under 450 lives a month"})}</div>` +
+    `<div class="grid g2">${card("Top 15 officers", "Lives reached in this period · blue = Gram Mitra, purple = Pragati Mitra", barList(top))}${card("Gram Mitra vs Pragati Mitra", "Lives reached", donut([{l:"Gram Mitra", v:gm.reduce((a,r) => a+r.lives, 0), c:"#5b9bd5"}, {l:"Pragati Mitra", v:pm.reduce((a,r) => a+r.lives, 0), c:"#b49ad8"}], null, "lives"))}</div>` +
+    card("Every officer", `${ceScope()} · * month still open`, `<div style="display:flex;justify-content:flex-end;margin-bottom:8px">${copyBtn("ceOffT")}</div>` + table("ceOffT", cols, R, {sort:8, name:"GM/PM officers", filters:[{label:"Role", get:r => r.role}, {label:"Partner", get:r => pName(r.p)}]}));
+};
+V.prog_quality = () => {
+  const I = D.impact, q = I.dq, F = ceFacts();
+  const byP = new Map(); F.forEach(f => { const o = byP.get(f[2]) || [0,0]; o[0] += f[5]; if (f[3]) o[1] += f[5]; byP.set(f[2], o); });
+  const appr = [...byP].map(([p,[n,a]]) => ({label:pName(p), total:n, segs:[{v:a, c:"#7cc79a", t:"Approved"}, {v:n-a, c:"#f6cd84", t:"In review"}], vtext:`${pct(a,n)}% approved`})).sort((a,b) => b.total-a.total);
+  const dup = I.dupes.map((d,i) => { const u = D.users[d[0]]; return {_id:i, nm:u ? u.nm : "—", e:u ? u.e : "", site:d[1], day:d[2], init:d[3], lives:d[4], n:d[5]}; });
+  return `<div class="grid g4">${kpi({icon:"alert", tone:q.ice_dupe_extra ? "t-amber" : "t-grey", label:"Likely duplicate ICE records", value:fmt(q.ice_dupe_extra), foot:`${q.ice_dupe_groups} groups: same officer, site, day, initiative and count`})}${kpi({icon:"target", tone:"t-amber", label:"ICE records at exactly 100", value:fmt(q.ice_at100), foot:"a round number can mean a capped or estimated count"})}${kpi({icon:"user", tone:"t-purple", label:"ICE records with no ‘Submitted by’", value:fmt(q.ice_no_submitter), foot:"cannot be credited to an officer; counted under the account that saved it"})}${kpi({icon:"clock", tone:"t-red", label:"Records approved", value:`${pct(F.filter(f => f[3]).reduce((a,f) => a+f[5], 0), F.reduce((a,f) => a+f[5], 0))}%`, foot:"of records behind the impact numbers"})}</div>` +
+    ceDq() +
+    card("Approval by partner", ceScope() + " · records behind the impact numbers", legend([["Approved","#7cc79a"],["In review","#f6cd84"]]) + barList(appr)) +
+    card(`Likely duplicate ICE records <span class="pill p-warn">${dup.length}</span>`, "Same officer, BU-site, day, initiative and number of people — check whether the session was filed twice", table("ceDupT", [{h:"Officer", v:r => r.nm, html:r => `<b>${esc(r.nm)}</b><div class="muted small">${esc(r.e)}</div>`, sv:r => r.nm + " " + r.e}, {h:"Email", v:r => r.e, noShow:true}, {h:"BU-site", v:r => r.site}, {h:"Day", v:r => r.day, html:r => dlabelY(r.day)}, {h:"Initiative", v:r => r.init}, {h:"People per record", r:1, v:r => r.lives}, {h:"Times filed", r:1, v:r => r.n, html:r => `<span class="pill p-warn">${r.n}</span>`}], dup, {sort:6, name:"Likely duplicate ICE records"}));
+};
+V.pil_food = () => pillarView("A.1", "food");
+V.pil_liv = () => pillarView("A.2", "liv");
+V.pil_soc = () => pillarView("A.3", "soc");
+
+/* ---------- Partners: one partner at a time ---------- */
+const pLink = (p, tab="profile") => `#partner-${tab}-${encodeURIComponent(D.partners[p].id)}`;
+function partnerFacts(p){ return D.facts.filter(f => f[F_P] === p); }
+function partnerDirectory(){
+  const y = addDays(D.today,-1);
+  const cards = partnerIds().map(p => {
+    const U = FIELD_USERS.filter(u => u.p === p), Ra = partnerFacts(p), g = D.grants.find(x => x.p === p);
+    const l7 = sum(Ra.filter(f => { const d = D.days[f[F_DAY]]; return d >= addDays(y,-6) && d <= y; }));
+    const last = Ra.length ? D.days[Math.max(...Ra.map(f => f[F_DAY]))] : null, act = U.filter(u => u.st === "active").length;
+    return `<a class="pcard" href="${pLink(p)}"><div class="pc-h"><b>${esc(pName(p))}</b>${g ? `<span class="pill p-good">Grant</span>` : `<span class="pill p-idle">No grant</span>`}</div>
+      <div class="pc-n"><div><span class="num">${fmt(sum(Ra))}</span><small>records</small></div><div><span class="num">${fmt(l7)}</span><small>last 7 days</small></div><div><span class="num">${act}<em>/${U.length}</em></span><small>active users</small></div></div>
+      <div class="progress"><i style="width:${pct(act, U.length)}%"></i></div>
+      <div class="muted small">${last ? `Last record ${dlabel(last)} · ${ago(last)}` : "No records yet"}</div></a>`;
+  });
+  return sectionHead("Choose a partner", `${cards.length} partners on iNOPS`) + `<div class="note" style="margin-bottom:14px">Each partner page brings together that partner's forms and submissions, field users, platform activity, and grant with compliance and budget. Pick a partner below or from the list at the top of any partner page.</div><div class="pdir">${cards.join("")}</div>`;
+}
+function pHead(p){
+  const g = D.grants.find(x => x.p === p), U = FIELD_USERS.filter(u => u.p === p), Ra = partnerFacts(p);
+  const pillars = [...new Set(Ra.map(f => D.forms[f[F_FORM]].pillar))];
+  const opts = partnerIds().map(x => `<option value="${esc(D.partners[x].id)}" ${x===p?"selected":""}>${esc(pName(x))}</option>`).join("");
+  return `<div class="phead"><div class="ph-l"><span class="ic t-amber">${KI.partner}</span><div><h2>${esc(pName(p))}</h2><div class="muted small">${esc(D.partners[p].id)} · ${U.length} field ${plural(U.length,"user","users")} · ${pillars.map(esc).join(", ") || "no records yet"}</div>
+    <div class="ph-pills">${g ? `<span class="pill p-good">${esc(g.grant || g.gaf)} · ${esc(g.gstatus || g.wf || "")}</span>` : `<span class="pill p-idle">No grant on iNOPS</span>`}${pillars.map(x => `<span class="pill" style="background:${PILLAR_COL[x]}26;color:#3d434c">${esc(x)}</span>`).join("")}</div></div></div>
+    <div class="ph-r"><div class="fl"><label for="pPick">Partner</label><select id="pPick"><option value="">All partners…</option>${opts}</select></div><a class="btn sm" href="https://inops.mgrant.in/app/ngo/${encodeURIComponent(D.partners[p].id)}" target="_blank" rel="noopener">Open on iNOPS ↗</a></div></div>`;
+}
+function partnerView(fn){ const p = curP(); return p === null ? partnerDirectory() : pHead(p) + fn(p); }
+const pAccess = p => D.forms.map((f,i) => FIELD_USERS.filter(u => u.p === p && u.acc.includes(i)).length);
+
+V.partner_profile = () => partnerView(p => {
+  const R = rows(), total = sum(R), Ra = rows({allTime:true});
+  const [l7, p7] = last7(Ra);
+  const fIdx = n => D.forms.findIndex(f => f.form === n);
+  const hh = sum(R.filter(f => f[F_FORM] === fIdx("Household Survey"))), ppl = sum(R.filter(f => f[F_FORM] === fIdx("Household Beneficiary")));
+  const U = usersScoped(), act = U.filter(u => u.st === "active").length;
+  const G = D.grants.filter(g => g.p === p), bud = G.reduce((a,g) => a+g.budget, 0);
+  const byF = group(R, f => f[F_FORM]);
+  const cnt = Object.keys(ST).map(k => ({l:ST[k].label, v:U.filter(u => u.st === k).length, c:ST[k].col}));
+  const g = G[0];
+  const grantCard = g ? card("Grant at a glance", `${esc(g.grant || g.gaf)} · ${dlabelY(g.start)} – ${dlabelY(g.end)}`,
+      `<dl class="kv"><dt>Budget</dt><dd>${inr(g.budget)}</dd><dt>Utilised</dt><dd>${inr(g.utilised)} (${pct(g.utilised, g.planned)}%)</dd><dt>Tranches</dt><dd>${g.tranches} · ${inr(g.tranche_sum)}</dd><dt>KPIs</dt><dd>${g.outputs} outputs · ${g.outcomes} outcomes</dd></dl><div style="height:14px"></div>` +
+      stackBar([{l:"Submitted",v:g.comp.Submitted||0,c:"#7cc79a"},{l:"Due",v:g.comp.Due||0,c:"#f6cd84"},{l:"Missed",v:g.comp.OverdueSince||0,c:"#f0a39b"},{l:"Backlog",v:g.comp.OverdueAtLoad||0,c:"#f7d0cb"},{l:"Planned",v:g.comp.Planned||0,c:"#dfe3e8"}]) +
+      `<div style="margin-top:12px"><a href="${pLink(p,"grant")}">Grant & compliance →</a></div>`)
+    : card("Grant at a glance", "", `<div class="note"><b>No grant set up on iNOPS for this partner.</b> Field data is coming in, but there is no GAF or grant to link it to yet.</div>`);
+  return `<div class="grid g5">
+    ${kpi({icon:"forms", label:"Forms submitted", value:fmt(total), foot:`${fmt(sum(R.filter(f => f[F_ST] === 1)))} in review · ${fmt(sum(R.filter(f => f[F_ST] === 2)))} approved`, key:"forms_filled", href:pLink(p,"forms").slice(1)})}
+    ${kpi({icon:"trend", tone:l7 >= p7 ? "t-green" : "t-amber", label:"Last 7 days", value:fmt(l7), foot:`${fmt(p7)} the 7 days before`, key:"delta7"})}
+    ${kpi({icon:"people", tone:"t-purple", label:"Active field users", value:`${fmt(act)} <small>of ${fmt(U.length)}</small>`, progress:pct(act,U.length), foot:`${pct(act,U.length)}% submitted in the last 7 days`, key:"active_users", href:pLink(p,"users").slice(1)})}
+    ${hh || ppl ? kpi({icon:"home", tone:"t-teal", label:"Households surveyed", value:fmt(hh), foot:`${fmt(ppl)} people enrolled`, key:"households"}) : kpi({icon:"target", tone:"t-teal", label:"Forms in use", value:`${byF.size} <small>of ${pAccess(p).filter(Boolean).length}</small>`, foot:"forms with records, of forms with access", href:pLink(p,"forms").slice(1)})}
+    ${kpi({icon:"rupee", tone:G.length?"t-green":"t-grey", label:"Grant budget", value:G.length ? inr(bud) : "—", foot:G.length ? `${G.length} ${plural(G.length,"grant","grants")} · ${inr(G.reduce((a,g) => a+g.utilised, 0))} utilised` : "no grant on iNOPS", href:pLink(p,"grant").slice(1)})}
+  </div>
+  ${card("Daily submissions", "Hover a bar for the day's numbers", dailyChart(R, 45), {key:"daily"})}
+  <div class="grid g3">
+    ${card("Forms filled", periodText() + " · click a form for its records", R.length ? barList([...byF].sort((a,b) => b[1]-a[1]).map(([i,v]) => ({id:i, label:D.forms[i].form, value:v, color:PILLAR_COL[D.forms[i].pillar]})), {click:"pform"}) : `<div class="empty">No records in this period.</div>`)}
+    ${card("Field user status", `${fmt(U.length)} accounts with form access`, donut(cnt, fmt(U.length), "users"), {key:"status"})}
+    ${grantCard}
+  </div>`;
+});
+
+V.partner_forms = () => partnerView(p => {
+  const R = rows(), Ra = rows({allTime:true}), acc = pAccess(p), y = addDays(D.today,-1);
+  const data = D.forms.map((f,i) => {
+    if (S.pillar && f.pillar !== S.pillar) return null;
+    const r = R.filter(x => x[F_FORM] === i), ra = Ra.filter(x => x[F_FORM] === i);
+    if (!acc[i] && !ra.length) return null;
+    return {_id:i, ...f, recs:sum(r), access:acc[i], subm:new Set(ra.map(x => x[F_U])).size, review:sum(r.filter(x => x[F_ST]===1)), approved:sum(r.filter(x => x[F_ST]===2)),
+      l7:sum(ra.filter(x => { const d = D.days[x[F_DAY]]; return d >= addDays(y,-6) && d <= y; })), last:ra.length ? D.days[Math.max(...ra.map(x => x[F_DAY]))] : null, all:sum(ra)};
+  }).filter(Boolean);
+  const rv = sum(R.filter(f => f[F_ST] === 1)), ap = sum(R.filter(f => f[F_ST] === 2)), nr = sum(R.filter(f => f[F_ST] === 0)), mob = sum(R.filter(f => f[F_MOB] === 1)), tot = sum(R);
+  // submissions vs approvals, by week
+  const wk = new Map(); R.forEach(f => { const w = weekStart(D.days[f[F_DAY]]); const o = wk.get(w) || [0,0,0]; o[f[F_ST] === 2 ? 0 : f[F_ST] === 1 ? 1 : 2] += f[F_N]; wk.set(w, o); });
+  const weeks = [...wk.keys()].sort(), curW = weekStart(D.today);
+  const series = weeks.map(w => { const o = wk.get(w); return {label:dlabel(w), tipTitle:"Week of " + dlabelY(w), value:o[0]+o[1]+o[2], segs:[{v:o[0], c:"#7cc79a", t:"Approved"}, {v:o[1], c:"#f6cd84", t:"In review"}, {v:o[2], c:"#c9d6e3", t:"No review step"}]}; });
+  const st = r => !r.access && r.all ? "Records, no access now" : !r.all ? "Access, no records" : diffDays(r.last, D.today) > 14 ? "Stale" : "In use";
+  const stCls = {"Records, no access now":"p-idle","Access, no records":"p-warn","Stale":"p-warn","In use":"p-good"};
+  const cols = [
+    {h:"Form", v:r => r.form, html:r => `<b>${esc(r.form)}</b><div class="muted small">${esc([r.pillar, r.programme].filter(x => x && x !== "-").join(" · "))}</div>`},
+    {h:"Pillar", v:r => r.pillar, noShow:true}, {h:"Programme", v:r => r.programme, noShow:true},
+    {h:"Records", r:1, v:r => r.recs, html:r => r.recs ? dd("pf", p, r._id, fmt(r.recs)) : "0"},
+    {h:"Last 7 days", r:1, v:r => r.l7},
+    {h:"In review", r:1, v:r => r.review, html:r => r.has_status ? fmt(r.review) : `<span class="muted">—</span>`},
+    {h:"Approved", r:1, v:r => r.approved, html:r => r.has_status ? fmt(r.approved) : `<span class="muted">—</span>`},
+    {h:"Users with access", r:1, v:r => r.access},
+    {h:"Users who submitted", r:1, v:r => r.subm},
+    {h:"Last record", v:r => r.last || "", html:r => r.last ? `${dlabel(r.last)} <span class="muted small">${ago(r.last)}</span>` : "—"},
+    {h:"State", v:r => st(r), html:r => `<span class="pill ${stCls[st(r)]}">${st(r)}</span>`}
+  ];
+  return `<div class="grid g4">${kpi({icon:"forms", label:"Forms submitted", value:fmt(tot), foot:`${mob ? pct(mob,tot) : 0}% from the mobile app`})}${kpi({icon:"clock", tone:"t-amber", label:"In review", value:rv ? dd("pst", p, 1, fmt(rv)) : "0", foot:"submitted, not yet approved", key:"review"})}${kpi({icon:"check", tone:"t-green", label:"Approved", value:ap ? dd("pst", p, 2, fmt(ap)) : "0", foot:`${pct(ap, rv+ap)}% of records with a review step`})}${kpi({icon:"target", tone:"t-teal", label:"Forms in use", value:`${data.filter(r => r.all).length} <small>of ${data.filter(r => r.access).length}</small>`, foot:"forms with records, of forms with access"})}</div>` +
+    card("Submissions vs approvals, by week", "Weeks start Monday · hover a bar for its numbers", legend([["Approved","#7cc79a"],["In review","#f6cd84"],["No review step","#c9d6e3"]]) + columnChart(series, {partialLast:weeks[weeks.length-1]===curW, labelEvery:Math.ceil(series.length/14)}));
+});
+
+V.partner_users = () => partnerView(p => {
+  const U = usersScoped().map(u => ({...u, _id:p, ui:uIndex(u.e)}));
+  const counts = Object.keys(ST).map(k => ({k, n:U.filter(u => u.st === k).length}));
+  const SI = {active:["check","t-green"], slowing:["clock","t-amber"], quiet:["pause","t-red"], opened:["user","t-purple"], never:["alert","t-grey"]};
+  const Ra = partnerFacts(p), cw = weekStart(D.today), weeks = []; for (let i = 11; i >= 0; i--) weeks.push(addDays(cw, -7*i));
+  const wk = weeks.map(w => ({label:dlabel(w), tipTitle:"Week of " + dlabelY(w), value:new Set(Ra.filter(f => weekStart(D.days[f[F_DAY]]) === w).map(f => f[F_U])).size}));
+  const tb = userTable("pUserT", [
+    {h:"Profile", v:r => r.pr, html:r => `<span class="small">${esc(r.pr || "—")}</span>`},
+    {h:"Forms they can fill", r:1, v:r => r.acc.length, x:r => r.acc.map(i => D.forms[i].form).join(", "), html:r => `<span title="${esc(r.acc.map(i => D.forms[i].form).join(", "))}">${r.acc.length}</span>`},
+    {h:"Last 7 days", r:1, v:r => r.n7},
+    {h:"Last 30 days", r:1, v:r => r.n30},
+    {h:"All time", r:1, v:r => r.n, html:r => r.n ? dd("u", r.ui, "", fmt(r.n)) : "0"},
+    {h:"Last submission", v:r => r.last || "", html:r => r.last ? `${dlabelY(r.last)} <span class="muted small">${ago(r.last)}</span>` : "—"}
+  ], U, {sort:8, name:pName(p) + " field users", filters:[{label:"Status", get:r => ST[r.st].label}]});
+  return `<div class="grid g5">${counts.map(c => kpi({icon:SI[c.k][0], tone:SI[c.k][1], label:ST[c.k].label, value:fmt(c.n), foot:ST[c.k].desc})).join("")}</div>
+  <div class="grid g3"><div class="span2">${card("Active users per week", "People who submitted at least one form that week · last 12 weeks", columnChart(wk, {height:220, partialLast:true, color:"#7cc79a"}), {key:"weekly_active"})}</div>
+  ${card("User status", `${fmt(U.length)} accounts with form access`, donut(counts.map(c => ({l:ST[c.k].label, v:c.n, c:ST[c.k].col})), fmt(U.length), "users"), {key:"status"})}</div>` +
+  card("Field users", `<div style="display:flex;gap:12px;align-items:center;justify-content:space-between;flex-wrap:wrap"><span>Everyone at this partner with form access · click a number for the records</span>${copyBtn("pUserT")}</div>`, tb);
+});
+
+V.partner_access = () => partnerView(p => {
+  const U = FIELD_USERS.filter(u => u.p === p).map(u => ({...u, _id:p, ui:uIndex(u.e), ad:u.la ? diffDays(u.la.slice(0,10), D.today) : null}));
+  const B = [["Today or yesterday",0,1,"#7cc79a"],["2–7 days ago",2,7,"#b5dcc2"],["8–30 days ago",8,30,"#f6cd84"],["Over 30 days ago",31,1e9,"#f0a39b"]];
+  const bars = B.map(([l,a,b,c]) => ({label:l, value:U.filter(u => u.ad !== null && u.ad >= a && u.ad <= b).length, color:c})).concat([{label:"Never", value:U.filter(u => u.ad === null).length, color:"#d3d8de"}]);
+  const acc = pAccess(p);
+  const fa = D.forms.map((f,i) => ({_id:i, form:f.form, pillar:f.pillar, access:acc[i], subm:FIELD_USERS.filter(u => u.p === p && u.acc.includes(i) && u.used.includes(i)).length})).filter(r => r.access);
+  const internal = !!D.internal;
+  const tb = userTable("pAccT", [
+    {h:"Account created", v:r => r.cr, html:r => dlabelY(r.cr)},
+    {h:"First submission", v:r => r.first || "", html:r => r.first ? dlabelY(r.first) : "—"},
+    {h:"Last submission", v:r => r.last || "", html:r => r.last ? dlabelY(r.last) : "—"},
+    {h:"Last used platform", v:r => r.la || "", html:r => r.la ? `${dlabelY(r.la.slice(0,10))} ${esc(r.la.slice(11,16))} <span class="muted small">${ago(r.la)}</span>` : `<span class="muted">never</span>`},
+    {h:"Days since active", r:1, v:r => r.ad ?? 1e9, x:r => r.ad ?? "", html:r => r.ad === null ? `<span class="pill p-idle">never</span>` : `<span class="pill ${r.ad<=7?"p-good":r.ad<=30?"p-warn":"p-bad"}">${r.ad}</span>`},
+    ...(internal ? [{h:"Web sign-ins", r:1, v:r => r.lg || 0}, {h:"Last web sign-in", v:r => r.ll || "", html:r => r.ll ? dlabelY(r.ll.slice(0,10)) : "—"}, {h:"Login As sessions", r:1, v:r => r.imp || 0}] : [])
+  ], U, {sort:8, dir:1, name:pName(p) + " access log"});
+  const used7 = U.filter(u => u.ad !== null && u.ad <= 7).length, used30 = U.filter(u => u.ad !== null && u.ad <= 30).length;
+  return `<div class="note" style="margin-bottom:16px">The mobile app does not write sign-in records, so <b>“Last used platform”</b> is the last time the account was active on iNOPS, including mobile sync. ${internal ? "Web sign-ins exclude Login As sessions." : ""}</div>
+  <div class="grid g4">${kpi({icon:"people", label:"Accounts with access", value:fmt(U.length), foot:`${fa.length} forms between them`})}${kpi({icon:"check", tone:"t-green", label:"Used it, last 7 days", value:`${fmt(used7)} <small>of ${fmt(U.length)}</small>`, progress:pct(used7, U.length)})}${kpi({icon:"clock", tone:"t-amber", label:"Used it, last 30 days", value:fmt(used30)})}${kpi({icon:"alert", tone:U.some(u => u.ad === null)?"t-red":"t-grey", label:"Never used it", value:fmt(U.filter(u => u.ad === null).length), foot:"account made, no activity"})}</div>
+  <div class="grid g2">${card("Last time on the platform", "Field users by days since their last activity", barList(bars))}
+  ${card("Who can fill what", "Users with access to each form, and how many have submitted it", table("pFaT", [{h:"Form", v:r => r.form, html:r => `<b>${esc(r.form)}</b><div class="muted small">${esc(r.pillar)}</div>`}, {h:"With access", r:1, v:r => r.access}, {h:"Submitted", r:1, v:r => r.subm}, {h:"Coverage", r:1, v:r => pct(r.subm, r.access), html:r => `<span class="pill ${pct(r.subm,r.access)>=60?"p-good":pct(r.subm,r.access)>0?"p-warn":"p-bad"}">${pct(r.subm, r.access)}%</span>`}], fa, {search:false, sort:1, pageSize:10, name:pName(p) + " form access"}))}</div>` +
+  card("Account activity log", `<div style="display:flex;gap:12px;align-items:center;justify-content:space-between;flex-wrap:wrap"><span>One row per field user · least recently active first</span>${copyBtn("pAccT")}</div>`, tb);
+});
+
+V.partner_grant = () => partnerView(p => {
+  const G = D.grants.filter(g => g.p === p), DDs = D.dd.filter(d => d.p === p);
+  const ddCard = card("Partner due diligence", "", DDs.length ? DDs.map(d => `<div class="kvrow"><span>${esc(d.id)} <span class="muted small">created ${dlabelY(d.cr)}</span></span><span class="pill ${d.st==="Approved"?"p-good":"p-warn"}">${esc(d.st)}</span></div>`).join("") : `<div class="muted">No due diligence record.</div>`);
+  if (!G.length) return `<div class="grid g2">${card("No grant on iNOPS", "", `<div class="note"><b>This partner has no GAF or grant set up on iNOPS.</b> ${sum(partnerFacts(p)) ? `They have ${fmt(sum(partnerFacts(p)))} field records, so the grant should be added to link field work to funding and compliance.` : ""}</div>`)}${ddCard}</div>`;
+  return G.map(g => {
+    const od = g.comp_list.map(([n,d,bl]) => ({n,d,bl}));
+    const compTot = Object.values(g.comp).reduce((a,b) => a+b, 0) - (g.comp.Overdue||0);
+    return `<div class="grid g5">${kpi({icon:"rupee", label:"Grant budget", value:inr(g.budget), foot:`${dlabelY(g.start)} – ${dlabelY(g.end)}`})}${kpi({icon:"trend", tone:g.utilised?"t-green":"t-amber", label:"Utilisation reported", value:inr(g.utilised), progress:pct(g.utilised, g.planned), foot:`${pct(g.utilised, g.planned)}% of ${inr(g.planned)} planned`, key:"budget"})}${kpi({icon:"grant", tone:"t-teal", label:"Tranches", value:g.tranches, foot:inr(g.tranche_sum)})}${kpi({icon:"check", tone:"t-green", label:"Reports submitted", value:`${g.comp.Submitted||0} <small>of ${compTot}</small>`, foot:"compliance reports"})}${kpi({icon:"alert", tone:g.comp.OverdueSince?"t-red":"t-amber", label:"Overdue reports", value:(g.comp.OverdueSince||0) + (g.comp.OverdueAtLoad||0), foot:`${g.comp.OverdueSince||0} missed · ${g.comp.OverdueAtLoad||0} backlog`, key:"compliance"})}</div>
+    <div class="grid g3">${card("Grant details", "", `<dl class="kv"><dt>Grant</dt><dd>${esc(g.grant || "—")}</dd><dt>GAF</dt><dd>${esc(g.gaf)}</dd><dt>Project</dt><dd>${esc(g.name)}</dd><dt>Focus area</dt><dd>${esc(g.focus || "—")}</dd><dt>Donor</dt><dd>${esc(g.donor || "—")}</dd><dt>GAF stage</dt><dd>${esc(g.stage || g.wf || "—")}</dd><dt>Grant status</dt><dd>${esc(g.gstatus || "—")}</dd><dt>KPIs</dt><dd>${g.outputs} outputs · ${g.outcomes} outcomes</dd></dl><div style="margin-top:14px">${g.grant ? `<a class="btn sm" href="https://inops.mgrant.in/app/grant/${encodeURIComponent(g.grant)}" target="_blank" rel="noopener">Open grant on iNOPS ↗</a>` : ""}</div>`)}
+    ${card("Compliance reports", "All reports set up on this grant", stackBar([{l:"Submitted",v:g.comp.Submitted||0,c:"#7cc79a"},{l:"Due",v:g.comp.Due||0,c:"#f6cd84"},{l:"Missed since setup",v:g.comp.OverdueSince||0,c:"#f0a39b"},{l:"Backlog from setup",v:g.comp.OverdueAtLoad||0,c:"#f7d0cb"},{l:"Planned",v:g.comp.Planned||0,c:"#dfe3e8"}]), {key:"compliance"})}
+    ${ddCard}</div>` +
+    card("Overdue reports", "Most days late first", table("pOdT_" + g.gaf.replace(/\W/g,""), [{h:"Report", v:r => r.n}, {h:"Due date", v:r => r.d, html:r => dlabelY(r.d)}, {h:"Type", v:r => r.bl ? "Backlog from setup" : "Missed since setup", html:r => r.bl ? `<span class="pill p-warn">Backlog from setup</span>` : `<span class="pill p-bad">Missed since setup</span>`}, {h:"Days late", r:1, v:r => diffDays(r.d, D.today), html:r => `<span class="pill p-bad">${diffDays(r.d, D.today)}</span>`}], od, {search:false, sort:3, name:pName(p) + " overdue reports", empty:"Nothing overdue."}));
+  }).join("");
+});
+
 /* ---------- drawers ---------- */
 function drawer(html){ $("#layer").innerHTML = `<div class="scrim" data-close="1"></div><aside class="drawer" role="dialog" aria-modal="true"><span class="dsnap"><button class="btn sm" data-print="1" title="Print this report"><svg viewBox="0 0 24 24"><path d="M7 9V4h10v5M7 17H5a1 1 0 0 1-1-1v-6a1 1 0 0 1 1-1h14a1 1 0 0 1 1 1v6a1 1 0 0 1-1 1h-2"/><rect x="7" y="14" width="10" height="6"/></svg>Print</button><button class="btn sm" data-snap="1" title="Download this report as Excel or CSV"><svg viewBox="0 0 24 24"><path d="M12 4v11M7 10l5 5 5-5M5 20h14"/></svg>Download</button></span><button class="x" data-close="1" aria-label="Close">×</button>${html}</aside>`; $("#layer .x").focus(); }
 function closeDrawer(){ $("#layer").innerHTML = ""; }
@@ -974,6 +1481,7 @@ function partnerDrawer(p){
     {h:"Last submission", v:r => r.last || "", html:r => r.last ? dlabelY(r.last) : "—"}
   ], U, {sort:5, name:pName(p) + " field users", filters:[{label:"Status", get:r => ST[r.st].label}]});
   drawer(`<h2>${esc(pName(p))}</h2><div class="muted">${fmt(sum(Ra))} records all time · data as of ${esc(asOf())}</div>
+  <div style="margin-top:12px"><a class="btn" href="#partner-profile-${encodeURIComponent(D.partners[p].id)}">Open full partner page →</a></div>
   <div class="grid g4" style="margin-top:16px">${kpi({icon:"people", label:"Field users enrolled", value:fmt(U.length)})}${kpi({icon:"check", tone:"t-green", label:"Active (7 days)", value:fmt(cnt("active")), foot:`${pct(cnt("active"),U.length)}% of users`})}${kpi({icon:"pause", tone:"t-red", label:"Less active or inactive", value:fmt(cnt("slowing") + cnt("quiet"))})}${kpi({icon:"user", tone:"t-purple", label:"Never submitted", value:fmt(cnt("opened") + cnt("never"))})}</div>
   <section><h4>Active users per week ${info("weekly_active")}</h4>${columnChart(wkSeries, {height:170, partialLast:true, color:"#7cc79a"})}</section>
   <section><h4>Records, last 30 days</h4>${last30Chart(Ra)}</section>
@@ -1006,13 +1514,15 @@ function renderNav(){
   $("#side").innerHTML = html;
 }
 function renderFilters(){
-  const pIds = [...new Set([...FIELD_USERS.map(u => u.p), ...D.facts.map(f => f[F_P]), ...D.grants.map(g => g.p)])].filter(p => D.partners[p].id !== "(none)").sort((a,b) => pName(a).localeCompare(pName(b)));
-  const off = route.sec === "logs" || route.sec === "team"; $("#filters").hidden = off; if (off) return;
+  if (CE_SECS.has(route.sec)) return renderCeFilters();
+  const pIds = partnerIds();
+  const off = route.sec === "logs" || route.sec === "team" || (route.sec === "partner" && curP() === null); $("#filters").hidden = off; if (off) return;
+  const inP = route.sec === "partner";
   $("#filters").innerHTML = `<div class="chips" role="group" aria-label="Period">${[["all","All time"],["90","90 days"],["30","30 days"],["7","7 days"],["custom","Custom"]].map(([k,l]) => `<button data-period="${k}" class="${S.period===k?"on":""}">${l}</button>`).join("")}</div>
   ${S.period==="custom" ? `<div class="fl set"><label for="fFrom">From</label><input type="date" id="fFrom" value="${S.from}"></div><div class="fl set"><label for="fTo">To</label><input type="date" id="fTo" value="${S.to}"></div>` : ""}
   <div class="fl ${S.pillar?"set":""}"><label for="fPillar">Pillar</label><select id="fPillar"><option value="">All pillars</option>${Object.keys(PILLAR_COL).map(p => `<option ${p===S.pillar?"selected":""}>${p}</option>`).join("")}</select></div>
-  <div class="fl ${S.partner?"set":""}"><label for="fPartner">Partner</label><select id="fPartner"><option value="">All partners</option>${pIds.map(p => `<option value="${p}" ${String(p)===S.partner?"selected":""}>${esc(pName(p))}</option>`).join("")}</select></div>
-  ${(S.period!=="all"||S.partner||S.pillar) ? `<button class="btn sm" id="fClear">Clear filters</button>` : ""}
+  ${inP ? "" : `<div class="fl ${S.partner?"set":""}"><label for="fPartner">Partner</label><select id="fPartner"><option value="">All partners</option>${pIds.map(p => `<option value="${p}" ${String(p)===S.partner?"selected":""}>${esc(pName(p))}</option>`).join("")}</select></div>`}
+  ${(S.period!=="all"||(!inP && S.partner)||S.pillar) ? `<button class="btn sm" id="fClear">Clear filters</button>` : ""}
   <span class="scope">${esc(scopeText())}</span>`;
 }
 function render(){
@@ -1021,7 +1531,8 @@ function render(){
   renderNav();
   $("#pgTitle").textContent = n.label;
   $("#printHead").innerHTML = `<b>Amazon iNOPS</b> · data as of ${esc(asOf())}${route.sec === "team" ? "" : " · " + esc(scopeText())}`;
-  $("#tabs").innerHTML = n.tabs.map(([k,l]) => `<a role="tab" href="#${n.id}-${k}" class="${route.tab===k?"on":""}" aria-selected="${route.tab===k}">${esc(l)}</a>`).join("");
+  const tail = route.pid ? "-" + encodeURIComponent(route.pid) : "";
+  $("#tabs").innerHTML = n.tabs.map(([k,l]) => `<a role="tab" href="#${n.id}-${k}${tail}" class="${route.tab===k?"on":""}" aria-selected="${route.tab===k}">${esc(l)}</a>`).join("");
   if (S.partner !== "" && !D.partners[+S.partner]) S.partner = "";
   renderFilters(); closePop(); hideTip();
   try { $("#view").innerHTML = V[route.sec + "_" + route.tab](); }
@@ -1057,6 +1568,8 @@ document.addEventListener("click", e => {
   const cp = t.closest("[data-copy]"); if (cp){ e.stopPropagation(); return copyEmails(cp.dataset.copy); }
   const ex = t.closest("[data-export]"); if (ex){ e.stopPropagation(); return exportTable(ex.dataset.export, ex.dataset.fmt, ex); }
   const ddb = t.closest("[data-dd]"); if (ddb){ e.stopPropagation(); e.preventDefault(); return openDrill(ddb); }
+  const ced = t.closest("[data-cedd]"); if (ced){ e.stopPropagation(); e.preventDefault(); return openCeDrill(ced); }
+  const cea = t.closest("[data-ceapp]"); if (cea){ S.ceApp = cea.dataset.ceapp; saveS(); return render(); }
   if (t.closest("[data-close]")) return closeDrawer();
   if (t.closest("#snapBtn") || t.closest("[data-print]")) return printPage(t.closest("#snapBtn") || t.closest("[data-print]"));
   const sb = t.closest("[data-snap]"); if (sb){ e.stopPropagation(); if ($("#pop") && $("#pop").dataset.k === "snap") return closePop(); return snapshotMenu(sb); }
@@ -1065,7 +1578,7 @@ document.addEventListener("click", e => {
   if (t.id === "fClear"){ S.period="all"; S.partner=""; S.pillar=""; saveS(); return render(); }
   const pg = t.closest("[data-page]"); if (pg){ TABLES[pg.dataset.page].page += +pg.dataset.d; return rerenderTable(pg.dataset.page); }
   const th = t.closest("[data-sort]"); if (th){ const T = TABLES[th.dataset.sort], k = +th.dataset.k; if (T.sortK === k) T.dir *= -1; else { T.sortK = k; T.dir = -1; } T.page = 0; return rerenderTable(th.dataset.sort); }
-  const rc = t.closest("[data-rclick]") || t.closest("[data-click]"); if (rc && !t.closest("a") && !t.closest("select") && !t.closest("input")){ const kind = rc.dataset.rclick || rc.dataset.click, id = rc.dataset.id; if (kind==="partner") partnerDrawer(id); else if (kind==="form") formDrawer(id); else if (kind==="grant") grantDrawer(id); return; }
+  const rc = t.closest("[data-rclick]") || t.closest("[data-click]"); if (rc && !t.closest("a") && !t.closest("select") && !t.closest("input")){ const kind = rc.dataset.rclick || rc.dataset.click, id = rc.dataset.id; if (kind==="partner") partnerDrawer(id); else if (kind==="pform") openDrill({dataset:{dd:"pf", a:String(curP()), b:id}}); else if (kind==="form") formDrawer(id); else if (kind==="grant") grantDrawer(id); return; }
   if (t.closest("#menuBtn")) $("#side").classList.toggle("open");
 });
 document.addEventListener("change", e => {
@@ -1073,6 +1586,10 @@ document.addEventListener("change", e => {
   if (t.dataset && t.dataset.psize){ const T = TABLES[t.dataset.psize]; T.pageSize = +t.value; T.page = 0; return rerenderTable(t.dataset.psize); }
   if (t.dataset && t.dataset.tfilter){ const T = TABLES[t.dataset.tfilter]; T.f[t.dataset.fi] = t.value; T.page = 0; return rerenderTable(t.dataset.tfilter); }
   if (t.id === "fPartner"){ S.partner = t.value; saveS(); render(); }
+  if (t.id === "ceP"){ S.ceP = t.value; saveS(); return render(); }
+  if (t.id === "ceProgP"){ S.ceProgP = t.value; saveS(); return render(); }
+  if (t.id === "ceZ"){ S.ceZ = t.value; saveS(); return render(); }
+  if (t.id === "pPick"){ location.hash = t.value ? `#partner-${route.tab}-${encodeURIComponent(t.value)}` : "#partner-profile"; }
   if (t.id === "fPillar"){ S.pillar = t.value; saveS(); render(); }
   if (t.id === "fFrom"){ S.from = t.value; saveS(); render(); }
   if (t.id === "fTo"){ S.to = t.value; saveS(); render(); }
@@ -1085,6 +1602,8 @@ window.addEventListener("hashchange", () => { closeDrawer(); render(); });
 function start(data, live){
   D = data;
   if (!D.internal) NAV = NAV.filter(n => n.id !== "logs");
+  if (!D.impact) NAV = NAV.filter(n => !CE_SECS.has(n.id));
+  else { if (S.ceP && S.ceP !== "all" && !/^Q\d$/.test(S.ceP) && !D.impact.months.includes(S.ceP)) S.ceP = "all"; if (S.ceProgP && !D.partners[+S.ceProgP]) S.ceProgP = ""; }
   derive();
   const dt = D.pulled_at_ist;
   $("#asat").innerHTML = `Data as of <b>${esc(dlabelY(dt.slice(0,10)))}, ${esc(dt.slice(11,16))} IST</b>`;
