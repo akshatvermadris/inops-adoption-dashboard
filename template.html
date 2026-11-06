@@ -1016,29 +1016,29 @@ V.logs_freshness = () => {
 const CE_SECS = new Set(["ce","prog","pil"]);
 const MONTHS_LONG = ["January","February","March","April","May","June","July","August","September","October","November","December"];
 const mLabel = k => MON[+k.slice(5,7)-1] + " " + k.slice(0,4);
-const mRange = k => { const y = +k.slice(0,4), m = +k.slice(5,7); const py = m === 1 ? y-1 : y, pm = m === 1 ? 12 : m-1; return `26 ${MON[pm-1]} – 25 ${MON[m-1]}`; };
+const mRange = k => { if (k === "2026-10") return "1 Oct – 25 Oct"; if (k === "2026-09") return "26 Aug – 30 Sep"; const y = +k.slice(0,4), m = +k.slice(5,7); const pm = m === 1 ? 12 : m-1; return `26 ${MON[pm-1]} – 25 ${MON[m-1]}`; };
 const qOf = k => "Q" + Math.ceil(+k.slice(5,7)/3);
 // where each indicator comes from, and what is still open
 const CE_NOTE = {
-  "A.1.1":"ICE Form food-security sessions (both food KPIs, including ‘Nutrition access & support’) and the Hunger Awareness form. Akshaya Patra's school awareness is reported outside iNOPS.",
-  "A.1.2":"MCH Activity Form · population covered for awareness (SNEHA). No SNEHA records since go-live.",
-  "A.1.3":"MCH Activity Form · pregnant women + children registered with ICDS. Counting rule to confirm with SNEHA.",
-  "A.1.4":"MNP Monthly Reporting form · students who received meals. Form is live; Akshaya Patra has not submitted on it yet.",
-  "A.1.5":"Pantry Distribution · total beneficiaries. Pantry Collection holds items, not people, so it is not counted here.",
-  "A.2.1":"ICE Form livelihood-awareness sessions and BuddhiMoney Training participants. AccessDev, GAME and RTP awareness is not filed on iNOPS yet.",
-  "A.2.2":"Member Enrolment · members enrolled (GAME). Counting rule is an open Amazon decision: enrolled, trained or completed.",
-  "A.2.3":"ICE Form menstrual-hygiene sessions + MH Training trainees + Women Champion Visit reach + Period Van reach (split columns summed).",
-  "A.3.1":"ICE Form financial-wellbeing sessions + Social Entitlements Enrolment Form interactions.",
-  "A.3.2":"Scheme Application · applications filed (Applied or later) + Social Entitlements Enrolment Form new applications. Rule open: unique people, applications or benefits delivered.",
-  "A.4.1":"No form on iNOPS. Jan Sahas reports waste management outside the platform.",
-  "B.1.1":"Samriddhi Mela Site Visit · total enrolments. One record with 71 lakh enrolments is left out as an entry error.",
+  "A.1.1":"ICE Form with Thematic Area Food Security: sum of Lives Impacted. Akshaya Patra and Mera Parivar awareness files are outside iNOPS.",
+  "A.1.2":"Taken from SNEHA's monthly annexure in the MBR, not from iNOPS. The SNEHA records on iNOPS were uploaded by Dhwani, so they are not counted.",
+  "A.1.3":"Taken from SNEHA's monthly annexure in the MBR, not from iNOPS.",
+  "A.1.4":"Taken from Akshaya Patra's MNP file in the MBR, not from iNOPS.",
+  "A.1.5":"Pantry Distribution: Total Beneficiaries, one row per distribution. Pantry Collection is supply, so it is not counted. Mera Parivar and YRG Care Excel files are outside iNOPS.",
+  "A.2.1":"Member Enrolment: one per member enrolled. AccessDev, RTP and GAME bulk files are outside iNOPS.",
+  "A.2.2":"Enterprise Master: one per enterprise. Enterprise Progress Visits are follow-ups and are not counted.",
+  "A.2.3":"ICE Form, Livelihoods: Lives Impacted on the four menstrual hygiene Activities, or with a menstrual hygiene term in the description; plus MH Training trainees. Women Champion and Period Van are not counted, as in the MBR.",
+  "A.3.1":"ICE Form, Social Security: Lives Impacted; plus Household Survey (one per household to September, members from October, as in the MBR); plus Social Entitlements Enrolment interactions (your decision of 6 Nov; the MBR sheet does not count them yet).",
+  "A.3.2":"Scheme Application: one per record, whatever its lifecycle or benefit status.",
+  "A.4.1":"No form on iNOPS. Taken from Jan Sahas's monthly report in the MBR.",
+  "B.1.1":"Samriddhi Mela Site Visit: total enrolments (ABHA + PM-JAY). One record with 71 lakh enrolments is left out as an entry error.",
   "B.1.2":"No form on iNOPS. Pratidhi scholarships (Buddy4Study) are reported outside the platform.",
   "B.1.3":"No form on iNOPS. The Ashray form is on hold and does not capture centres set up.",
   "B.1.4":"No form on iNOPS. There is no field for delivery-associate visits.",
   "C.1.1":"Goodera platform, outside iNOPS.", "C.1.2":"Goodera platform, outside iNOPS.", "C.1.3":"Goodera platform, outside iNOPS.", "C.1.4":"Goodera platform, outside iNOPS."
 };
-const CE_RULE = new Set(["A.1.3","A.2.2","A.3.2"]);
-const SRC = {live:["Live on iNOPS","p-good"], empty:["Form ready, no records","p-warn"], rule:["Live · rule to confirm","p-plum"], none:["Not on iNOPS","p-idle"]};
+const CE_RULE = new Set(["A.3.1"]);
+const SRC = {live:["Live on iNOPS","p-good"], empty:["Form ready, no records","p-warn"], rule:["Live · rule to confirm","p-plum"], file:["Partner file on iNOPS","p-acc"], none:["Not on iNOPS","p-idle"]};
 const PILLARS = [["A.1","Food Security","food","#f2b06a"],["A.2","Livelihoods","liv","#6cc3a0"],["A.3","Social Security","soc","#5b9bd5"]];
 const ceInd = () => D.impact.goals.indicators;
 const ceMet = () => D.impact.metrics;
@@ -1061,9 +1061,14 @@ const indVal = (id, F) => F.reduce((a,f) => a + (ceMet()[f[1]].ind === id ? f[4]
 const metVal = (id, F) => { const i = ceMet().findIndex(m => m.id === id); return F.reduce((a,f) => a + (f[1] === i ? f[4] : 0), 0); };
 function goalFor(ind, months){ return Math.round(months.reduce((a,m) => a + (ind.goal_q[qOf(m)] || 0)/3, 0)); }
 function page0For(ind, months){ const P0 = D.impact.goals.page0_months; let v = 0, any = false; months.forEach(m => { const i = P0.indexOf(m); if (i >= 0){ v += ind.page0[i] || 0; any = true; } }); return any ? v : null; }
+/* platform = a form on iNOPS; file = partner-file figures entered on iNOPS in MBR Manual Value (as the P0 report adds them) */
+const isFileMet = m => m.dt === "MBR Manual Value";
 function indSrc(id, Fall){
-  const mets = ceMet().filter(m => m.ind === id); if (!mets.length) return "none";
-  const has = Fall.some(f => ceMet()[f[1]].ind === id && f[4]); if (!has) return "empty";
+  const plat = ceMet().filter(m => m.ind === id && !isFileMet(m));
+  const hasPlat = Fall.some(f => { const m = ceMet()[f[1]]; return m.ind === id && !isFileMet(m) && f[4]; });
+  const hasFile = Fall.some(f => { const m = ceMet()[f[1]]; return m.ind === id && isFileMet(m) && f[4]; });
+  if (!plat.length) return hasFile ? "file" : "none";
+  if (!hasPlat && !hasFile) return "empty";
   return CE_RULE.has(id) ? "rule" : "live";
 }
 const band = p => p === null ? ["No goal","p-idle"] : p >= 100 ? ["Achieved","p-good"] : p >= 85 ? ["On track","p-good"] : p >= 60 ? ["Making progress","p-warn"] : ["Needs focus","p-bad"];
@@ -1080,7 +1085,7 @@ function renderCeFilters(){
   <span class="scope">${esc(ceScope())}</span>`;
 }
 function ring(p, col){ const r = 26, C = 2*Math.PI*r, v = Math.max(0, Math.min(100, p ?? 0)); return `<svg class="ring" viewBox="0 0 64 64" role="img" aria-label="${p ?? 0}%"><circle cx="32" cy="32" r="${r}" fill="none" stroke="#eef0f3" stroke-width="7"/><circle cx="32" cy="32" r="${r}" fill="none" stroke="${col}" stroke-width="7" stroke-linecap="round" stroke-dasharray="${C*v/100} ${C}" transform="rotate(-90 32 32)"/><text x="32" y="36" text-anchor="middle">${p === null ? "—" : p + "%"}</text></svg>`; }
-const ceMarker = F => { const rv = F.filter(f => f[3] === 0).reduce((a,f) => a + f[5], 0); const tot = F.reduce((a,f) => a + f[5], 0); return `<div class="note" style="margin-bottom:16px"><b>Counted only from records filled on iNOPS</b> (not partner Excel). ${S.ceApp === "appr" ? "Showing <b>approved records only</b>." : `Numbers show <b>all records</b>, with the <b>approved</b> part beside them: ${fmt(tot - rv)} of ${fmt(tot)} records are approved, ${fmt(rv)} are still in Review.`} Months run 26th to 25th, as in the MBR. Goals come from the 2026 goal sheet, which is not on iNOPS.</div>`; };
+const ceMarker = F => { const rv = F.filter(f => f[3] === 0).reduce((a,f) => a + f[5], 0); const tot = F.reduce((a,f) => a + f[5], 0); return `<div class="note" style="margin-bottom:16px"><b>Counted only from records filled on iNOPS</b> (not partner Excel). ${S.ceApp === "appr" ? "Showing <b>approved records only</b>." : `Numbers show <b>all records</b>, with the <b>approved</b> part beside them: ${fmt(tot - rv)} of ${fmt(tot)} records are approved, ${fmt(rv)} are still in Review.`} Counted as in the MBR logic sheet: by <b>date of activity</b>, months run 26th to 25th, and test rows and rows entered by Dhwani accounts are left out. Partner-file figures entered on iNOPS (MBR Manual Value) are added, as in the P0 report. Goals are the MBR goals stored on iNOPS.</div>`; };
 function ceDrill(title, pred){
   const F = ceFacts().filter(pred);
   const data = F.map((f,i) => ({_id:i, m:D.impact.months[f[0]], met:ceMet()[f[1]].label, dt:ceMet()[f[1]].dt, ind:ceMet()[f[1]].ind || "Outcome", p:pName(f[2]), st:f[3] ? "Approved" : "Review", v:f[4], n:f[5], z:D.impact.zones[f[6]] || "", s:siteOf(f)}));
@@ -1161,8 +1166,9 @@ function ceDq(){
   const rows = [
     ["Samriddhi Mela entry error", q.sam_outliers.length ? q.sam_outliers.map(o => `${o[0]} (${o[1]}, ${o[2]}): ${fmt(o[3])} enrolments`).join("; ") : "none", "Left out of B.1.1. Ask the partner to correct the record.", q.sam_outliers.length],
     ["Scheme Application status fields disagree", `${fmt(q.sa_status_conflict)} applications say benefit received = Yes while the lifecycle is not ‘Benefit Received’`, "A.3.2 benefits use the lifecycle field. Decide which field is the source of truth.", q.sa_status_conflict],
-    ["ICE records with no indicator", `${fmt(q.ice_unmapped)} records (${fmt(q.ice_unmapped_lives)} lives)`, "Need an initiative or thematic area.", q.ice_unmapped],
-    ["Lives touched = lives impacted on ICE Form", "The two ICE totals are the same number on every record", "ICE counts as lives touched only, never as impacted.", 1]
+    ["ICE records with no thematic area", `${fmt(q.ice_unmapped)} records (${fmt(q.ice_unmapped_lives)} lives)`, "Need a thematic area to count in any indicator.", q.ice_unmapped],
+    ["Records entered by Dhwani accounts", Object.entries(q.dhwani_rows || {}).map(([k,v]) => `${k} ${fmt(v)}`).join(" · ") || "none", "Not counted, as in the MBR: these are uploads of partner Excel files, which the MBR takes from the files themselves.", Object.keys(q.dhwani_rows || {}).length],
+    ["Test rows", `${fmt(q.test_rows || 0)} records with “test”, “tester” or “RMN” in a name or description`, "Not counted, as in the MBR.", q.test_rows || 0]
   ];
   return card("Data checks", "Problems found in the iNOPS records that change a number", `<div class="pc2-l">${rows.map(([a,b,c,n]) => `<div><span><b>${esc(a)}</b><br><span class="small">${esc(b)}</span><br><span class="muted small">${esc(c)}</span></span><span class="pill ${n ? "p-warn" : "p-good"}">${n ? "Check" : "OK"}</span></div>`).join("")}</div>`);
 }
@@ -1189,7 +1195,7 @@ V.prog_coverage = () => {
   const pil = PILLARS.map(([code, name, , col]) => { const R = rows.filter(r => r.pil === code); const v = R.reduce((a,r) => a+r.v, 0), g = R.reduce((a,r) => a+r.g, 0); return {label:name, value:v, total:Math.max(v,g), segs:[{v, c:col, t:"Actual"}], vtext:g ? `${fmt(v)} · ${pct(v,g)}% of ${fmt(g)}` : fmt(v)}; });
   return ceMarker(F) + `<div class="grid g4">${kpi({icon:"people", label:"Lives touched", value:fmt(rows.filter(r => r.kind === "touched").reduce((a,r) => a+r.v, 0))})}${kpi({icon:"check", tone:"t-green", label:"Lives impacted", value:fmt(rows.filter(r => r.kind === "impacted").reduce((a,r) => a+r.v, 0))})}${kpi({icon:"target", tone:"t-teal", label:"Indicators at or above goal", value:`${at} <small>of ${rows.length}</small>`, foot:"indicators with a form on iNOPS"})}${kpi({icon:"grant", tone:"t-amber", label:"MoU KPIs with targets", value:`${D.impact.mou.filter(x => x[5]).length} <small>of ${D.impact.mou.length}</small>`, foot:"on the grants, not yet linked to forms", href:"prog-mou"})}</div>` +
     card("Pillars against goal", ceScope() + " · touched and impacted summed per pillar", barList(pil)) +
-    card("Indicator coverage", "Achieved ≥ 100% · On track 85–99% · Making progress 60–84% · Needs focus below 60%. Goals from the 2026 goal sheet.", table("ceCovT", cols, rows, {search:false, sort:null, name:"Indicator coverage"}));
+    card("Indicator coverage", "Achieved ≥ 100% · On track 85–99% · Making progress 60–84% · Needs focus below 60%. Goals from the MBR (Goal Sheet V.12, stored on iNOPS).", table("ceCovT", cols, rows, {search:false, sort:null, name:"Indicator coverage"}));
 };
 V.prog_partners = () => {
   const months = ceMonthsSel(), F = ceFacts({partner:""}); const inds = ceInd().filter(i => F.some(f => ceMet()[f[1]].ind === i.id && f[4]));
@@ -1220,7 +1226,7 @@ V.prog_funds = () => {
     `<div class="grid g4">${kpi({icon:"rupee", label:"Approved grant budget", value:inr(bud), foot:`${G.length} grants`})}${kpi({icon:"grant", tone:"t-teal", label:"Tranches planned", value:inr(tr)})}${kpi({icon:"trend", tone:ut?"t-green":"t-amber", label:"Spend reported on iNOPS", value:inr(ut), foot:`${pct(ut,bud)}% of budget`})}${kpi({icon:"alert", tone:"t-amber", label:"Grants with no spend entered", value:G.filter(g => !g.utilised).length, foot:`of ${G.length}`})}</div>` +
     card("Budget by partner", "Approved budget on iNOPS · click for the grant", barList([...G].sort((a,b) => b.budget-a.budget).map(g => ({id:g.gaf, label:pName(g.p), segs:[{v:g.utilised, c:"#7cc79a", t:"Spent (reported)"}, {v:Math.max(0,g.budget-g.utilised), c:"#dfe5ec", t:"Not reported"}], total:g.budget, vtext:inr(g.budget)})), {click:"grant", fmtV:inr}));
 };
-const PIL_OUT = {food:["fr_items","fr_value","fd_items","mch_anthro","mch_nrc","mnp_meals"], liv:["pads","pad_rev","me_packets","me_income","champions","mes","units","mh_knowledge","enterprises","epv"], soc:["hh","hh_members","hb","sa_benefit"]};
+const PIL_OUT = {food:["fr_items","fr_value","fd_items","mch_anthro","mch_nrc","mnp_meals"], liv:["mhc","van","ice_liv_other","mh_knowledge","pads","pad_rev","me_packets","me_income","champions","mes","units","epv"], soc:["hh","hb","sa_benefit","seef_app"]};
 function pillarView(code, key){
   const [, name, , col] = PILLARS.find(p => p[0] === code); const lead = (D.impact.goals.pillars[code]||{}).lead;
   const months = ceMonthsSel(), F = ceFacts({partner:""}), M = D.impact.months;
@@ -1247,8 +1253,8 @@ function socialExtras(){
   const sa = D.impact.sa, L = sa.life;
   const order = ["Identified","Applied","Under Review","Re-applied","Approved","Benefit Received"];
   const funnel = order.filter(k => L[k]).map(k => ({label:k, value:L[k], color:k === "Benefit Received" ? "#7cc79a" : k === "Approved" ? "#a8d8b6" : "#a7c8e6"}));
-  const apps = order.slice(1).reduce((a,k) => a + (L[k]||0), 0);
-  const rule = [["Unique people with an application", sa.unique], ["Applications filed (used for A.3.2)", apps], ["Benefits delivered (lifecycle = Benefit Received)", L["Benefit Received"] || 0]];
+  const apps = Object.values(L).reduce((a,v) => a + v, 0);
+  const rule = [["Unique people with an application", sa.unique], ["Applications, one per record (used for A.3.2, as in the MBR)", apps], ["Benefits delivered (lifecycle = Benefit Received)", L["Benefit Received"] || 0]];
   const sch = sa.schemes.map(([s,o]) => ({label:s, total:o[0], segs:[{v:o[2], c:"#7cc79a", t:"Benefit received"}, {v:o[1]-o[2], c:"#a7c8e6", t:"Applied, in progress"}, {v:o[0]-o[1], c:"#dfe3e8", t:"Identified only"}], vtext:`${fmt(o[0])}`}));
   const pt = table("ceSaP", [{h:"Partner", v:r => pName(r[0]), html:r => `<b>${esc(pName(r[0]))}</b>`}, {h:"Applications", r:1, v:r => r[1]}, {h:"Unique people", r:1, v:r => r[2]}, {h:"Benefit received (lifecycle)", r:1, v:r => r[3]}, {h:"Benefit = Yes (status field)", r:1, v:r => r[4]}, {h:"Completion", r:1, v:r => r[1] ? r[3]/r[1] : 0, x:r => pct(r[3], r[1]) + "%", html:r => `${pct(r[3], r[1])}%`}], sa.partners.map(r => Object.assign([...r], {_id:r[0]})), {search:false, sort:1, name:"Scheme applications by partner"});
   return `<div class="grid g2">${card("Scheme Application funnel", "Since go-live · all partners · by lifecycle status", barList(funnel))}${card("A.3.2 counting rule — Amazon decision", "The same records give three different answers", `<div class="pc2-l">${rule.map(([l,v]) => `<div><span>${esc(l)}</span><b class="num">${fmt(v)}</b></div>`).join("")}</div><div class="note" style="margin-top:12px">${fmt(D.impact.dq.sa_status_conflict)} applications say “benefit received = Yes” while their lifecycle is not ‘Benefit Received’. The two fields need one source of truth.</div>`)}</div>` +
