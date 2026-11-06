@@ -2,8 +2,12 @@
 // Usage: node pull.js  (token from INOPS_TOKEN or the inops-daily skill's .credentials)
 const fs = require("fs"), path = require("path");
 const BASE = "https://inops.mgrant.in";
-const TOK = (process.env.INOPS_TOKEN || fs.readFileSync(path.join(process.env.USERPROFILE || process.env.HOME, ".claude/skills/inops-daily/.credentials"), "utf8")).trim();
-if (!TOK) { console.error("INOPS_TOKEN is empty"); process.exit(2); }
+// Token: GitHub Actions passes INOPS_TOKEN; locally it is read from .env (INOPS_TOKEN=key:secret, git-ignored).
+// Use the SAME key in both places, and never click "Generate Keys" again, because that cancels the old key everywhere.
+const envFile = path.join(__dirname, ".env");
+const fromEnvFile = fs.existsSync(envFile) ? ((/^\s*INOPS_TOKEN\s*=\s*"?([^"\r\n]+)"?/m.exec(fs.readFileSync(envFile, "utf8")) || [])[1] || "") : "";
+const TOK = (process.env.INOPS_TOKEN || fromEnvFile).trim();
+if (!TOK) { console.error("No iNOPS key: set INOPS_TOKEN, or put INOPS_TOKEN=key:secret in .env"); process.exit(2); }
 const FORMS = require("./forms.json").forms;
 
 async function api(p, body) {
