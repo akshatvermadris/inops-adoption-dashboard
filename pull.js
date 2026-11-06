@@ -91,18 +91,32 @@ async function meta(dt) { return (await api(`/api/method/frappe.desk.form.load.g
     "Household Beneficiary": [],
     "Scheme Application": ["lifecycle_status", "benefit_received_status", "scheme", "beneficiary"],
     "Social Entitlements Enrolment Form": ["total_interactions", "new_applications_initiated"],
-    "Samridhi Mela Site Visit": ["name", "total_enrollments"]
+    "Samridhi Mela Site Visit": ["total_enrollments", "abha_enrollments", "pmjay_enrollments"]
   };
-  out.impact = {};
+  // Name / description fields the MBR test-row rule checks on each form (frappe_inops mbr_logic.FIXED_FORMS).
+  // Only rows whose field contains test / tester / rmn are fetched, so no personal names are pulled.
+  const TEST_FIELDS = { "ICE Form": ["institution_name", "activity_description"], "Food Distribution Form": ["comments", "lot_comments"], "Member Enrolment": ["member_name"], "Enterprise Master": ["business_name"], "Menstrual Hygiene Training": ["institution_name"], "Household Survey": ["head_name"], "Scheme Application": ["remarks"] };
+  out.impact = {}; out.test_rows = {};
   for (const [dt, fl] of Object.entries(IMPACT)) {
     try {
       const one = ((await api(`/api/resource/${encodeURIComponent(dt)}?fields=["*"]&limit_page_length=1`).catch(() => [])) || [])[0] || {};
       // location: Gen-2 forms use state/district/block/gram_panchayat; Gen-1 forms use zone/state/district/site
       const extra = ["approval_status", "activity_date", "zone", "state", "district", "block", "gram_panchayat", "site", "submitted_by"].filter(k => k in one);
-      const rows = await list(dt, ["owner", "partner_name", "creation", ...extra, ...fl]);
-      out.impact[dt] = { fields: ["owner", "partner_name", "creation", ...extra, ...fl], rows: rows.map(r => ["owner", "partner_name", "creation", ...extra, ...fl].map(k => r[k] ?? null)) };
+      const F = ["name", "owner", "partner_name", "creation", ...extra, ...fl.filter(k => k !== "name")];
+      const rows = await list(dt, F, [["docstatus", "<", 2]]); // cancelled records left out, as in the P0 report
+      out.impact[dt] = { fields: F, rows: rows.map(r => F.map(k => r[k] ?? null)) };
+      const hits = new Set();
+      for (const f of (TEST_FIELDS[dt] || []).filter(k => k in one || dt === "ICE Form")) {
+        for (const w of ["test", "rmn"]) {
+          const found = await list(dt, ["name", f], [[f, "like", `%${w}%`]]).catch(() => []);
+          found.forEach(x => { if (/\b(test|tester|rmn)\b/i.test(String(x[f] || ""))) hits.add(x.name); });
+        }
+      }
+      if (hits.size) out.test_rows[dt] = [...hits];
     } catch (e) { out.warnings.push("impact " + dt + ": " + e.message); }
   }
+  // MBR Manual Value: goals (Goal Sheet) and partner-file actuals, the same rows the P0 report reads
+  out.mbr_manual = await list("MBR Manual Value", ["indicator", "year", "period", "value_type", "value", "partner", "source", "display"]).catch(e => { out.warnings.push("mbr manual: " + e.message); return []; });
   // location masters: State = Amazon zone, District = state (province), Block = facility, Gram Panchayat = BU-site
   out.geo = {
     zones: await list("State", ["name", "state_name"]).catch(() => []),

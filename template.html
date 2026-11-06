@@ -1038,7 +1038,7 @@ const CE_NOTE = {
   "C.1.1":"Goodera platform, outside iNOPS.", "C.1.2":"Goodera platform, outside iNOPS.", "C.1.3":"Goodera platform, outside iNOPS.", "C.1.4":"Goodera platform, outside iNOPS."
 };
 const CE_RULE = new Set(["A.3.1"]);
-const SRC = {live:["Live on iNOPS","p-good"], empty:["Form ready, no records","p-warn"], rule:["Live · rule to confirm","p-plum"], none:["Not on iNOPS","p-idle"]};
+const SRC = {live:["Live on iNOPS","p-good"], empty:["Form ready, no records","p-warn"], rule:["Live · rule to confirm","p-plum"], file:["Partner file on iNOPS","p-acc"], none:["Not on iNOPS","p-idle"]};
 const PILLARS = [["A.1","Food Security","food","#f2b06a"],["A.2","Livelihoods","liv","#6cc3a0"],["A.3","Social Security","soc","#5b9bd5"]];
 const ceInd = () => D.impact.goals.indicators;
 const ceMet = () => D.impact.metrics;
@@ -1061,9 +1061,14 @@ const indVal = (id, F) => F.reduce((a,f) => a + (ceMet()[f[1]].ind === id ? f[4]
 const metVal = (id, F) => { const i = ceMet().findIndex(m => m.id === id); return F.reduce((a,f) => a + (f[1] === i ? f[4] : 0), 0); };
 function goalFor(ind, months){ return Math.round(months.reduce((a,m) => a + (ind.goal_q[qOf(m)] || 0)/3, 0)); }
 function page0For(ind, months){ const P0 = D.impact.goals.page0_months; let v = 0, any = false; months.forEach(m => { const i = P0.indexOf(m); if (i >= 0){ v += ind.page0[i] || 0; any = true; } }); return any ? v : null; }
+/* platform = a form on iNOPS; file = partner-file figures entered on iNOPS in MBR Manual Value (as the P0 report adds them) */
+const isFileMet = m => m.dt === "MBR Manual Value";
 function indSrc(id, Fall){
-  const mets = ceMet().filter(m => m.ind === id); if (!mets.length) return "none";
-  const has = Fall.some(f => ceMet()[f[1]].ind === id && f[4]); if (!has) return "empty";
+  const plat = ceMet().filter(m => m.ind === id && !isFileMet(m));
+  const hasPlat = Fall.some(f => { const m = ceMet()[f[1]]; return m.ind === id && !isFileMet(m) && f[4]; });
+  const hasFile = Fall.some(f => { const m = ceMet()[f[1]]; return m.ind === id && isFileMet(m) && f[4]; });
+  if (!plat.length) return hasFile ? "file" : "none";
+  if (!hasPlat && !hasFile) return "empty";
   return CE_RULE.has(id) ? "rule" : "live";
 }
 const band = p => p === null ? ["No goal","p-idle"] : p >= 100 ? ["Achieved","p-good"] : p >= 85 ? ["On track","p-good"] : p >= 60 ? ["Making progress","p-warn"] : ["Needs focus","p-bad"];
@@ -1080,7 +1085,7 @@ function renderCeFilters(){
   <span class="scope">${esc(ceScope())}</span>`;
 }
 function ring(p, col){ const r = 26, C = 2*Math.PI*r, v = Math.max(0, Math.min(100, p ?? 0)); return `<svg class="ring" viewBox="0 0 64 64" role="img" aria-label="${p ?? 0}%"><circle cx="32" cy="32" r="${r}" fill="none" stroke="#eef0f3" stroke-width="7"/><circle cx="32" cy="32" r="${r}" fill="none" stroke="${col}" stroke-width="7" stroke-linecap="round" stroke-dasharray="${C*v/100} ${C}" transform="rotate(-90 32 32)"/><text x="32" y="36" text-anchor="middle">${p === null ? "—" : p + "%"}</text></svg>`; }
-const ceMarker = F => { const rv = F.filter(f => f[3] === 0).reduce((a,f) => a + f[5], 0); const tot = F.reduce((a,f) => a + f[5], 0); return `<div class="note" style="margin-bottom:16px"><b>Counted only from records filled on iNOPS</b> (not partner Excel). ${S.ceApp === "appr" ? "Showing <b>approved records only</b>." : `Numbers show <b>all records</b>, with the <b>approved</b> part beside them: ${fmt(tot - rv)} of ${fmt(tot)} records are approved, ${fmt(rv)} are still in Review.`} Counted as in the MBR logic sheet: by <b>date of activity</b>, months run 26th to 25th, and test rows and rows entered by Dhwani accounts are left out. Goals are the MBR goals (Goal Sheet V.12), which are not on iNOPS.</div>`; };
+const ceMarker = F => { const rv = F.filter(f => f[3] === 0).reduce((a,f) => a + f[5], 0); const tot = F.reduce((a,f) => a + f[5], 0); return `<div class="note" style="margin-bottom:16px"><b>Counted only from records filled on iNOPS</b> (not partner Excel). ${S.ceApp === "appr" ? "Showing <b>approved records only</b>." : `Numbers show <b>all records</b>, with the <b>approved</b> part beside them: ${fmt(tot - rv)} of ${fmt(tot)} records are approved, ${fmt(rv)} are still in Review.`} Counted as in the MBR logic sheet: by <b>date of activity</b>, months run 26th to 25th, and test rows and rows entered by Dhwani accounts are left out. Partner-file figures entered on iNOPS (MBR Manual Value) are added, as in the P0 report. Goals are the MBR goals stored on iNOPS.</div>`; };
 function ceDrill(title, pred){
   const F = ceFacts().filter(pred);
   const data = F.map((f,i) => ({_id:i, m:D.impact.months[f[0]], met:ceMet()[f[1]].label, dt:ceMet()[f[1]].dt, ind:ceMet()[f[1]].ind || "Outcome", p:pName(f[2]), st:f[3] ? "Approved" : "Review", v:f[4], n:f[5], z:D.impact.zones[f[6]] || "", s:siteOf(f)}));
@@ -1190,7 +1195,7 @@ V.prog_coverage = () => {
   const pil = PILLARS.map(([code, name, , col]) => { const R = rows.filter(r => r.pil === code); const v = R.reduce((a,r) => a+r.v, 0), g = R.reduce((a,r) => a+r.g, 0); return {label:name, value:v, total:Math.max(v,g), segs:[{v, c:col, t:"Actual"}], vtext:g ? `${fmt(v)} · ${pct(v,g)}% of ${fmt(g)}` : fmt(v)}; });
   return ceMarker(F) + `<div class="grid g4">${kpi({icon:"people", label:"Lives touched", value:fmt(rows.filter(r => r.kind === "touched").reduce((a,r) => a+r.v, 0))})}${kpi({icon:"check", tone:"t-green", label:"Lives impacted", value:fmt(rows.filter(r => r.kind === "impacted").reduce((a,r) => a+r.v, 0))})}${kpi({icon:"target", tone:"t-teal", label:"Indicators at or above goal", value:`${at} <small>of ${rows.length}</small>`, foot:"indicators with a form on iNOPS"})}${kpi({icon:"grant", tone:"t-amber", label:"MoU KPIs with targets", value:`${D.impact.mou.filter(x => x[5]).length} <small>of ${D.impact.mou.length}</small>`, foot:"on the grants, not yet linked to forms", href:"prog-mou"})}</div>` +
     card("Pillars against goal", ceScope() + " · touched and impacted summed per pillar", barList(pil)) +
-    card("Indicator coverage", "Achieved ≥ 100% · On track 85–99% · Making progress 60–84% · Needs focus below 60%. Goals from the MBR (Goal Sheet V.12).", table("ceCovT", cols, rows, {search:false, sort:null, name:"Indicator coverage"}));
+    card("Indicator coverage", "Achieved ≥ 100% · On track 85–99% · Making progress 60–84% · Needs focus below 60%. Goals from the MBR (Goal Sheet V.12, stored on iNOPS).", table("ceCovT", cols, rows, {search:false, sort:null, name:"Indicator coverage"}));
 };
 V.prog_partners = () => {
   const months = ceMonthsSel(), F = ceFacts({partner:""}); const inds = ceInd().filter(i => F.some(f => ceMet()[f[1]].ind === i.id && f[4]));

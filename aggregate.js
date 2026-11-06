@@ -134,12 +134,18 @@ const impersonations = (s.impersonations || []).map(x => ({ user: x.user, by: x.
 let impact = null;
 if (s.impact) {
   const G = require("./goals.json");
+  // Goals live on iNOPS in MBR Manual Value (Goal Sheet rows, read by the P0 report); goals.json is the fallback.
+  const liveGoals = (s.mbr_manual || []).filter(r => r.value_type === "Goal" && /^Q[1-4]$/.test(r.period) && +r.year === +TODAY.slice(0, 4));
+  if (liveGoals.length) {
+    G.goal_source = "MBR Manual Value on iNOPS (Goal Sheet rows), the same goals the P0 report uses";
+    G.indicators.forEach(ind => { const q = {}; liveGoals.filter(r => r.indicator === ind.id).forEach(r => { q[r.period] = (q[r.period] || 0) + (+r.value || 0); }); if (Object.keys(q).length) { ind.goal_q = Object.assign({ Q1: 0, Q2: 0, Q3: 0, Q4: 0 }, q); ind.goal_fy = Object.values(ind.goal_q).reduce((a, b) => a + b, 0); } });
+  }
   // October 2026 MBR used 1-25 Oct, so 26-30 Sep 2026 stays in September (MBR Common Rules: Reporting window).
   const mbr = d => { if (d >= "2026-09-26" && d <= "2026-09-30") return "2026-09"; let y = +d.slice(0, 4), m = +d.slice(5, 7); if (+d.slice(8, 10) >= 26) { m++; if (m > 12) { m = 1; y++; } } return y + "-" + String(m).padStart(2, "0"); };
   const FIRST_MONTH = mbr(GO_LIVE), LAST_MONTH = mbr(TODAY);
   const dateOf = r => (r.activity_date || r.creation || "").slice(0, 10);
   const MH_ACTIVITY = new Set(["KPI-00092", "KPI-00415", "KPI-01195", "KPI-03113"]); // the four menstrual hygiene Activities (MBR A.2.3)
-  const MH_TERM = /menstr|menstu|mensur|mensus|period|sanitary|\bpads?\b|\bmhm\b|hygien/i;
+  const MH_TERM = /\b(mens\w*|mhh?|mhm|hygiene|hygeine|pads?|sanitary|periods?|napkins?|puberty)\b/i; // = frappe_inops mbr_logic.MH_TERM
   const TEST_WORD = /\b(test|tester|rmn)\b/i;
   const SAM_CAP = 5000; // one Samriddhi mela visit above this is treated as an entry error
   const isMH = r => MH_ACTIVITY.has(r.activity) || MH_TERM.test(r.activity_description || "");
@@ -152,10 +158,10 @@ if (s.impact) {
     ["ice_mh", "ICE Form · menstrual hygiene sessions (MH Activity or MH term)", "ICE Form", r => r.thematic_area === "THEME-088" && isMH(r) ? r.total_interactions : null, "A.2.3"],
     ["mht", "MH Training · trainees attended", "Menstrual Hygiene Training", r => r.mh_trainees, "A.2.3"],
     ["ice_ss", "ICE Form · Social Security sessions (Lives Impacted)", "ICE Form", r => r.thematic_area === "THEME-068" ? r.total_interactions : null, "A.3.1"],
-    ["hh_members", "Household Survey · one per household to Sep, members from Oct", "Household Survey", r => mbr(dateOf(r)) < "2026-10" ? 1 : r.member_count, "A.3.1"], // MBR: Jan-Sep one per household; October counts members
+    ["hh_members", "Household Survey · household members", "Household Survey", r => r.member_count, "A.3.1"],
     ["seef_int", "Social Entitlements Enrolment · interactions", "Social Entitlements Enrolment Form", r => r.total_interactions, "A.3.1"],
     ["sa_app", "Scheme Application · applications (one per record)", "Scheme Application", r => 1, "A.3.2"],
-    ["sam", "Samriddhi Mela · total enrolments", "Samridhi Mela Site Visit", r => r.total_enrollments > SAM_CAP ? null : r.total_enrollments, "B.1.1"],
+    ["sam", "Samriddhi Mela · total enrolments", "Samridhi Mela Site Visit", r => { const v = r.total_enrollments ?? ((r.abha_enrollments || 0) + (r.pmjay_enrollments || 0)); return v > SAM_CAP ? null : v; }, "B.1.1"],
     // outcomes and programme activity (not framework lines)
     ["hh", "Households surveyed", "Household Survey", r => 1, null],
     ["hb", "Household beneficiaries enrolled", "Household Beneficiary", r => 1, null],
@@ -180,23 +186,27 @@ if (s.impact) {
     ["units", "Pad manufacturing units", "Manufacturing Unit Master", r => 1, null],
     ["epv", "Enterprise progress visits", "Enterprise Progress Visit", r => 1, null]
   ];
+  // Partner-file actuals entered on iNOPS in MBR Manual Value (the P0 report adds these to the platform figures)
+  const IND_ALL = (G.indicators || []).map(x => x.id);
+  IND_ALL.forEach(code => M.push(["file_" + code, "Partner file entered on iNOPS (MBR Manual Value)", "MBR Manual Value", null, code]));
   const months = [], mI = {}; const MI = k => (k in mI ? mI[k] : (mI[k] = months.push(k) - 1));
   const fm = new Map(); const dq = { rejected: 0, ice_unmapped: 0, ice_unmapped_lives: 0, sam_outliers: [], sa_status_conflict: 0, test_rows: 0, dhwani_rows: {}, outside_window: 0 };
   const recs = {}; // doctype -> rows after exclusions
-  const isTest = r => TEST_WORD.test([r.institution_name, r.activity_description].filter(Boolean).join(" "));
+  const testNames = Object.fromEntries(Object.entries(s.test_rows || {}).map(([k, v]) => [k, new Set(v)]));
+  const isTest = (r, dt) => (testNames[dt] && testNames[dt].has(r.name)) || TEST_WORD.test([r.institution_name, r.activity_description].filter(Boolean).join(" "));
   const byDhwani = r => isInternal(r.owner) || /@dhwaniris\.com$/i.test(r.submitted_by || "");
   for (const [dt, blk] of Object.entries(s.impact)) {
     recs[dt] = blk.rows.map(a => Object.fromEntries(blk.fields.map((k, i) => [k, a[i]]))).filter(r => {
       if (!r.partner_name || EXCLUDE_NGOS.has(r.partner_name)) return false;
       const mm = mbr(dateOf(r)); if (mm < FIRST_MONTH || mm > LAST_MONTH) { dq.outside_window++; return false; }
       if (byDhwani(r)) { dq.dhwani_rows[dt] = (dq.dhwani_rows[dt] || 0) + 1; return false; }
-      if (isTest(r)) { dq.test_rows++; return false; }
-      if (r.approval_status === "Rejected") { dq.rejected++; return false; }
+      if (isTest(r, dt)) { dq.test_rows++; return false; }
+      if (r.approval_status === "Rejected") dq.rejected++; // approval is ignored, as in the MBR (rejected records still count)
       return true;
     });
   }
   (recs["ICE Form"] || []).forEach(r => { if (!["THEME-086", "THEME-088", "THEME-068"].includes(r.thematic_area)) { dq.ice_unmapped++; dq.ice_unmapped_lives += r.total_interactions || 0; } });
-  (recs["Samridhi Mela Site Visit"] || []).forEach(r => { if (r.total_enrollments > SAM_CAP) dq.sam_outliers.push([r.name, ngoName[r.partner_name] || r.partner_name, dateOf(r), r.total_enrollments]); });
+  (recs["Samridhi Mela Site Visit"] || []).forEach(r => { if ((r.total_enrollments ?? ((r.abha_enrollments || 0) + (r.pmjay_enrollments || 0))) > SAM_CAP) dq.sam_outliers.push([r.name, ngoName[r.partner_name] || r.partner_name, dateOf(r), r.total_enrollments]); });
   (recs["Scheme Application"] || []).forEach(r => { if (r.benefit_received_status === "Yes" && r.lifecycle_status !== "Benefit Received") dq.sa_status_conflict++; });
   // location: Gen-1 forms (have a `zone` field) store zone/state/site; Gen-2 store state(=zone)/district/gram_panchayat
   const geo = s.geo || { zones: [], provinces: [], sites: [] };
@@ -214,6 +224,18 @@ if (s.impact) {
     const key = [MI(mbr(dateOf(r))), mi, P(r.partner_name), r.approval_status === "Approved" ? 1 : 0, ZI(z || ""), SI(st || "")].join(",");
     const o = fm.get(key) || [0, 0]; o[0] += +v; o[1]++; fm.set(key, o);
   }));
+  // partner-file Actual rows of MBR Manual Value (old typed-in workbook history is skipped, as the P0 report does)
+  const PER = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+  const FILE_PARTNER = [[/akshaya/i], [/mera parivar/i], [/vid(h)?yaranya/i], [/way for life/i], [/\bsaad\b/i], [/\bread\b/i], [/\bsneha\b/i], [/kshamata/i], [/vatsalya/i], [/\byrg\b/i], [/\bia foundation\b/i], [/access ?dev/i, /access development/i], [/global alliance for mass|\bgame\b/i], [/pinkishe/i], [/she (&|and) we/i], [/\bhhh\b|head held high/i], [/jan sahas/i]];
+  const ngoFor = name => { const pats = FILE_PARTNER.find(ps => ps[0].test(name || "")); if (!pats) return null; const hit = Object.entries(ngoName).find(([, nm]) => pats.some(p => p.test(nm))); return hit ? hit[0] : null; };
+  dq.partner_file_rows = 0;
+  (s.mbr_manual || []).filter(r => r.value_type === "Actual" && r.source !== "MBR October 2026 workbook" && PER.includes(r.period)).forEach(r => {
+    const mk = r.year + "-" + String(PER.indexOf(r.period) + 1).padStart(2, "0"); if (mk < FIRST_MONTH || mk > LAST_MONTH) return;
+    const mi = M.findIndex(x => x[0] === "file_" + r.indicator); if (mi < 0) return;
+    const ngo = ngoFor(r.partner); const pIdx = ngo ? P(ngo) : P("(partner file: " + (r.partner || "no partner set") + ")");
+    const key = [MI(mk), mi, pIdx, 0, ZI(""), SI("")].join(",");
+    const o = fm.get(key) || [0, 0]; o[0] += +r.value || 0; o[1]++; fm.set(key, o); dq.partner_file_rows++;
+  });
   // remap month index to sorted order; fact = [month, metric, partner, approved, value, records, zone, site]
   const sorted = [...months].sort(); const remap = months.map(k => sorted.indexOf(k));
   const ifacts = [...fm].map(([k, [v, n]]) => { const a = k.split(",").map(Number); return [remap[a[0]], a[1], a[2], a[3], Math.round(v), n, a[4], a[5]]; });
