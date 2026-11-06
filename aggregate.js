@@ -134,7 +134,8 @@ const impersonations = (s.impersonations || []).map(x => ({ user: x.user, by: x.
 let impact = null;
 if (s.impact) {
   const G = require("./goals.json");
-  const mbr = d => { let y = +d.slice(0, 4), m = +d.slice(5, 7); if (+d.slice(8, 10) >= 26) { m++; if (m > 12) { m = 1; y++; } } return y + "-" + String(m).padStart(2, "0"); };
+  // October 2026 MBR used 1-25 Oct, so 26-30 Sep 2026 stays in September (MBR Common Rules: Reporting window).
+  const mbr = d => { if (d >= "2026-09-26" && d <= "2026-09-30") return "2026-09"; let y = +d.slice(0, 4), m = +d.slice(5, 7); if (+d.slice(8, 10) >= 26) { m++; if (m > 12) { m = 1; y++; } } return y + "-" + String(m).padStart(2, "0"); };
   const FIRST_MONTH = mbr(GO_LIVE), LAST_MONTH = mbr(TODAY);
   const dateOf = r => (r.activity_date || r.creation || "").slice(0, 10);
   const MH_ACTIVITY = new Set(["KPI-00092", "KPI-00415", "KPI-01195", "KPI-03113"]); // the four menstrual hygiene Activities (MBR A.2.3)
@@ -151,7 +152,7 @@ if (s.impact) {
     ["ice_mh", "ICE Form · menstrual hygiene sessions (MH Activity or MH term)", "ICE Form", r => r.thematic_area === "THEME-088" && isMH(r) ? r.total_interactions : null, "A.2.3"],
     ["mht", "MH Training · trainees attended", "Menstrual Hygiene Training", r => r.mh_trainees, "A.2.3"],
     ["ice_ss", "ICE Form · Social Security sessions (Lives Impacted)", "ICE Form", r => r.thematic_area === "THEME-068" ? r.total_interactions : null, "A.3.1"],
-    ["hh_members", "Household Survey · household members", "Household Survey", r => r.member_count, "A.3.1"],
+    ["hh_members", "Household Survey · one per household to Sep, members from Oct", "Household Survey", r => mbr(dateOf(r)) < "2026-10" ? 1 : r.member_count, "A.3.1"], // MBR: Jan-Sep one per household; October counts members
     ["seef_int", "Social Entitlements Enrolment · interactions", "Social Entitlements Enrolment Form", r => r.total_interactions, "A.3.1"],
     ["sa_app", "Scheme Application · applications (one per record)", "Scheme Application", r => 1, "A.3.2"],
     ["sam", "Samriddhi Mela · total enrolments", "Samridhi Mela Site Visit", r => r.total_enrollments > SAM_CAP ? null : r.total_enrollments, "B.1.1"],

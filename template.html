@@ -1016,7 +1016,7 @@ V.logs_freshness = () => {
 const CE_SECS = new Set(["ce","prog","pil"]);
 const MONTHS_LONG = ["January","February","March","April","May","June","July","August","September","October","November","December"];
 const mLabel = k => MON[+k.slice(5,7)-1] + " " + k.slice(0,4);
-const mRange = k => { const y = +k.slice(0,4), m = +k.slice(5,7); const py = m === 1 ? y-1 : y, pm = m === 1 ? 12 : m-1; return `26 ${MON[pm-1]} – 25 ${MON[m-1]}`; };
+const mRange = k => { if (k === "2026-10") return "1 Oct – 25 Oct"; if (k === "2026-09") return "26 Aug – 30 Sep"; const y = +k.slice(0,4), m = +k.slice(5,7); const pm = m === 1 ? 12 : m-1; return `26 ${MON[pm-1]} – 25 ${MON[m-1]}`; };
 const qOf = k => "Q" + Math.ceil(+k.slice(5,7)/3);
 // where each indicator comes from, and what is still open
 const CE_NOTE = {
@@ -1028,7 +1028,7 @@ const CE_NOTE = {
   "A.2.1":"Member Enrolment: one per member enrolled. AccessDev, RTP and GAME bulk files are outside iNOPS.",
   "A.2.2":"Enterprise Master: one per enterprise. Enterprise Progress Visits are follow-ups and are not counted.",
   "A.2.3":"ICE Form, Livelihoods: Lives Impacted on the four menstrual hygiene Activities, or with a menstrual hygiene term in the description; plus MH Training trainees. Women Champion and Period Van are not counted, as in the MBR.",
-  "A.3.1":"ICE Form, Social Security: Lives Impacted; plus Household Survey members; plus Social Entitlements Enrolment interactions (your decision of 6 Nov; the MBR sheet does not count them yet).",
+  "A.3.1":"ICE Form, Social Security: Lives Impacted; plus Household Survey (one per household to September, members from October, as in the MBR); plus Social Entitlements Enrolment interactions (your decision of 6 Nov; the MBR sheet does not count them yet).",
   "A.3.2":"Scheme Application: one per record, whatever its lifecycle or benefit status.",
   "A.4.1":"No form on iNOPS. Taken from Jan Sahas's monthly report in the MBR.",
   "B.1.1":"Samriddhi Mela Site Visit: total enrolments (ABHA + PM-JAY). One record with 71 lakh enrolments is left out as an entry error.",
