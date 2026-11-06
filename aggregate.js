@@ -179,9 +179,13 @@ if (s.impact) {
   const months = [], mI = {}; const MI = k => (k in mI ? mI[k] : (mI[k] = months.push(k) - 1));
   const fm = new Map(); const dq = { rejected: 0, ice_unmapped: 0, ice_unmapped_lives: 0, sam_outliers: [], sa_status_conflict: 0 };
   const recs = {}; // doctype -> rows after exclusions
+  // Impact keeps records entered by Dhwani accounts: they are bulk uploads made for partners
+  // (all SNEHA MCH and much of Pantry). Records with no partner, or a zero value, add nothing anyway.
+  dq.bulk_uploaded = {};
   for (const [dt, blk] of Object.entries(s.impact)) {
     recs[dt] = blk.rows.map(a => Object.fromEntries(blk.fields.map((k, i) => [k, a[i]]))).filter(r =>
-      r.creation >= GO_LIVE && !isInternal(r.owner) && !EXCLUDE_NGOS.has(r.partner_name) && !exclUsers.has(r.owner) && !(r.approval_status === "Rejected" && ++dq.rejected));
+      r.creation >= GO_LIVE && r.partner_name && !EXCLUDE_NGOS.has(r.partner_name) && !(r.approval_status === "Rejected" && ++dq.rejected));
+    const bu = recs[dt].filter(r => isInternal(r.owner)).length; if (bu) dq.bulk_uploaded[dt] = bu;
   }
   (recs["ICE Form"] || []).forEach(r => { if (!(INIT_IND[r.initiative] || THEME_IND[r.thematic_area])) { dq.ice_unmapped++; dq.ice_unmapped_lives += r.grand_total || 0; } });
   (recs["Samridhi Mela Site Visit"] || []).forEach(r => { if (r.total_enrollments > SAM_CAP) dq.sam_outliers.push([r.name, ngoName[r.partner_name] || r.partner_name, r.creation.slice(0, 10), r.total_enrollments]); });
