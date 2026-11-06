@@ -124,41 +124,45 @@ const formApprovers = s.forms.map(f => [...(approvers[f.doctype] || [])]);
 const impersonations = (s.impersonations || []).map(x => ({ user: x.user, by: x.owner, at: x.creation.slice(0, 16) }));
 
 // ---- CE Impact: framework indicators computed from production forms ----
-// Month = MBR cycle (26th of M-1 00:00 -> 25th of M 18:00), by creation. Rejected records are left out.
-// Goals and Page 0 figures are NOT on iNOPS: they come from goals.json (goal sheet / Page 0, loaded by hand).
+// Follows the INOPS MBR Indicator Logic Sheet (Oct 2026), plus Akshat's decisions of 6 Nov 2026:
+//  - month = MBR month by DATE OF ACTIVITY: 26th of the previous month to the 25th (a record dated the 26th or later
+//    counts in the next month). Review status is ignored (all records count; the approved part is shown beside it).
+//  - test rows are left out: entered or submitted from a dhwaniris.com account, or a whole-word test/tester/RMN
+//    in a name or description field. (MBR rule: Dhwani uploads of partner Excel files are not counted as platform data.)
+//  - A.3.1 also counts Social Entitlements Enrolment interactions (Akshat: awareness belongs in A.3.1; not in the MBR sheet).
+// Goals and Page 0 figures are NOT on iNOPS: they come from goals.json (MBR goal columns / Page 0, loaded by hand).
 let impact = null;
 if (s.impact) {
   const G = require("./goals.json");
-  const mbr = c => { let y = +c.slice(0, 4), m = +c.slice(5, 7); const d = +c.slice(8, 10), h = +c.slice(11, 13); if (d > 25 || (d === 25 && h >= 18)) { m++; if (m > 12) { m = 1; y++; } } return y + "-" + String(m).padStart(2, "0"); };
-  const INIT_IND = { "KPI-00080": "A.1.1", "KPI-00081": "A.1.1", "KPI-00082": "A.2.3", "KPI-00083": "A.2.1", "KPI-00137": "A.3.1" };
-  const THEME_IND = { "THEME-086": "A.1.1", "THEME-088": "A.2.3", "THEME-068": "A.3.1" };
-  const APPLIED = new Set(["Applied", "Under Review", "Approved", "Benefit Received", "Re-applied"]);
-  const SAM_CAP = 5000; // one Samridhi mela visit above this is treated as an entry error
-  // metric: [id, label, doctype, value(row)->number|null, indicator|null, unit]
+  const mbr = d => { let y = +d.slice(0, 4), m = +d.slice(5, 7); if (+d.slice(8, 10) >= 26) { m++; if (m > 12) { m = 1; y++; } } return y + "-" + String(m).padStart(2, "0"); };
+  const FIRST_MONTH = mbr(GO_LIVE), LAST_MONTH = mbr(TODAY);
+  const dateOf = r => (r.activity_date || r.creation || "").slice(0, 10);
+  const MH_ACTIVITY = new Set(["KPI-00092", "KPI-00415", "KPI-01195", "KPI-03113"]); // the four menstrual hygiene Activities (MBR A.2.3)
+  const MH_TERM = /menstr|menstu|mensur|mensus|period|sanitary|\bpads?\b|\bmhm\b|hygien/i;
+  const TEST_WORD = /\b(test|tester|rmn)\b/i;
+  const SAM_CAP = 5000; // one Samriddhi mela visit above this is treated as an entry error
+  const isMH = r => MH_ACTIVITY.has(r.activity) || MH_TERM.test(r.activity_description || "");
+  // metric: [id, label, doctype, value(row)->number|null, indicator|null]
   const M = [
-    ["ice_food", "ICE Form · food security sessions", "ICE Form", r => (INIT_IND[r.initiative] || THEME_IND[r.thematic_area]) === "A.1.1" ? r.grand_total : null, "A.1.1"],
-    ["hunger_aw", "Hunger Awareness · participants", "Hunger Awareness Form", r => r.total_participants, "A.1.1"],
-    ["mch_aw", "MCH Activity · population covered for awareness", "MCH Activity Form", r => r.awareness_population, "A.1.2"],
-    ["mch_reg", "MCH Activity · women and children registered with ICDS", "MCH Activity Form", r => (r.pw_registered || 0) + (r.children_registered || 0), "A.1.3"],
-    ["mnp", "MNP Monthly Reporting · students who received meals", "Monthly Meal Donation Form", r => r.students_received_meals, "A.1.4"],
+    ["ice_food", "ICE Form · Food Security sessions (Lives Impacted)", "ICE Form", r => r.thematic_area === "THEME-086" ? r.total_interactions : null, "A.1.1"],
     ["fd", "Pantry Distribution · total beneficiaries", "Food Distribution Form", r => r.bene_total, "A.1.5"],
-    ["ice_liv", "ICE Form · livelihood awareness sessions", "ICE Form", r => (INIT_IND[r.initiative] || THEME_IND[r.thematic_area]) === "A.2.1" ? r.grand_total : null, "A.2.1"],
-    ["bmt", "BuddhiMoney Training · participants", "Training", r => r.ent_attendees, "A.2.1"],
-    ["me_enrol", "Member Enrolment · members enrolled", "Member Enrolment", r => 1, "A.2.2"],
-    ["ice_mh", "ICE Form · menstrual hygiene sessions", "ICE Form", r => (INIT_IND[r.initiative] || THEME_IND[r.thematic_area]) === "A.2.3" ? r.grand_total : null, "A.2.3"],
-    ["mht", "MH Training · trainees", "Menstrual Hygiene Training", r => r.mh_trainees, "A.2.3"],
-    ["mhc", "Women Champion Visit · women reached", "Menstrual Hygiene Champion", r => r.mh_women_reached, "A.2.3"],
-    ["van", "Period Van · people reached", "Menstrual Hygiene Period Van", r => r.mh_van_reached, "A.2.3"],
-    ["ice_ss", "ICE Form · financial wellbeing sessions", "ICE Form", r => (INIT_IND[r.initiative] || THEME_IND[r.thematic_area]) === "A.3.1" ? r.grand_total : null, "A.3.1"],
+    ["me_enrol", "Member Enrolment · members enrolled", "Member Enrolment", r => 1, "A.2.1"],
+    ["ent", "Enterprise Master · enterprises registered", "Enterprise Master", r => 1, "A.2.2"],
+    ["ice_mh", "ICE Form · menstrual hygiene sessions (MH Activity or MH term)", "ICE Form", r => r.thematic_area === "THEME-088" && isMH(r) ? r.total_interactions : null, "A.2.3"],
+    ["mht", "MH Training · trainees attended", "Menstrual Hygiene Training", r => r.mh_trainees, "A.2.3"],
+    ["ice_ss", "ICE Form · Social Security sessions (Lives Impacted)", "ICE Form", r => r.thematic_area === "THEME-068" ? r.total_interactions : null, "A.3.1"],
+    ["hh_members", "Household Survey · household members", "Household Survey", r => r.member_count, "A.3.1"],
     ["seef_int", "Social Entitlements Enrolment · interactions", "Social Entitlements Enrolment Form", r => r.total_interactions, "A.3.1"],
-    ["sa_app", "Scheme Application · applications filed", "Scheme Application", r => APPLIED.has(r.lifecycle_status) ? 1 : null, "A.3.2"],
-    ["seef_app", "Social Entitlements Enrolment · new applications", "Social Entitlements Enrolment Form", r => r.new_applications_initiated, "A.3.2"],
-    ["sam", "Samriddhi Mela · enrolments", "Samridhi Mela Site Visit", r => r.total_enrollments > SAM_CAP ? null : r.total_enrollments, "B.1.1"],
+    ["sa_app", "Scheme Application · applications (one per record)", "Scheme Application", r => 1, "A.3.2"],
+    ["sam", "Samriddhi Mela · total enrolments", "Samridhi Mela Site Visit", r => r.total_enrollments > SAM_CAP ? null : r.total_enrollments, "B.1.1"],
     // outcomes and programme activity (not framework lines)
     ["hh", "Households surveyed", "Household Survey", r => 1, null],
-    ["hh_members", "Household members listed", "Household Survey", r => r.member_count, null],
     ["hb", "Household beneficiaries enrolled", "Household Beneficiary", r => 1, null],
     ["sa_benefit", "Applications with benefit received (lifecycle)", "Scheme Application", r => r.lifecycle_status === "Benefit Received" ? 1 : null, null],
+    ["seef_app", "Social Entitlements Enrolment · new applications started", "Social Entitlements Enrolment Form", r => r.new_applications_initiated, null],
+    ["ice_liv_other", "ICE Form · other livelihood sessions (not counted in A.2.3)", "ICE Form", r => r.thematic_area === "THEME-088" && !isMH(r) ? r.total_interactions : null, null],
+    ["mhc", "Women Champion Visit · women reached (not in MBR)", "Menstrual Hygiene Champion", r => r.mh_women_reached, null],
+    ["van", "Period Van · people reached (not in MBR)", "Menstrual Hygiene Period Van", r => r.mh_van_reached, null],
     ["fr_items", "Pantry Collection · items collected", "Food Rescue Form", r => r.quantity, null],
     ["fr_value", "Pantry Collection · value collected (₹)", "Food Rescue Form", r => r.value, null],
     ["fd_items", "Pantry Distribution · items distributed", "Food Distribution Form", r => r.quantity, null],
@@ -173,22 +177,25 @@ if (s.impact) {
     ["champions", "Women champions registered", "Champion", r => 1, null],
     ["mes", "Micro-entrepreneurs registered", "Micro-Entrepreneur Master", r => 1, null],
     ["units", "Pad manufacturing units", "Manufacturing Unit Master", r => 1, null],
-    ["enterprises", "Enterprises registered", "Enterprise Master", r => 1, null],
     ["epv", "Enterprise progress visits", "Enterprise Progress Visit", r => 1, null]
   ];
   const months = [], mI = {}; const MI = k => (k in mI ? mI[k] : (mI[k] = months.push(k) - 1));
-  const fm = new Map(); const dq = { rejected: 0, ice_unmapped: 0, ice_unmapped_lives: 0, sam_outliers: [], sa_status_conflict: 0 };
+  const fm = new Map(); const dq = { rejected: 0, ice_unmapped: 0, ice_unmapped_lives: 0, sam_outliers: [], sa_status_conflict: 0, test_rows: 0, dhwani_rows: {}, outside_window: 0 };
   const recs = {}; // doctype -> rows after exclusions
-  // Impact keeps records entered by Dhwani accounts: they are bulk uploads made for partners
-  // (all SNEHA MCH and much of Pantry). Records with no partner, or a zero value, add nothing anyway.
-  dq.bulk_uploaded = {};
+  const isTest = r => TEST_WORD.test([r.institution_name, r.activity_description].filter(Boolean).join(" "));
+  const byDhwani = r => isInternal(r.owner) || /@dhwaniris\.com$/i.test(r.submitted_by || "");
   for (const [dt, blk] of Object.entries(s.impact)) {
-    recs[dt] = blk.rows.map(a => Object.fromEntries(blk.fields.map((k, i) => [k, a[i]]))).filter(r =>
-      r.creation >= GO_LIVE && r.partner_name && !EXCLUDE_NGOS.has(r.partner_name) && !(r.approval_status === "Rejected" && ++dq.rejected));
-    const bu = recs[dt].filter(r => isInternal(r.owner)).length; if (bu) dq.bulk_uploaded[dt] = bu;
+    recs[dt] = blk.rows.map(a => Object.fromEntries(blk.fields.map((k, i) => [k, a[i]]))).filter(r => {
+      if (!r.partner_name || EXCLUDE_NGOS.has(r.partner_name)) return false;
+      const mm = mbr(dateOf(r)); if (mm < FIRST_MONTH || mm > LAST_MONTH) { dq.outside_window++; return false; }
+      if (byDhwani(r)) { dq.dhwani_rows[dt] = (dq.dhwani_rows[dt] || 0) + 1; return false; }
+      if (isTest(r)) { dq.test_rows++; return false; }
+      if (r.approval_status === "Rejected") { dq.rejected++; return false; }
+      return true;
+    });
   }
-  (recs["ICE Form"] || []).forEach(r => { if (!(INIT_IND[r.initiative] || THEME_IND[r.thematic_area])) { dq.ice_unmapped++; dq.ice_unmapped_lives += r.grand_total || 0; } });
-  (recs["Samridhi Mela Site Visit"] || []).forEach(r => { if (r.total_enrollments > SAM_CAP) dq.sam_outliers.push([r.name, ngoName[r.partner_name] || r.partner_name, r.creation.slice(0, 10), r.total_enrollments]); });
+  (recs["ICE Form"] || []).forEach(r => { if (!["THEME-086", "THEME-088", "THEME-068"].includes(r.thematic_area)) { dq.ice_unmapped++; dq.ice_unmapped_lives += r.total_interactions || 0; } });
+  (recs["Samridhi Mela Site Visit"] || []).forEach(r => { if (r.total_enrollments > SAM_CAP) dq.sam_outliers.push([r.name, ngoName[r.partner_name] || r.partner_name, dateOf(r), r.total_enrollments]); });
   (recs["Scheme Application"] || []).forEach(r => { if (r.benefit_received_status === "Yes" && r.lifecycle_status !== "Benefit Received") dq.sa_status_conflict++; });
   // location: Gen-1 forms (have a `zone` field) store zone/state/site; Gen-2 store state(=zone)/district/gram_panchayat
   const geo = s.geo || { zones: [], provinces: [], sites: [] };
@@ -203,7 +210,7 @@ if (s.impact) {
   M.forEach(([id, , dt, fn], mi) => (recs[dt] || []).forEach(r => {
     const v = fn(r); if (v === null || v === undefined || Number.isNaN(+v)) return;
     const [z, , st] = geoOf(r);
-    const key = [MI(mbr(r.creation)), mi, P(r.partner_name), r.approval_status === "Approved" ? 1 : 0, ZI(z || ""), SI(st || "")].join(",");
+    const key = [MI(mbr(dateOf(r))), mi, P(r.partner_name), r.approval_status === "Approved" ? 1 : 0, ZI(z || ""), SI(st || "")].join(",");
     const o = fm.get(key) || [0, 0]; o[0] += +v; o[1]++; fm.set(key, o);
   }));
   // remap month index to sorted order; fact = [month, metric, partner, approved, value, records, zone, site]
@@ -216,17 +223,19 @@ if (s.impact) {
   const off = new Map(); const dupe = new Map(); let at100 = 0, noSub = 0;
   (recs["ICE Form"] || []).forEach(r => {
     const e = r.submitted_by || r.owner; if (!r.submitted_by) noSub++;
-    const [z, , st] = geoOf(r); const m = mbr(r.creation);
+    const [z, , st] = geoOf(r); const m = mbr(dateOf(r));
     const k = e + "|" + m; const o = off.get(k) || { e, m, p: r.partner_name, z, sites: new Set(), n: 0, lives: 0, appr: 0 };
-    o.n++; o.lives += r.grand_total || 0; if (r.approval_status === "Approved") o.appr++; if (st) o.sites.add(st); off.set(k, o);
-    if (r.grand_total === 100) at100++;
-    const sig = [e, st, r.creation.slice(0, 10), r.initiative, r.grand_total].join("|"); dupe.set(sig, (dupe.get(sig) || 0) + 1);
+    o.n++; o.lives += r.total_interactions || 0; if (r.approval_status === "Approved") o.appr++; if (st) o.sites.add(st); off.set(k, o);
+    if (r.total_interactions === 100) at100++;
+    const sig = [e, st, dateOf(r), r.activity, r.total_interactions].join("|"); dupe.set(sig, (dupe.get(sig) || 0) + 1);
   });
   const officers = [...off.values()].map(o => [sorted.indexOf(o.m), uIdx[o.e] ?? -1, P(o.p), ZI(o.z || ""), o.n, o.lives, o.appr, o.sites.size, roleOf(o.e)]).filter(x => x[1] >= 0);
   const dupes = [...dupe].filter(([, n]) => n > 1).map(([k, n]) => { const [e, st, d, init, gt] = k.split("|"); return [uIdx[e] ?? -1, st, d, init, +gt, n]; }).sort((a, b) => b[5] - a[5]).slice(0, 300);
   dq.ice_at100 = at100; dq.ice_no_submitter = noSub; dq.ice_dupe_groups = [...dupe.values()].filter(n => n > 1).length; dq.ice_dupe_extra = [...dupe.values()].reduce((a, n) => a + (n > 1 ? n - 1 : 0), 0);
   // Scheme Application detail (since go-live): funnel, schemes, partners, counting-rule options
   const SA = recs["Scheme Application"] || [];
+  // funnel view only: A.3.2 itself counts every record (MBR rule), whatever its lifecycle
+  const APPLIED = new Set(["Identified", "Applied", "Under Review", "Approved", "Benefit Received", "Re-applied"]);
   const life = {}; SA.forEach(r => { const k = r.lifecycle_status || "(blank)"; life[k] = (life[k] || 0) + 1; });
   const byScheme = {}; SA.forEach(r => { const o = byScheme[r.scheme || "(blank)"] || (byScheme[r.scheme || "(blank)"] = [0, 0, 0]); o[0]++; if (APPLIED.has(r.lifecycle_status)) o[1]++; if (r.lifecycle_status === "Benefit Received") o[2]++; });
   const saP = {}; SA.forEach(r => { const o = saP[r.partner_name] || (saP[r.partner_name] = { apps: 0, ben: new Set(), recv: 0, yes: 0 }); if (APPLIED.has(r.lifecycle_status)) { o.apps++; if (r.beneficiary) o.ben.add(r.beneficiary); } if (r.lifecycle_status === "Benefit Received") o.recv++; if (r.benefit_received_status === "Yes") o.yes++; });

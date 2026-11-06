@@ -71,7 +71,7 @@ async function meta(dt) { return (await api(`/api/method/frappe.desk.form.load.g
   out.has_role = await api("/api/method/frappe.client.get_list", { doctype: "Has Role", parent: "User", fields: ["parent", "role"], filters: [["parenttype", "=", "User"], ["role", "like", "%Full Access"]], limit_page_length: 0 }).catch(e => { out.warnings.push("has_role: " + e.message); return []; });
   // ---- CE Impact: aggregate value fields per record (no names, no beneficiary details) ----
   const IMPACT = {
-    "ICE Form": ["thematic_area", "initiative", "grand_total"],
+    "ICE Form": ["thematic_area", "initiative", "activity", "activity_description", "institution_name", "grand_total", "total_interactions"],
     "Hunger Awareness Form": ["total_participants"],
     "MCH Activity Form": ["awareness_population", "pw_registered", "children_registered", "children_anthropometry", "children_malnourished_referred"],
     "Monthly Meal Donation Form": ["meals_distributed", "students_received_meals"],
@@ -81,7 +81,7 @@ async function meta(dt) { return (await api(`/api/method/frappe.desk.form.load.g
     "Member Enrolment": [],
     "Enterprise Master": [],
     "Enterprise Progress Visit": ["monthly_income", "monthly_sales"],
-    "Menstrual Hygiene Training": ["mh_trainees", "mh_improved_knowledge"],
+    "Menstrual Hygiene Training": ["mh_trainees", "mh_improved_knowledge", "institution_name"],
     "Menstrual Hygiene Champion": ["mh_women_reached"],
     "Menstrual Hygiene Period Van": ["mh_van_reached"],
     "Sanitary Pad Unit Visit": ["mh_napkins_made", "mh_revenue", "mh_women_count"],
@@ -98,7 +98,7 @@ async function meta(dt) { return (await api(`/api/method/frappe.desk.form.load.g
     try {
       const one = ((await api(`/api/resource/${encodeURIComponent(dt)}?fields=["*"]&limit_page_length=1`).catch(() => [])) || [])[0] || {};
       // location: Gen-2 forms use state/district/block/gram_panchayat; Gen-1 forms use zone/state/district/site
-      const extra = ["approval_status", "zone", "state", "district", "block", "gram_panchayat", "site", "submitted_by"].filter(k => k in one);
+      const extra = ["approval_status", "activity_date", "zone", "state", "district", "block", "gram_panchayat", "site", "submitted_by"].filter(k => k in one);
       const rows = await list(dt, ["owner", "partner_name", "creation", ...extra, ...fl]);
       out.impact[dt] = { fields: ["owner", "partner_name", "creation", ...extra, ...fl], rows: rows.map(r => ["owner", "partner_name", "creation", ...extra, ...fl].map(k => r[k] ?? null)) };
     } catch (e) { out.warnings.push("impact " + dt + ": " + e.message); }
